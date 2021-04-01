@@ -47,17 +47,20 @@ public class ProductServiceImpl implements ProductService {
    * @return - the product
    */
   public Product getProductById(Long id) {
+    Product product;
+
     try {
-      Product product = productRepository.findById(id).orElse(null);
-      if (product != null) {
-        return product;
-      } else {
-        logger.info("Get by id failed, it does not exist in the database: " + id);
-        throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
-      }
+      product = productRepository.findById(id).orElse(null);
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
+    }
+
+    if (product != null) {
+      return product;
+    } else {
+      logger.info("Get by id failed, it does not exist in the database: " + id);
+      throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
     }
   }
 }
