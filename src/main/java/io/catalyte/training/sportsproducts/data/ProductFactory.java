@@ -16,52 +16,6 @@ import org.apache.commons.lang3.RandomStringUtils;
  */
 public class ProductFactory {
 
-  /**
-   * Generates a number of random products based on input.
-   *
-   * @param numberOfProducts - the number of random products to generate
-   * @return - a list of random products
-   */
-  public List<Product> generateRandomProducts(Integer numberOfProducts) {
-
-    List<Product> productList = new ArrayList<>();
-
-    for (int i = 0; i < numberOfProducts; i++) {
-      productList.add(createRandomProduct());
-    }
-
-    return productList;
-  }
-
-  /**
-   * Uses random generators to build a product.
-   *
-   * @return - a randomly generated product
-   */
-  public Product createRandomProduct() {
-    Product product = new Product();
-    String category = ProductFactory.getCategory();
-    String adjective = ProductFactory.getAdjective();
-    String type = ProductFactory.getType();
-    String demographic = ProductFactory.getDemographic();
-
-    product.setDescription("This " + category.toLowerCase() + " "
-        + type.toLowerCase()
-        + " for " + demographic.toLowerCase()
-        + " is " + adjective.toLowerCase()
-        + ". You're going to love it!");
-    product.setCategory(category);
-    product.setName(adjective + " " + category + " " + type);
-    product.setType(type);
-    product.setDemographic(demographic);
-    product.setPrimaryColorCode(ProductFactory.getColorCode());
-    product.setSecondaryColorCode(ProductFactory.getColorCode());
-    product.setGlobalProductCode(ProductFactory.getRandomProductId());
-    product.setStyleNumber(ProductFactory.getStyleCode());
-    product.setReleaseDate(ProductFactory.getReleaseDate().toString());
-    return product;
-  }
-
   private static final String[] colors = {
       "#000000", // white
       "#ffffff", // black
@@ -79,13 +33,11 @@ public class ProductFactory {
       "#f092b0", // pink
       "#b7c0c7"  // light gray
   };
-
   private static final String[] demographics = {
       "Men",
       "Women",
       "Kids"
   };
-
   private static final String[] categories = {
       "Golf",
       "Soccer",
@@ -98,7 +50,6 @@ public class ProductFactory {
       "Boxing",
       "Weightlifting"
   };
-
   private static final String[] adjectives = {
       "Lightweight",
       "Slim",
@@ -114,7 +65,6 @@ public class ProductFactory {
       "Wicking",
       "Heavy Duty"
   };
-
   private static final String[] types = {
       "Pant",
       "Short",
@@ -243,6 +193,52 @@ public class ProductFactory {
     LocalDate start = LocalDate.of(2017, Month.JANUARY, 1);
     LocalDate end = LocalDate.now();
     return between(start, end);
+  }
+
+  /**
+   * Generates a number of random products based on input.
+   *
+   * @param numberOfProducts - the number of random products to generate
+   * @return - a list of random products
+   */
+  public List<Product> generateRandomProducts(Integer numberOfProducts) {
+
+    List<Product> productList = new ArrayList<>();
+
+    for (int i = 0; i < numberOfProducts; i++) {
+      productList.add(createRandomProduct());
+    }
+
+    return productList;
+  }
+
+  /**
+   * Uses random generators to build a product.
+   *
+   * @return - a randomly generated product
+   */
+  public Product createRandomProduct() {
+    Product product = new Product();
+    String category = ProductFactory.getCategory();
+    String adjective = ProductFactory.getAdjective();
+    String type = ProductFactory.getType();
+    String demographic = ProductFactory.getDemographic();
+
+    product.setDescription("This " + category.toLowerCase() + " "
+        + type.toLowerCase()
+        + " for " + demographic.toLowerCase()
+        + " is " + adjective.toLowerCase()
+        + ". You're going to love it!");
+    product.setCategory(category);
+    product.setName(adjective + " " + category + " " + type);
+    product.setType(type);
+    product.setDemographic(demographic);
+    product.setPrimaryColorCode(ProductFactory.getColorCode());
+    product.setSecondaryColorCode(ProductFactory.getColorCode());
+    product.setGlobalProductCode(ProductFactory.getRandomProductId());
+    product.setStyleNumber(ProductFactory.getStyleCode());
+    product.setReleaseDate(ProductFactory.getReleaseDate().toString());
+    return product;
   }
 
 }
