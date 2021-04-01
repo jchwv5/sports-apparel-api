@@ -21,14 +21,11 @@ import org.springframework.stereotype.Component;
 public class DemoData implements CommandLineRunner {
 
   private final Logger logger = LogManager.getLogger(DemoData.class);
-
+  ProductFactory productFactory = new ProductFactory();
   @Autowired
   private ProductRepository productRepository;
-
   @Autowired
   private Environment env;
-
-  ProductFactory productFactory = new ProductFactory();
 
   @Override
   public void run(String... strings) {
