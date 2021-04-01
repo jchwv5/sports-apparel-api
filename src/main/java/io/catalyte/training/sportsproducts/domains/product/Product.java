@@ -35,6 +35,8 @@ public class Product {
 
   private String globalProductCode;
 
+  private Boolean active;
+
   public Product() {
   }
 
@@ -137,6 +139,14 @@ public class Product {
     this.globalProductCode = globalProductCode;
   }
 
+  public Boolean getActive() {
+    return active;
+  }
+
+  public void setActive(Boolean active) {
+    this.active = active;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -148,34 +158,44 @@ public class Product {
 
     Product product = (Product) o;
 
-    if (!getName().equals(product.getName())) {
+    if (name != null ? !name.equals(product.name) : product.name != null) {
       return false;
     }
-    if (!getDescription().equals(product.getDescription())) {
+    if (description != null ? !description.equals(product.description)
+        : product.description != null) {
       return false;
     }
-    if (!getDemographic().equals(product.getDemographic())) {
+    if (demographic != null ? !demographic.equals(product.demographic)
+        : product.demographic != null) {
       return false;
     }
-    if (!getCategory().equals(product.getCategory())) {
+    if (category != null ? !category.equals(product.category) : product.category != null) {
       return false;
     }
-    if (!getType().equals(product.getType())) {
+    if (type != null ? !type.equals(product.type) : product.type != null) {
       return false;
     }
-    if (!getReleaseDate().equals(product.getReleaseDate())) {
+    if (releaseDate != null ? !releaseDate.equals(product.releaseDate)
+        : product.releaseDate != null) {
       return false;
     }
-    if (!getPrimaryColorCode().equals(product.getPrimaryColorCode())) {
+    if (primaryColorCode != null ? !primaryColorCode.equals(product.primaryColorCode)
+        : product.primaryColorCode != null) {
       return false;
     }
-    if (!getSecondaryColorCode().equals(product.getSecondaryColorCode())) {
+    if (secondaryColorCode != null ? !secondaryColorCode.equals(product.secondaryColorCode)
+        : product.secondaryColorCode != null) {
       return false;
     }
-    if (!getStyleNumber().equals(product.getStyleNumber())) {
+    if (styleNumber != null ? !styleNumber.equals(product.styleNumber)
+        : product.styleNumber != null) {
       return false;
     }
-    return getGlobalProductCode().equals(product.getGlobalProductCode());
+    if (globalProductCode != null ? !globalProductCode.equals(product.globalProductCode)
+        : product.globalProductCode != null) {
+      return false;
+    }
+    return active != null ? active.equals(product.active) : product.active == null;
   }
 
   @Override
@@ -190,6 +210,7 @@ public class Product {
     result = 31 * result + (secondaryColorCode != null ? secondaryColorCode.hashCode() : 0);
     result = 31 * result + (styleNumber != null ? styleNumber.hashCode() : 0);
     result = 31 * result + (globalProductCode != null ? globalProductCode.hashCode() : 0);
+    result = 31 * result + (active != null ? active.hashCode() : 0);
     return result;
   }
 
@@ -207,6 +228,7 @@ public class Product {
         ", secondaryColorCode='" + secondaryColorCode + '\'' +
         ", styleNumber='" + styleNumber + '\'' +
         ", globalProductCode='" + globalProductCode + '\'' +
+        ", active='" + active + '\'' +
         '}';
   }
 }

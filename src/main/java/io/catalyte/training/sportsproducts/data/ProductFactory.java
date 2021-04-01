@@ -164,7 +164,6 @@ public class ProductFactory {
    */
   public static String getStyleCode() {
     return "sc" + RandomStringUtils.random(5, false, true);
-
   }
 
   /**
@@ -193,6 +192,11 @@ public class ProductFactory {
     LocalDate start = LocalDate.of(2017, Month.JANUARY, 1);
     LocalDate end = LocalDate.now();
     return between(start, end);
+  }
+
+  public static Boolean getActive() {
+    Random randomGenerator = new Random();
+    return randomGenerator.nextInt(2) == 1 ? Boolean.TRUE : Boolean.FALSE;
   }
 
   /**
@@ -238,6 +242,7 @@ public class ProductFactory {
     product.setGlobalProductCode(ProductFactory.getRandomProductId());
     product.setStyleNumber(ProductFactory.getStyleCode());
     product.setReleaseDate(ProductFactory.getReleaseDate().toString());
+    product.setActive((ProductFactory.getActive()));
     return product;
   }
 
