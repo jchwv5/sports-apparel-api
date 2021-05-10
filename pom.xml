@@ -2,34 +2,19 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>sports-apparel-api</artifactId>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <mainClass>io.catalyte.training.sportsproducts.AppRunner</mainClass>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
-        <groupId>org.springframework.boot</groupId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>11</source>
-          <target>11</target>
-        </configuration>
-        <groupId>org.apache.maven.plugins</groupId>
-      </plugin>
-    </plugins>
-  </build>
+  <groupId>io.catalyte.training.sportsproducts</groupId>
+  <artifactId>sports-apparel-api</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <version>1.1-SNAPSHOT</version>
+
+  <parent>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <groupId>org.springframework.boot</groupId>
+    <relativePath/>
+    <version>2.2.4.RELEASE</version> <!-- lookup parent from repository -->
+  </parent>
+
   <dependencies>
     <dependency>
       <artifactId>spring-boot-starter</artifactId>
@@ -90,10 +75,17 @@
     </dependency>
 
     <dependency>
-      <artifactId>junit</artifactId>
-      <groupId>junit</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <groupId>org.junit.jupiter</groupId>
       <scope>test</scope>
-      <version>4.12</version>
+      <version>5.6.0</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>junit-jupiter-api</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <scope>test</scope>
+      <version>5.6.0</version>
     </dependency>
 
     <dependency>
@@ -101,20 +93,18 @@
       <groupId>org.springframework.boot</groupId>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
     <dependency>
       <artifactId>log4j-core</artifactId>
       <groupId>org.apache.logging.log4j</groupId>
       <version>2.12.1</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+
     <dependency>
       <artifactId>log4j-api</artifactId>
       <groupId>org.apache.logging.log4j</groupId>
       <version>2.12.1</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
     <dependency>
       <artifactId>commons-lang3</artifactId>
       <groupId>org.apache.commons</groupId>
@@ -126,17 +116,12 @@
       <groupId>org.springframework.boot</groupId>
     </dependency>
 
+    <dependency>
+      <artifactId>h2</artifactId>
+      <groupId>com.h2database</groupId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
-  <groupId>io.catalyte.training.sportsproducts</groupId>
 
-  <modelVersion>4.0.0</modelVersion>
-
-  <parent>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <groupId>org.springframework.boot</groupId>
-    <relativePath/>
-    <version>2.1.4.RELEASE</version> <!-- lookup parent from repository -->
-  </parent>
-
-  <version>1.1-SNAPSHOT</version>
 </project>
