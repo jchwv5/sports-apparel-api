@@ -7,31 +7,22 @@ import static org.mockito.Mockito.when;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import java.util.Optional;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * This is a placeholder for file structure and is intentionally left blank
  */
-@ContextConfiguration(classes = {ProductServiceImpl.class})
 @RunWith(MockitoJUnitRunner.class)
-@WebMvcTest(ProductServiceImpl.class)
 public class ProductServiceImplTest {
 
   @InjectMocks
   private ProductServiceImpl productServiceImpl;
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @Mock
   private ProductRepository productRepository;
