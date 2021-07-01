@@ -3,6 +3,7 @@ package io.catalyte.training.sportsproducts.domains.user;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "users")
 public class User {
 
   @Id
