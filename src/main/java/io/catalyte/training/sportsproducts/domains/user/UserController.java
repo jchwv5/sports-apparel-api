@@ -30,19 +30,19 @@ public class UserController {
     return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
   }
 
-  @PostMapping(path = "/authorize")
-  public ResponseEntity<User> authorizeUser(
+  @PutMapping
+  public ResponseEntity<User> updateUser(
       @RequestBody User user
   ) {
-    logger.info("Request received for Authorize User");
-    return new ResponseEntity<>(userService.authorizeUser(user), HttpStatus.CREATED);
+    logger.info("Request received for Update User");
+    return new ResponseEntity<>(userService.updateUser(user), HttpStatus.OK);
   }
 
   @PostMapping(path = "/login")
   public ResponseEntity<JwtResponse> loginUser(
       @RequestBody User user
   ) {
-    logger.info("Request received for user login");
+    logger.info("Request received for User Login");
     return new ResponseEntity<>(userService.loginUser(user), HttpStatus.OK);
   }
 

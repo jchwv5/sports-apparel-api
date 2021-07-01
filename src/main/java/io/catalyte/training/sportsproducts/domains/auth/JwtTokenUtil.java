@@ -1,4 +1,4 @@
-package io.catalyte.training.sportsproducts.config;
+package io.catalyte.training.sportsproducts.domains.auth;
 
 import io.catalyte.training.sportsproducts.domains.user.*;
 import io.jsonwebtoken.*;
@@ -64,7 +64,6 @@ public class JwtTokenUtil implements Serializable {
     return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
   }
 
-
   /**
    * Checks if token is expired
    *
@@ -96,8 +95,6 @@ public class JwtTokenUtil implements Serializable {
    * @implNote https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1
    */
   private String generateToken(Map<String, Object> claims, String subject) {
-
-
 
     return Jwts.builder()
         .setClaims(claims)
