@@ -2,8 +2,10 @@ package io.catalyte.training.sportsproducts.domains.user;
 
 import io.catalyte.training.sportsproducts.domains.auth.*;
 import io.catalyte.training.sportsproducts.exceptions.*;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.dao.*;
+import org.springframework.http.*;
 import org.springframework.stereotype.*;
 
 @Service
@@ -20,19 +22,27 @@ public class UserServiceImpl implements UserService{
   }
 
   @Override
-  public User createUser(User user) {
-    try {
-      return userRepository.save(user);
-    } catch (DataAccessException dae) {
-      throw new ServerError(dae.getMessage());
-    }
-  }
+  public User updateUser(String authorization, Long id, User user) {
 
-  @Override
-  public User updateUser(User user) {
-    User existingUser;
+    // GET TOKEN FROM HEADERS
+    String token = jwtTokenUtil.getTokenFromAuthorization(authorization);
+
+    String email;
+
     try {
-      existingUser = userRepository.findById(user.getId()).orElse(null);
+      email = jwtTokenUtil.getEmailFromToken(token);
+    } catch (ExpiredJwtException e) {
+      throw new RuntimeException(e.getMessage());
+    }
+
+    if (!email.equals(user.getEmail())) {
+      throw new RuntimeException("JWT Token is bad");
+    }
+
+    User existingUser;
+
+    try {
+      existingUser = userRepository.findById(id).orElse(null);
     } catch (DataAccessException dae) {
       throw new ServerError(dae.getMessage());
     }
@@ -62,7 +72,7 @@ public class UserServiceImpl implements UserService{
       existingUser = userRepository.save(user);
     }
 
-    String token = jwtTokenUtil.generateToken(existingUser);
+    String token = jwtTokenUtil.generateJwtToken(existingUser);
 
     return new JwtResponse(token, existingUser);
 

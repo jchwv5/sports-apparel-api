@@ -5,6 +5,7 @@ import io.jsonwebtoken.*;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.*;
+import org.apache.logging.log4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.env.*;
 import org.springframework.stereotype.*;
@@ -15,11 +16,25 @@ public class JwtTokenUtil implements Serializable {
   private static final long serialVersionUID = -2550185165626007488L;
 
   public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+//  public static final long JWT_TOKEN_VALIDITY = 10; // TEST CASE
+
+  Logger logger = LogManager.getLogger(JwtTokenUtil.class);
 
   @Autowired
   private Environment env;
 
   String secret = "secret";
+
+  public String getTokenFromAuthorization(String authorization) {
+
+    // PARSE JWT TOKEN
+    if (authorization != null && authorization.startsWith("Bearer ")) {
+      return authorization.substring(7);
+    }
+
+    logger.warn("JWT Token does not being with the Bearer String");
+    return null;
+  }
 
   /**
    * Gets username from token
@@ -27,7 +42,7 @@ public class JwtTokenUtil implements Serializable {
    * @param token String - JWT Token
    * @return Claim
    */
-  public String getUsernameFromToken(String token) {
+  public String getEmailFromToken(String token) {
     return getClaimFromToken(token, Claims::getSubject);
   }
 
@@ -61,7 +76,11 @@ public class JwtTokenUtil implements Serializable {
    * @return Claims
    */
   private Claims getAllClaimsFromToken(String token) {
-    return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    return Jwts
+        .parser()
+        .setSigningKey(secret)
+        .parseClaimsJws(token)
+        .getBody();
   }
 
   /**
@@ -81,9 +100,13 @@ public class JwtTokenUtil implements Serializable {
    * @param user User
    * @return String - JWT Token
    */
-  public String generateToken(User user) {
+  public String generateJwtToken(User user) {
+   // CREATE CLAIMS BODY
     Map<String, Object> claims = new HashMap<>();
-    return generateToken(claims, user.getEmail());
+    claims.put("user", user);
+
+    // GENERATE THE JWT
+    return generateJwt(claims, user.getEmail());
   }
 
   /**
@@ -94,8 +117,7 @@ public class JwtTokenUtil implements Serializable {
    * @return token
    * @implNote https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1
    */
-  private String generateToken(Map<String, Object> claims, String subject) {
-
+  private String generateJwt(Map<String, Object> claims, String subject) {
     return Jwts.builder()
         .setClaims(claims)
         .setSubject(subject)
@@ -112,7 +134,14 @@ public class JwtTokenUtil implements Serializable {
    * @return Boolean
    */
   public Boolean validateToken(String token, User user) {
-    final String username = getUsernameFromToken(token);
-    return (username.equals(user.getEmail()) && !isTokenExpired(token));
+    // GET EMAIL FROM TOKEN
+    final String email = getEmailFromToken(token);
+
+    // CHECK IF TOKEN EMAIL AND EXPIRATION ARE VALID
+    boolean isValidEmail = email.equals(user.getEmail());
+    boolean isValidToken = !isTokenExpired(token);
+
+    // RETURN VALIDITY
+    return (isValidToken && isValidEmail);
   }
 }

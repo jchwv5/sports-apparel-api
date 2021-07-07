@@ -22,20 +22,14 @@ public class UserController {
     this.userService = userService;
   }
 
-  @PostMapping
-  public ResponseEntity<User> createUser(
-      @RequestBody User user
-  ) {
-    logger.info("Request received for Create User");
-    return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
-  }
-
-  @PutMapping
+  @PutMapping(path = "/{id}")
   public ResponseEntity<User> updateUser(
-      @RequestBody User user
+      @PathVariable Long id,
+      @RequestBody User user,
+      @RequestHeader("Authorization") String authorization
   ) {
     logger.info("Request received for Update User");
-    return new ResponseEntity<>(userService.updateUser(user), HttpStatus.OK);
+    return new ResponseEntity<>(userService.updateUser(authorization, id, user), HttpStatus.OK);
   }
 
   @PostMapping(path = "/login")
