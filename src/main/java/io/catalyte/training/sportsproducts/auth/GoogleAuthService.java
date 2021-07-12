@@ -36,7 +36,7 @@ public class GoogleAuthService {
       return bearerToken.substring(7);
     }
 
-    logger.warn("JWT Token does not begin with the Bearer String");
+    logger.error("JWT Token does not begin with the Bearer String");
     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Authorization Header must start with 'Bearer ' ");
   }
 
@@ -57,37 +57,29 @@ public class GoogleAuthService {
         .setAudience(Collections.singletonList(clientId))
         .build();
 
-    // VERIFY TOKEN
     GoogleIdToken idToken;
 
+    // VERIFY TOKEN
     try {
       idToken = verifier.verify(idTokenString);
+      logger.info("Verified token");
     } catch (GeneralSecurityException gse) {
+      logger.error(gse.getMessage());
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, gse.getMessage());
     } catch (Exception e) {
+      logger.error("There was a problem reading the token");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There was a problem reading the token");
     }
 
     if (idToken == null) {
+      logger.error("Could not verify token");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Could not verify token");
     }
 
-    // GET USER FROM GOOGLE TOKEN
-    // postman requests - create these.
-    Payload payload = idToken.getPayload();
-
-    // Google user accounts require email, first name, and last name. No error handling needed.
-    String email = payload.getEmail();
-    String firstName = (String) payload.get("given_name");
-    String lastname = (String) payload.get("family_name");
-
-    // CONSTRUCT USER
-    User googleUser = new User();
-    googleUser.setFirstName(firstName);
-    googleUser.setLastName(lastname);
-    googleUser.setEmail(email);
+    // GET EMAIL FROM GOOGLE TOKEN
+    String googleEmail = idToken.getPayload().getEmail();
 
     // AUTHENTICATE USER
-    return googleUser.getEmail().equals(user.getEmail());
+    return googleEmail.equals(user.getEmail());
   }
 }

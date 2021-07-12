@@ -4,6 +4,7 @@ import static io.catalyte.training.sportsproducts.constants.Roles.CUSTOMER;
 
 import io.catalyte.training.sportsproducts.auth.*;
 import io.catalyte.training.sportsproducts.exceptions.*;
+import org.apache.logging.log4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.dao.*;
 import org.springframework.http.*;
@@ -18,6 +19,8 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   private final UserRepository userRepository;
+
+  Logger logger = LogManager.getLogger(UserController.class);
 
   private final GoogleAuthService googleAuthService = new GoogleAuthService();
 
@@ -43,6 +46,7 @@ public class UserServiceImpl implements UserService {
     boolean isAuthenticated = googleAuthService.authenticateUser(token, updatedUser);
 
     if (!isAuthenticated) {
+      logger.error("Email in the request body does not match email from JWT");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Email in the request body does not match email from JWT Token");
     }
@@ -53,10 +57,12 @@ public class UserServiceImpl implements UserService {
     try {
       existingUser = userRepository.findById(id).orElse(null);
     } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
       throw new ServerError(dae.getMessage());
     }
 
     if (existingUser == null) {
+      logger.error("User with id: " + id + " does not exist");
       throw new ResourceNotFound("User with id: " + id + " does not exist");
     }
 
@@ -69,8 +75,10 @@ public class UserServiceImpl implements UserService {
     }
 
     try {
+      logger.info("Saved user to");
       return userRepository.save(updatedUser);
     } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
       throw new ServerError(dae.getMessage());
     }
 
@@ -92,6 +100,7 @@ public class UserServiceImpl implements UserService {
     boolean isAuthenticated = googleAuthService.authenticateUser(token, user);
 
     if (!isAuthenticated) {
+      logger.error("Email in the request body does not match email from JWT");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Email in the request body does not match email from JWT Token");
     }
@@ -102,11 +111,13 @@ public class UserServiceImpl implements UserService {
     try {
       existingUser = userRepository.findByEmail(user.getEmail());
     } catch (DataAccessException dae) {
+      logger.info(dae.getMessage());
       throw new ServerError(dae.getMessage());
     }
 
     // IF USER EXISTS, RETURN EXISTING USER
     if (existingUser != null) {
+      logger.info("Existing user has been found");
       return existingUser;
     }
 
@@ -127,6 +138,7 @@ public class UserServiceImpl implements UserService {
 
     // CHECK TO MAKE SURE EMAIL EXISTS ON INCOMING USER
     if (email == null) {
+      logger.error("User must have an email field");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have an email field");
     }
 
@@ -136,10 +148,12 @@ public class UserServiceImpl implements UserService {
     try {
       existingUser = userRepository.findByEmail(user.getEmail());
     } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
       throw new ServerError(dae.getMessage());
     }
 
     if (existingUser != null) {
+      logger.error("Email is taken");
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is taken");
     }
 
@@ -151,8 +165,10 @@ public class UserServiceImpl implements UserService {
 
     // SAVE USER
     try {
+      logger.info("Saved user");
       return userRepository.save(user);
     } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
       throw new ServerError(dae.getMessage());
     }
 
