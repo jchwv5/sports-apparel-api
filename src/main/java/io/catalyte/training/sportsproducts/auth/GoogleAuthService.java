@@ -1,13 +1,12 @@
 package io.catalyte.training.sportsproducts.auth;
 
+import static io.catalyte.training.sportsproducts.constants.StringConstants.GOOGLE_CLIENT_ID;
+
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.*;
-import io.catalyte.training.sportsproducts.config.*;
 import io.catalyte.training.sportsproducts.domains.user.*;
-import java.io.*;
 import java.security.*;
 import java.util.*;
 import org.apache.logging.log4j.*;
@@ -19,7 +18,6 @@ import org.springframework.web.server.*;
 public class GoogleAuthService {
 
   Logger logger = LogManager.getLogger(GoogleAuthService.class);
-  String clientId = "912899852587-7996nh9mlpvpa2446q0il4f9hj5o492h.apps.googleusercontent.com";
   public GoogleAuthService() {};
 
   /**
@@ -54,7 +52,7 @@ public class GoogleAuthService {
         new NetHttpTransport(),
         new GsonFactory()
     )
-        .setAudience(Collections.singletonList(clientId))
+        .setAudience(Collections.singletonList(GOOGLE_CLIENT_ID))
         .build();
 
     GoogleIdToken idToken;
