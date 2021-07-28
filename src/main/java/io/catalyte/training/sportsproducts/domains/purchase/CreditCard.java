@@ -96,4 +96,8 @@ public class CreditCard {
         ", cardholder='" + cardholder + '\'' +
         '}';
   }
+
+  public boolean validateCreditCard(){
+    return false;
+  }
 }
