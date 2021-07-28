@@ -98,6 +98,22 @@ public class CreditCard {
   }
 
   /**
+   * Checks the credit network of a card number with at least 16 digits
+   *
+   * @return Credit network as a String, or message stating it is an unsupported network
+   */
+  public String getCardNetwork(){
+    if(this.getCardNumber() < 1000000000000000L)
+      return "Unsupported credit Network";
+    int cardNetwork = (int) Math.floor(this.getCardNumber());
+    switch (cardNetwork){
+      case 4: return "VISA";
+      case 5: return "MASTERCARD";
+      default: return "Unsupported Credit Network";
+    }
+  }
+
+  /**
    * Checks if the credit card is valid
    *
    * @return true if all information is valid, descriptive exceptions thrown if any fields do not
@@ -105,7 +121,7 @@ public class CreditCard {
    */
   public boolean validateCreditCard() {
     long cardNumber = this.getCardNumber();
-    int cardNetwork = (int) Math.floor(cardNumber);
+    String cardNetwork = this.getCardNetwork();
 
     if (this == null
         || this.getCardholder() == null || this.getCardholder().equals("")
@@ -113,7 +129,7 @@ public class CreditCard {
       return false;
     } else if (cardNumber < 1000000000000000L) {
       return false;
-    } else if(cardNetwork != 4 || cardNetwork != 5){
+    } else if(cardNetwork != "VISA" || cardNetwork != "MASTERCARD"){
       return false;
     } else if (this.getCvv() < 100 || this.getCvv() >= 1000) {
       return false;
