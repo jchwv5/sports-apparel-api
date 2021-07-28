@@ -103,11 +103,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @param ccToValidate - the credit card information to validate
    */
   private void validatePurchase(CreditCard ccToValidate) {
-    if (ccToValidate == null
-        || ccToValidate.getCardholder() == null || ccToValidate.getCardholder().equals("")
-        || ccToValidate.getCardNumber() < 1000000000000000L
-        || ccToValidate.getCvv() < 100
-        || ccToValidate.getExpiration() == null || ccToValidate.getExpiration().equals("")) {
+    if (ccToValidate.validateCreditCard()) {
       throw new RuntimeException("Transaction declined - invalid credit card information");
     }
   }

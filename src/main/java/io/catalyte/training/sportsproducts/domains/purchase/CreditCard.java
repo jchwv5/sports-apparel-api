@@ -97,7 +97,20 @@ public class CreditCard {
         '}';
   }
 
-  public boolean validateCreditCard(){
-    return false;
+  /**
+   * Checks if the credit card is valid
+   *
+   * @return true if all information is valid, descriptive exceptions thrown if any fields do not match
+   */
+  public boolean validateCreditCard() {
+    if (this == null
+        || this.getCardholder() == null || this.getCardholder().equals("")
+        || this.getCardNumber() < 1000000000000000L
+        || this.getCvv() < 100
+        || this.getExpiration() == null || this.getExpiration().equals("")) {
+      return false;
+    }
+
+    return true;
   }
 }
