@@ -102,14 +102,18 @@ public class CreditCard {
    *
    * @return Credit network as a String, or message stating it is an unsupported network
    */
-  public String getCardNetwork(){
-    if(this.getCardNumber() < 1000000000000000L)
+  public String getCardNetwork() {
+    if (this.getCardNumber() < 1000000000000000L) {
       return "Unsupported credit Network";
+    }
     int cardNetwork = (int) Math.floor(this.getCardNumber());
-    switch (cardNetwork){
-      case 4: return "VISA";
-      case 5: return "MASTERCARD";
-      default: return "Unsupported Credit Network";
+    switch (cardNetwork) {
+      case 4:
+        return "VISA";
+      case 5:
+        return "MASTERCARD";
+      default:
+        return "Unsupported Credit Network";
     }
   }
 
@@ -123,15 +127,17 @@ public class CreditCard {
     long cardNumber = this.getCardNumber();
     String cardNetwork = this.getCardNetwork();
 
-    if (this == null
-        || this.getCardholder() == null || this.getCardholder().equals("")
-        || this.getExpiration() == null || this.getExpiration().equals("")) {
+    if (this == null) {
       return false;
     } else if (cardNumber < 1000000000000000L) {
       return false;
-    } else if(cardNetwork != "VISA" || cardNetwork != "MASTERCARD"){
-      return false;
     } else if (this.getCvv() < 100 || this.getCvv() >= 1000) {
+      return false;
+    } else if (this.getCardholder() == null || this.getCardholder().equals("")) {
+      return false;
+    } else if (this.getExpiration() == null || this.getExpiration().equals("")) {
+      return false;
+    } else if (cardNetwork != "VISA" || cardNetwork != "MASTERCARD") {
       return false;
     } else {
       return true;
