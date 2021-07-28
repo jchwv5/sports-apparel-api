@@ -100,17 +100,25 @@ public class CreditCard {
   /**
    * Checks if the credit card is valid
    *
-   * @return true if all information is valid, descriptive exceptions thrown if any fields do not match
+   * @return true if all information is valid, descriptive exceptions thrown if any fields do not
+   * match
    */
   public boolean validateCreditCard() {
+    long cardNumber = this.getCardNumber();
+    int cardNetwork = (int) Math.floor(cardNumber);
+
     if (this == null
         || this.getCardholder() == null || this.getCardholder().equals("")
-        || this.getCardNumber() < 1000000000000000L
-        || this.getCvv() < 100
         || this.getExpiration() == null || this.getExpiration().equals("")) {
       return false;
+    } else if (cardNumber < 1000000000000000L) {
+      return false;
+    } else if(cardNetwork != 4 || cardNetwork != 5){
+      return false;
+    } else if (this.getCvv() < 100 || this.getCvv() >= 1000) {
+      return false;
+    } else {
+      return true;
     }
-
-    return true;
   }
 }
