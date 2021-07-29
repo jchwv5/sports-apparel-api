@@ -101,9 +101,9 @@ public class CreditCard {
   }
 
   /**
-   * Checks the credit network of a card number with at least 16 digits
+   * Checks if card is a Visa or Mastercard. No other networks currently supported.
    *
-   * @return Credit network as a String, or message stating it is an unsupported network
+   * @return Credit network, or message stating unsupported network
    */
   public String getCardNetwork() {
     if (this.getCardNumber() < 1000000000000000L || this.getCardNumber() > 9999999999999999L) {
@@ -121,12 +121,14 @@ public class CreditCard {
   }
 
   /**
-   * Checks if the credit card is valid
+   * Validates Credit Card information
    *
    * @return true if all information is valid, descriptive exceptions thrown if any fields do not
    * match
    */
-  public boolean validateCreditCard() {
+  boolean validateCreditCard() {
+    boolean cardIsValid = true;
+    String invalidCardMessage = "";
     long cardNumber = this.getCardNumber();
     String cardNetwork = this.getCardNetwork();
 
@@ -143,21 +145,32 @@ public class CreditCard {
     boolean cardIsExpired = expiry.before(new Date());
 
     if (this == null) {
-      return false;
+      cardIsValid = false;
+      invalidCardMessage = "Required fields must not be left empty";
     } else if (cardNumber < 1000000000000000L) {
-      return false;
+      cardIsValid = false;
+      invalidCardMessage = "Card number must be at least 16 digits";
     } else if (this.getCvv() < 100 || this.getCvv() >= 1000) {
-      return false;
+      cardIsValid = false;
+      invalidCardMessage = "Cvv number must be exactly 3 digits";
     } else if (this.getCardholder() == null || this.getCardholder().equals("")) {
-      return false;
+      cardIsValid = false;
+      invalidCardMessage = "Name field must not be empty";
     } else if (this.getExpiration() == null || this.getExpiration().equals("")) {
-      return false;
+      cardIsValid = false;
+      invalidCardMessage = "Expiration field must not be left empty";
     } else if (cardNetwork != "VISA" && cardNetwork != "MASTERCARD") {
-      return false;
+      cardIsValid = false;
+      invalidCardMessage = cardNetwork;
     } else if (cardIsExpired) {
-      return false;
-    } else {
+      cardIsValid = false;
+      invalidCardMessage = "Card is expired";
+    }
+
+    if(cardIsValid){
       return true;
+    } else {
+      throw new RuntimeException("Transaction declined - " + invalidCardMessage);
     }
   }
 }
