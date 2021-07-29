@@ -1,5 +1,8 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.persistence.Embeddable;
 
 /**
@@ -103,10 +106,10 @@ public class CreditCard {
    * @return Credit network as a String, or message stating it is an unsupported network
    */
   public String getCardNetwork() {
-    if (this.getCardNumber() < 1000000000000000L) {
+    if (this.getCardNumber() < 1000000000000000L || this.getCardNumber() > 9999999999999999L) {
       return "Unsupported credit Network";
     }
-    int cardNetwork = (int) Math.floor(this.getCardNumber());
+    int cardNetwork = (int) Math.floor(this.getCardNumber()/1000000000000000L);
     switch (cardNetwork) {
       case 4:
         return "VISA";
@@ -127,6 +130,18 @@ public class CreditCard {
     long cardNumber = this.getCardNumber();
     String cardNetwork = this.getCardNetwork();
 
+    String cardExpiration = this.getExpiration();
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/yy");
+    simpleDateFormat.setLenient(false);
+    Date expiry = null;
+    try {
+      expiry = simpleDateFormat.parse(cardExpiration);
+    } catch (ParseException e) {
+      e.printStackTrace();
+      return false;
+    }
+    boolean cardIsExpired = expiry.before(new Date());
+
     if (this == null) {
       return false;
     } else if (cardNumber < 1000000000000000L) {
@@ -137,7 +152,9 @@ public class CreditCard {
       return false;
     } else if (this.getExpiration() == null || this.getExpiration().equals("")) {
       return false;
-    } else if (cardNetwork != "VISA" || cardNetwork != "MASTERCARD") {
+    } else if (cardNetwork != "VISA" && cardNetwork != "MASTERCARD") {
+      return false;
+    } else if (cardIsExpired) {
       return false;
     } else {
       return true;
