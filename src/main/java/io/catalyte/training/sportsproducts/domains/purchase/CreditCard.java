@@ -129,10 +129,10 @@ public class CreditCard {
   boolean validateCreditCard() {
     boolean cardIsValid = true;
     String invalidCardMessage = "";
-    long cardNumber = this.getCardNumber();
+
     String cardNetwork = this.getCardNetwork();
 
-    if (this == null) {
+    if (!this.validateCardExists()) {
       cardIsValid = false;
       invalidCardMessage = "No credit information provided";
     } else if (cardNumber < 1000000000000000L) {
@@ -151,18 +151,7 @@ public class CreditCard {
       cardIsValid = false;
       invalidCardMessage = cardNetwork;
     } else {
-      String cardExpiration = this.getExpiration();
-      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/yy");
-      simpleDateFormat.setLenient(false);
-      Date expiry = null;
-      try {
-        expiry = simpleDateFormat.parse(cardExpiration);
-      } catch (ParseException e) {
-        e.printStackTrace();
-        cardIsValid = false;
-      }
-      boolean cardIsExpired = expiry.before(new Date());
-      if (cardIsExpired) {
+      if (this.validateExpirationDate()) {
         cardIsValid = false;
         invalidCardMessage = "Card is expired";
       }
@@ -175,7 +164,41 @@ public class CreditCard {
     }
   }
 
-  boolean validateCardNumber(){
+  boolean validateCardExists() {
+    if (this == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  boolean validateCardNumber() {
+    long cardNumber = this.getCardNumber();
+    if (cardNumber < 1000000000000000L) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  boolean validateCvv() {
+    return true;
+  }
+
+  boolean validateExpirationDate() {
+    String cardExpiration = this.getExpiration();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
+    dateFormat.setLenient(false);
+    Date expiry = null;
+    try {
+      expiry = dateFormat.parse(cardExpiration);
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+    return expiry.before(new Date());
+  }
+
+  boolean validateCardholer() {
     return true;
   }
 }
