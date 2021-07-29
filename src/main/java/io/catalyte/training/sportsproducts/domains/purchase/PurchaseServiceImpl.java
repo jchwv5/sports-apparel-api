@@ -3,6 +3,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
@@ -33,9 +34,8 @@ public class PurchaseServiceImpl implements PurchaseService {
    *
    * @return
    */
-  public List<Purchase> findAllPurchases() {
-    try {
-      return purchaseRepository.findAll();
+  public List<Purchase> findPurchasesByEmail(String email) {
+    try {return purchaseRepository.findPurchasesByBillingAddressEmail(email);
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());

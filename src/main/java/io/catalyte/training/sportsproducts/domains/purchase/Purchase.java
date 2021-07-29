@@ -205,13 +205,9 @@ class BillingAddress {
     return billingZip;
   }
 
-  public void setBillingZip(int billingZip) {
-    this.billingZip = billingZip;
-  }
+  public void setBillingZip(int billingZip) { this.billingZip = billingZip;  }
 
-  public String getEmail() {
-    return email;
-  }
+  public String getEmail() { return email;  }
 
   public void setEmail(String email) {
     this.email = email;
