@@ -123,7 +123,7 @@ public class CreditCard {
   /**
    * Validates Credit Card information
    *
-   * @return true if all information is valid, descriptive exceptions thrown if any fields do not
+   * @return true if all information is valid, descriptive exception thrown if any fields do not
    * match
    */
   boolean validateCreditCard() {
