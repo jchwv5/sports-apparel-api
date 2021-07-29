@@ -109,7 +109,7 @@ public class CreditCard {
     if (this.getCardNumber() < 1000000000000000L || this.getCardNumber() > 9999999999999999L) {
       return "Unsupported credit Network";
     }
-    int cardNetwork = (int) Math.floor(this.getCardNumber()/1000000000000000L);
+    int cardNetwork = (int) Math.floor(this.getCardNumber() / 1000000000000000L);
     switch (cardNetwork) {
       case 4:
         return "VISA";
@@ -132,45 +132,50 @@ public class CreditCard {
     long cardNumber = this.getCardNumber();
     String cardNetwork = this.getCardNetwork();
 
-    String cardExpiration = this.getExpiration();
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/yy");
-    simpleDateFormat.setLenient(false);
-    Date expiry = null;
-    try {
-      expiry = simpleDateFormat.parse(cardExpiration);
-    } catch (ParseException e) {
-      e.printStackTrace();
-      return false;
-    }
-    boolean cardIsExpired = expiry.before(new Date());
-
     if (this == null) {
       cardIsValid = false;
-      invalidCardMessage = "Required fields must not be left empty";
+      invalidCardMessage = "No credit information provided";
     } else if (cardNumber < 1000000000000000L) {
       cardIsValid = false;
       invalidCardMessage = "Card number must be at least 16 digits";
     } else if (this.getCvv() < 100 || this.getCvv() >= 1000) {
       cardIsValid = false;
       invalidCardMessage = "Cvv number must be exactly 3 digits";
-    } else if (this.getCardholder() == null || this.getCardholder().equals("")) {
+    } else if (this.getCardholder() == null || this.getCardholder().trim().equals("")) {
       cardIsValid = false;
       invalidCardMessage = "Name field must not be empty";
-    } else if (this.getExpiration() == null || this.getExpiration().equals("")) {
+    } else if (this.getExpiration() == null || this.getExpiration().trim().equals("")) {
       cardIsValid = false;
       invalidCardMessage = "Expiration field must not be left empty";
     } else if (cardNetwork != "VISA" && cardNetwork != "MASTERCARD") {
       cardIsValid = false;
       invalidCardMessage = cardNetwork;
-    } else if (cardIsExpired) {
-      cardIsValid = false;
-      invalidCardMessage = "Card is expired";
+    } else {
+      String cardExpiration = this.getExpiration();
+      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/yy");
+      simpleDateFormat.setLenient(false);
+      Date expiry = null;
+      try {
+        expiry = simpleDateFormat.parse(cardExpiration);
+      } catch (ParseException e) {
+        e.printStackTrace();
+        cardIsValid = false;
+      }
+      boolean cardIsExpired = expiry.before(new Date());
+      if (cardIsExpired) {
+        cardIsValid = false;
+        invalidCardMessage = "Card is expired";
+      }
     }
 
-    if(cardIsValid){
+    if (cardIsValid) {
       return true;
     } else {
       throw new RuntimeException("Transaction declined - " + invalidCardMessage);
     }
+  }
+
+  boolean validateCardNumber(){
+    return true;
   }
 }

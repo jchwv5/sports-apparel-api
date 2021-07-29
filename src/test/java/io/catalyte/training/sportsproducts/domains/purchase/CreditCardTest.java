@@ -3,18 +3,15 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
-class CreditCardTest {
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+
+public class CreditCardTest {
   CreditCard testCard = new CreditCard();
 
   @Test
-  void getCardNetwork() {
-  }
-
-  @Test
-  void validateValidCard() {
+  public void validateValidCard() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -24,7 +21,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCardNumberNoInput() {
+  public void validateWithCardNumberNoInput() {
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
@@ -35,7 +32,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCardNumberTooShort() {
+  public void validateWithCardNumberTooShort() {
     testCard.setCardNumber(423456789123L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -47,7 +44,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCardOutOfNetwork() {
+  public void validateWithCardOutOfNetwork() {
     testCard.setCardNumber(1234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -59,7 +56,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCvvNoInput() {
+  public void validateWithCvvNoInput() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
@@ -70,7 +67,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCvvTooShort() {
+  public void validateWithCvvTooShort() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(4);
     testCard.setExpiration("01/35");
@@ -82,7 +79,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCvvTooLong() {
+  public void validateWithCvvTooLong() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(4556);
     testCard.setExpiration("01/35");
@@ -94,7 +91,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithExpiredCard() {
+  public void validateWithExpiredCard() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/20");
@@ -106,18 +103,18 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithExpirationNoInput() {
+  public void validateWithExpirationNoInput() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setCardholder("Test User");
 
     RuntimeException e = Assertions.assertThrows(RuntimeException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Card number must be at least 16 digits");
+    assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
   }
 
   @Test
-  void validateWithExpirationEmpty() {
+  public void validateWithExpirationEmpty() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("");
@@ -129,7 +126,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithExpirationOnlyWhitespace() {
+  public void validateWithExpirationOnlyWhitespace() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration(" ");
@@ -141,7 +138,19 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCardholderNoInput() {
+  public void validateWithExpirationInvalidInputLetters() {
+    testCard.setCardNumber(4234567891234567L);
+    testCard.setCvv(455);
+    testCard.setExpiration("abcdef");
+    testCard.setCardholder("Test User");
+
+    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+        () -> testCard.validateCreditCard());
+    assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
+  }
+
+  @Test
+  public void validateWithCardholderNoInput() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -152,7 +161,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCardholderEmpty() {
+  public void validateWithCardholderEmpty() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -164,7 +173,7 @@ class CreditCardTest {
   }
 
   @Test
-  void validateWithCardholderOnlyWhitespace() {
+  public void validateWithCardholderOnlyWhitespace() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
