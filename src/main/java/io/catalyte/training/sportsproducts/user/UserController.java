@@ -2,12 +2,12 @@ package io.catalyte.training.sportsproducts.user;
 
 import static io.catalyte.training.sportsproducts.constants.Paths.USERS_PATH;
 
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,18 +37,29 @@ public class UserController {
 
 
   @PostMapping
-  public void registerNewUser(@RequestBody User user) {
-    userServiceImpl.addNewUser(user);
+  @ResponseStatus(value = HttpStatus.OK)
+  public ResponseEntity<User> addUserByEmail(@RequestBody User user) {
+    logger.info("Request received for addUsersByEmail: " + user.getEmail());
 
+    return new ResponseEntity<>(userServiceImpl.addUserByEmail(user), HttpStatus.OK);
   }
 
-  @GetMapping(value = "/{id}/")
+  @GetMapping(value = "/{id}")
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<User> getUserById(@PathVariable Long id) {
     logger.info("Request received for getUsersById: " + id);
 
-    return new ResponseEntity<>(userServiceImpl.getUserById(id), HttpStatus.OK);
+   return new ResponseEntity<>(userServiceImpl.getUserById(id), HttpStatus.OK);
   }
+
+  @DeleteMapping(value = "/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  public void deleteUserById(@PathVariable Long id) {
+    logger.info("Request received for deleteUsersById: " + id);
+    userServiceImpl.deleteUserById(id);
+//    return new ResponseEntity<>(userServiceImpl.deleteUserById(id), HttpStatus.OK);
+  }
+
 
 }
 

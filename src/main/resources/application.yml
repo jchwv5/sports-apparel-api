@@ -7,13 +7,13 @@ products:
 
 logging:
   level:
-    org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: ERROR
+    org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: DEBUG
 
 spring:
   jpa:
     database: POSTGRESQL
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   datasource:
     platform: postgres
     url: jdbc:postgresql://localhost:5432/postgres
