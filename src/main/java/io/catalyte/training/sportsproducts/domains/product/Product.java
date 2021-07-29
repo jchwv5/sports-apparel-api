@@ -139,7 +139,7 @@ public class Product {
     this.globalProductCode = globalProductCode;
   }
 
-  public Boolean getActive() {
+  public Boolean getActive(Product product) {
     return active;
   }
 
