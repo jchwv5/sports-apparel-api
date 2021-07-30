@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 public class CreditCardTest {
-
   CreditCard testCard = new CreditCard();
 
   @Test
@@ -36,7 +35,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Card number must have at least 16 digits");
   }
@@ -48,7 +47,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Card number must have at least 16 digits");
   }
@@ -60,7 +59,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Unsupported credit network");
   }
@@ -72,7 +71,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Unsupported credit network");
   }
@@ -83,7 +82,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
@@ -95,7 +94,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
@@ -107,7 +106,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
@@ -119,7 +118,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/20");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Card is expired");
   }
@@ -130,7 +129,7 @@ public class CreditCardTest {
     testCard.setCvv(455);
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
   }
@@ -142,7 +141,7 @@ public class CreditCardTest {
     testCard.setExpiration("");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
   }
@@ -154,7 +153,7 @@ public class CreditCardTest {
     testCard.setExpiration(" ");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
   }
@@ -166,7 +165,7 @@ public class CreditCardTest {
     testCard.setExpiration("abcdef");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
   }
@@ -178,7 +177,7 @@ public class CreditCardTest {
     testCard.setExpiration("99/99");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
   }
@@ -190,7 +189,7 @@ public class CreditCardTest {
     testCard.setExpiration("99999");
     testCard.setCardholder("Test User");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
   }
@@ -201,7 +200,7 @@ public class CreditCardTest {
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
   }
@@ -213,7 +212,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
   }
@@ -225,7 +224,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder(" ");
 
-    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
   }

@@ -3,7 +3,6 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +49,13 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
-    validatePurchase(newPurchase.getCreditCard());
+    try {
+      validatePurchase(newPurchase.getCreditCard());
+    } catch (IllegalArgumentException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+
 
     try {
       purchaseRepository.save(newPurchase);
@@ -106,9 +111,9 @@ public class PurchaseServiceImpl implements PurchaseService {
   private void validatePurchase(CreditCard ccToValidate) {
     if (ccToValidate == null) {
       throw new RuntimeException("Transaction Declined - No credit card provided");
-    } else {
-      ccToValidate.validateCreditCard();
     }
+    ccToValidate.validateCreditCard();
   }
 }
+
 

@@ -110,9 +110,9 @@ public class CreditCard {
   boolean validateCreditCard() {
     return (
         this.validateCardNumber() &&
-        this.validateCvv() &&
-        this.validateExpirationDate() &&
-        this.validateCardholder());
+            this.validateCvv() &&
+            this.validateExpirationDate() &&
+            this.validateCardholder());
   }
 
   boolean validateCardNumber() {
@@ -187,11 +187,11 @@ public class CreditCard {
   }
 
   /**
-   * Validation helper to throw exception with appropriate message
+   * Validation helper method to throw exception with appropriate message
    *
    * @param message message detailing what caused validation to fail
    */
   void declineTransaction(String message) {
-    throw new RuntimeException("Transaction declined - " + message);
+    throw new IllegalArgumentException("Transaction declined - " + message);
   }
 }
