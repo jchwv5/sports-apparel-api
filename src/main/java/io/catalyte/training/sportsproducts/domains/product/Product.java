@@ -1,5 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.product;
 
+import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,6 +36,14 @@ public class Product {
 
   private String globalProductCode;
 
+  private String brand;
+
+  private BigDecimal price;
+
+  private Integer quantity;
+
+  private String imageSrc;
+
   private Boolean active;
 
   public Product() {
@@ -42,13 +51,14 @@ public class Product {
 
   public Product(String name, String description,
       String demographic, String category,
-      String type, String releaseDate) {
+      String type, String releaseDate, String brand) {
     this.name = name;
     this.description = description;
     this.demographic = demographic;
     this.category = category;
     this.type = type;
     this.releaseDate = releaseDate;
+    this.brand = brand;
   }
 
   public Long getId() {
@@ -97,6 +107,12 @@ public class Product {
 
   public void setType(String type) {
     this.type = type;
+  }
+
+  public String getBrand() { return brand; }
+
+  public void setBrand(String brand) {
+    this.brand = brand;
   }
 
   public String getReleaseDate() {
@@ -195,8 +211,13 @@ public class Product {
         : product.globalProductCode != null) {
       return false;
     }
+    if (brand != null ? !brand.equals(product.brand)
+        : product.brand != null) {
+      return false;
+    }
     return active != null ? active.equals(product.active) : product.active == null;
   }
+
 
   @Override
   public int hashCode() {
@@ -211,6 +232,7 @@ public class Product {
     result = 31 * result + (styleNumber != null ? styleNumber.hashCode() : 0);
     result = 31 * result + (globalProductCode != null ? globalProductCode.hashCode() : 0);
     result = 31 * result + (active != null ? active.hashCode() : 0);
+    result = 31 * result + (brand != null ? brand.hashCode() : 0);
     return result;
   }
 
@@ -228,6 +250,7 @@ public class Product {
         ", secondaryColorCode='" + secondaryColorCode + '\'' +
         ", styleNumber='" + styleNumber + '\'' +
         ", globalProductCode='" + globalProductCode + '\'' +
+        ", brand='" + brand + '\'' +
         ", active='" + active + '\'' +
         '}';
   }
