@@ -63,4 +63,30 @@ public class ProductServiceImpl implements ProductService {
       throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
     }
   }
+
+  @Override
+  public List<String> getProductByCategory() {
+    Product category = null;
+    try {
+      assert category != null;
+      return productRepository.getProductByCategory();
+    }
+    catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+  }
+
+  @Override
+  public List<String> getProductTypes() {
+    Product type = null;
+    try {
+      assert type != null;
+      return productRepository.getProductByTypes();
+    }
+    catch  (DataAccessException e){
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+  }
 }
