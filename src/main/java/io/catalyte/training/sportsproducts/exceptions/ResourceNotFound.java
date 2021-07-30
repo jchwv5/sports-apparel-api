@@ -1,10 +1,12 @@
 package io.catalyte.training.sportsproducts.exceptions;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  * A custom exception for resource not found.
  */
-public class ResourceNotFound extends RuntimeException {
-
+public final class ResourceNotFound extends RuntimeException {
   public ResourceNotFound() {
   }
 

@@ -2,6 +2,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
+import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,9 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return
    */
   public List<Purchase> findPurchasesByEmail(String email) {
+    if (email == null || email == ""){
+      throw new ResourceNotFound();
+    }
     try {return purchaseRepository.findPurchasesByBillingAddressEmail(email);
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
@@ -49,8 +53,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
-    validatePurchase(newPurchase.getCreditCard());
-
+//    validatePurchase(newPurchase.getCreditCard());
     try {
       purchaseRepository.save(newPurchase);
     } catch (DataAccessException e) {
@@ -102,14 +105,14 @@ public class PurchaseServiceImpl implements PurchaseService {
    *
    * @param ccToValidate - the credit card information to validate
    */
-  private void validatePurchase(CreditCard ccToValidate) {
-    if (ccToValidate == null
-        || ccToValidate.getCardholder() == null || ccToValidate.getCardholder().equals("")
-        || ccToValidate.getCardNumber() < 1000000000000000L
-        || ccToValidate.getCvv() < 100
-        || ccToValidate.getExpiration() == null || ccToValidate.getExpiration().equals("")) {
-      throw new RuntimeException("Transaction declined - invalid credit card information");
-    }
-  }
+//  private void validatePurchase(CreditCard ccToValidate) {
+//    if (ccToValidate == null
+//        || ccToValidate.getCardholder() == null || ccToValidate.getCardholder().equals("")
+//        || ccToValidate.getCardNumber() < 1000000000000000L
+//        || ccToValidate.getCvv() < 100
+//        || ccToValidate.getExpiration() == null || ccToValidate.getExpiration().equals("")) {
+//      throw new RuntimeException("Transaction declined - invalid credit card information");
+//    }
+//  }
 }
 

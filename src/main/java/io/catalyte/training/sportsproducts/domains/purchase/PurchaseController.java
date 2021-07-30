@@ -40,7 +40,7 @@ public class PurchaseController {
 
   @GetMapping
   public ResponseEntity findPurchasesByEmail(
-      @RequestParam(required = false) String email) {
+      @RequestParam (required = false) String email) {
     return new ResponseEntity<>(purchaseService.findPurchasesByEmail(email), HttpStatus.OK);
   }
 }
