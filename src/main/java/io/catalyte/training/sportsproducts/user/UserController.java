@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -57,10 +58,16 @@ public class UserController {
   public void deleteUserById(@PathVariable Long id) {
     logger.info("Request received for deleteUsersById: " + id);
     userServiceImpl.deleteUserById(id);
-//    return new ResponseEntity<>(userServiceImpl.deleteUserById(id), HttpStatus.OK);
   }
 
-
+  @PutMapping(path = "/{id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  public void updateUser(
+      @PathVariable("id") Long id,
+      @RequestBody User user){
+    logger.debug("User"+user);
+    userServiceImpl.updateUser(id, user);
+  }
 }
 
 

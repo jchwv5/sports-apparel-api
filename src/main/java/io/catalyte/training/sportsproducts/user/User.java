@@ -21,7 +21,7 @@ public class User {
   private String lastName;
   private String email;
   private String streetAddress;
-  private String getStreetAddress2;
+  private String StreetAddress2;
   private String city;
   private String state;
   private String zipCode;
@@ -31,16 +31,16 @@ public class User {
   }
 
   public User(Long id, String firstName, String lastName, String email,
-      String streetAddress, String getStreetAddress2, String city, String street,
+      String streetAddress, String StreetAddress2, String city, String state,
       String zipCode, String phoneNumber) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.streetAddress = streetAddress;
-    this.getStreetAddress2 = getStreetAddress2;
+    this.StreetAddress2 = StreetAddress2;
     this.city = city;
-    this.state = street;
+    this.state = state;
     this.zipCode = zipCode;
     this.phoneNumber = phoneNumber;
   }
@@ -85,12 +85,12 @@ public class User {
     this.streetAddress = streetAddress;
   }
 
-  public String getGetStreetAddress2() {
-    return getStreetAddress2;
+  public String GetStreetAddress2() {
+    return StreetAddress2;
   }
 
   public void setGetStreetAddress2(String getStreetAddress2) {
-    this.getStreetAddress2 = getStreetAddress2;
+    this.StreetAddress2 = getStreetAddress2;
   }
 
   public String getCity() {
@@ -101,12 +101,12 @@ public class User {
     this.city = city;
   }
 
-  public String getStreet() {
+  public String getState() {
     return state;
   }
 
-  public void setStreet(String street) {
-    this.state = street;
+  public void setState(String state) {
+    this.state = state;
   }
 
   public String getZipCode() {
@@ -135,7 +135,7 @@ public class User {
         ", lastName='" + lastName + '\'' +
         ", email='" + email + '\'' +
         ", streetAddress='" + streetAddress + '\'' +
-        ", getStreetAddress2='" + getStreetAddress2 + '\'' +
+        ", getStreetAddress2='" + StreetAddress2 + '\'' +
         ", city='" + city + '\'' +
         ", street='" + state + '\'' +
         ", zipCode='" + zipCode + '\'' +
