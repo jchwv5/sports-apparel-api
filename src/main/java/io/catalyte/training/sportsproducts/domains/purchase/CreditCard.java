@@ -103,27 +103,9 @@ public class CreditCard {
   }
 
   /**
-   * Checks if card is a Visa or Mastercard. No other networks currently supported.
-   *
-   * @return Credit network, or message stating unsupported network
-   */
-  public String getCardNetwork() {
-    int cardNetwork = (int) Math.floor(this.getCardNumber() / 1000000000000000L);
-    switch (cardNetwork) {
-      case 4:
-        return "VISA";
-      case 5:
-        return "MASTERCARD";
-      default:
-        return "Unsupported credit network";
-    }
-  }
-
-  /**
    * Validates Credit Card information
    *
-   * @return true if all information is valid, descriptive exception thrown if any fields do not
-   * match
+   * @return true if all information is valid
    */
   boolean validateCreditCard() {
     return (
@@ -187,6 +169,28 @@ public class CreditCard {
     return true;
   }
 
+  /**
+   * Checks if card is a Visa or Mastercard. No other networks currently supported.
+   *
+   * @return Credit network, or message stating unsupported network
+   */
+  public String getCardNetwork() {
+    int cardNetwork = (int) Math.floor(this.getCardNumber() / 1000000000000000L);
+    switch (cardNetwork) {
+      case 4:
+        return "VISA";
+      case 5:
+        return "MASTERCARD";
+      default:
+        return "Unsupported credit network";
+    }
+  }
+
+  /**
+   * Validation helper to throw exception with appropriate message
+   *
+   * @param message message detailing what caused validation to fail
+   */
   void declineTransaction(String message) {
     throw new RuntimeException("Transaction declined - " + message);
   }
