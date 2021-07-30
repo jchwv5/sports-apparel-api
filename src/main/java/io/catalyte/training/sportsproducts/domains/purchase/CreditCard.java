@@ -3,6 +3,8 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
+import java.util.regex.Pattern;
 import javax.persistence.Embeddable;
 
 /**
@@ -106,9 +108,6 @@ public class CreditCard {
    * @return Credit network, or message stating unsupported network
    */
   public String getCardNetwork() {
-    if (this.getCardNumber() < 1000000000000000L || this.getCardNumber() > 9999999999999999L) {
-      return "Unsupported Credit Network";
-    }
     int cardNetwork = (int) Math.floor(this.getCardNumber() / 1000000000000000L);
     switch (cardNetwork) {
       case 4:
@@ -116,7 +115,7 @@ public class CreditCard {
       case 5:
         return "MASTERCARD";
       default:
-        return "Unsupported Credit Network";
+        return "Unsupported credit network";
     }
   }
 
@@ -127,78 +126,68 @@ public class CreditCard {
    * match
    */
   boolean validateCreditCard() {
-    if (this.validateCardExists() &&
+    return (
         this.validateCardNumber() &&
         this.validateCvv() &&
         this.validateExpirationDate() &&
-        this.validateCardholder()) {
-      return true;
-    } else {
-      this.getErrorCode();
-      return false;
-    }
-  }
-
-  boolean validateCardExists() {
-    if (this == null) {
-      return false;
-    } else {
-      return true;
-    }
+        this.validateCardholder());
   }
 
   boolean validateCardNumber() {
     long cardNumber = this.getCardNumber();
     String cardNetwork = this.getCardNetwork();
 
-    if (cardNumber == 0L || (cardNetwork != "VISA" && cardNetwork != "MASTERCARD")) {
-      return false;
-    } else {
-      return true;
+    if (cardNumber < 1000000000000000L) {
+      declineTransaction("Card number must have at least 16 digits");
+    } else if (!Objects.equals(cardNetwork, "VISA")
+        && !Objects.equals(cardNetwork, "MASTERCARD")) {
+      declineTransaction(cardNetwork);
     }
+    return true;
   }
 
   boolean validateCvv() {
-    if (this.getCvv() < 100 || this.getCvv() >= 1000) {
-      return false;
-    } else {
-      return true;
+    if (!(this.getCvv() >= 100) || !(this.getCvv() < 1000)) {
+      declineTransaction("Cvv must be 3 digits");
     }
+    return true;
   }
 
   boolean validateExpirationDate() {
+    if (this.getExpiration() == null) {
+      declineTransaction("Expiration field must not be left empty");
+    }
     String cardExpiration = this.getExpiration().trim();
+    Date formattedCardExpiration = null;
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
     dateFormat.setLenient(false);
-    Date expiry = null;
 
-    if (cardExpiration == null || this.getExpiration().equals(""))
-
-    try {
-      expiry = dateFormat.parse(cardExpiration);
-    } catch (ParseException e) {
-      e.printStackTrace();
+    if (cardExpiration.equals("")) {
+      declineTransaction("Expiration field must not be left empty");
+    } else if (!Pattern.matches("^(0[1-9]|1[0-2])/?([0-9]{2})$", cardExpiration)) {
+      declineTransaction("Expiration input is invalid");
+    } else {
+      try {
+        formattedCardExpiration = dateFormat.parse(cardExpiration);
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+    }
+    if (formattedCardExpiration.before(new Date())) {
+      declineTransaction("Card is expired");
     }
 
-    return expiry.before(new Date());
+    return true;
   }
 
   boolean validateCardholder() {
     if (this.getCardholder() == null || this.getCardholder().trim().equals("")) {
-      return false;
-    } else {
-      return true;
+      declineTransaction("Name field must not be empty");
     }
+    return true;
   }
 
-  String getErrorCode() {
-    String invalidCardMessage = "";
-    invalidCardMessage = "No credit information provided";
-    invalidCardMessage = "Card number must be at least 16 digits";
-    invalidCardMessage = "Cvv number must be exactly 3 digits";
-    invalidCardMessage = "Name field must not be empty";
-    invalidCardMessage = "Expiration field must not be left empty";
-    invalidCardMessage = "Card is expired";
-    return invalidCardMessage;
+  void declineTransaction(String message) {
+    throw new RuntimeException("Transaction declined - " + message);
   }
 }

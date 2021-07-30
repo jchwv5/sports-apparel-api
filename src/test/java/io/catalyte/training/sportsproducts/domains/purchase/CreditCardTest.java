@@ -1,18 +1,28 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 public class CreditCardTest {
+
   CreditCard testCard = new CreditCard();
 
   @Test
-  public void validateValidCard() {
+  public void validateValidCardVisa() {
     testCard.setCardNumber(4234567891234567L);
+    testCard.setCvv(455);
+    testCard.setExpiration("01/35");
+    testCard.setCardholder("Test User");
+
+    assertTrue(testCard.validateCreditCard());
+  }
+
+  @Test
+  public void validateValidCardMasterCard() {
+    testCard.setCardNumber(5234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
@@ -28,7 +38,7 @@ public class CreditCardTest {
 
     RuntimeException e = Assertions.assertThrows(RuntimeException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Card number must be at least 16 digits");
+    assertThat(e).hasMessage("Transaction declined - Card number must have at least 16 digits");
   }
 
   @Test
@@ -40,7 +50,19 @@ public class CreditCardTest {
 
     RuntimeException e = Assertions.assertThrows(RuntimeException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Card number must be at least 16 digits");
+    assertThat(e).hasMessage("Transaction declined - Card number must have at least 16 digits");
+  }
+
+  @Test
+  public void validateWithCardNumberTooLong() {
+    testCard.setCardNumber(423456789123456789L);
+    testCard.setCvv(455);
+    testCard.setExpiration("01/35");
+    testCard.setCardholder("Test User");
+
+    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+        () -> testCard.validateCreditCard());
+    assertThat(e).hasMessage("Transaction declined - Unsupported credit network");
   }
 
   @Test
@@ -52,7 +74,7 @@ public class CreditCardTest {
 
     RuntimeException e = Assertions.assertThrows(RuntimeException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Unsupported Credit Network");
+    assertThat(e).hasMessage("Transaction declined - Unsupported credit network");
   }
 
   @Test
@@ -63,7 +85,7 @@ public class CreditCardTest {
 
     RuntimeException e = Assertions.assertThrows(RuntimeException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Cvv number must be exactly 3 digits");
+    assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
 
   @Test
@@ -75,7 +97,7 @@ public class CreditCardTest {
 
     RuntimeException e = Assertions.assertThrows(RuntimeException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Cvv number must be exactly 3 digits");
+    assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
 
   @Test
@@ -87,7 +109,7 @@ public class CreditCardTest {
 
     RuntimeException e = Assertions.assertThrows(RuntimeException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Cvv number must be exactly 3 digits");
+    assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
 
   @Test
@@ -146,7 +168,31 @@ public class CreditCardTest {
 
     RuntimeException e = Assertions.assertThrows(RuntimeException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
+    assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
+  }
+
+  @Test
+  public void validateWithExpirationInvalidInputDate() {
+    testCard.setCardNumber(4234567891234567L);
+    testCard.setCvv(455);
+    testCard.setExpiration("99/99");
+    testCard.setCardholder("Test User");
+
+    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+        () -> testCard.validateCreditCard());
+    assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
+  }
+
+  @Test
+  public void validateWithExpirationInvalidInputAllNumbers() {
+    testCard.setCardNumber(4234567891234567L);
+    testCard.setCvv(455);
+    testCard.setExpiration("99999");
+    testCard.setCardholder("Test User");
+
+    RuntimeException e = Assertions.assertThrows(RuntimeException.class,
+        () -> testCard.validateCreditCard());
+    assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
   }
 
   @Test
