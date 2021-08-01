@@ -132,7 +132,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    */
   private void checkForInactiveProducts(Purchase purchase) {
 
-    String errorMessage = "The following products in the purchase are inaactive: ";
+    String errorMessage = "The following products in the purchase are inactive: ";
     boolean inactiveProductPresent = false;
 
     Set<LineItem> itemsList = purchase.getProducts();
