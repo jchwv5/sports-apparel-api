@@ -5,11 +5,15 @@ import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -49,6 +53,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
+
     validatePurchase(newPurchase.getCreditCard());
 
     try {
@@ -111,5 +116,34 @@ public class PurchaseServiceImpl implements PurchaseService {
       throw new RuntimeException("Transaction declined - invalid credit card information");
     }
   }
+
+  /**
+   * Checks the purchase for inactive products
+   *
+   * @param purchase - the purchase object to check for inactive products
+   */
+  private void checkForInactiveProducts(Purchase purchase) {
+
+    String errorMessage = "The following products in the purchase are inaactive: ";
+    boolean inactiveProductPresent = false;
+
+    Set<LineItem> itemsList = purchase.getProducts();
+    if (itemsList != null) {
+      for (LineItem lineItem : itemsList) {
+        Product product = productService.getProductById(lineItem.getProduct().getId());
+
+        if (product.getActive()) {
+          inactiveProductPresent = true;
+          errorMessage = errorMessage + product.getName() + "\n";
+        }
+      }
+    }
+
+    if(inactiveProductPresent) {
+      throw new RuntimeException(errorMessage);
+    }
+  }
 }
+
+
 
