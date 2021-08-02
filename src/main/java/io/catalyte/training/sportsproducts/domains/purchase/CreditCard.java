@@ -2,6 +2,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -108,36 +109,43 @@ public class CreditCard {
    * @return true if all information is valid
    */
   boolean validateCreditCard() {
-    return (
-        this.validateCardNumber() &&
-            this.validateCvv() &&
-            this.validateExpirationDate() &&
-            this.validateCardholder());
+    ArrayList<String> errors = new ArrayList();
+    this.validateCardNumber(errors);
+    this.validateCvv(errors);
+    this.validateExpirationDate(errors);
+    this.validateCardholder(errors);
+
+    if (errors.isEmpty()) {
+      return true;
+    } else {
+      declineTransaction(errors);
+    }
+    return false;
   }
 
-  boolean validateCardNumber() {
+  ArrayList<String> validateCardNumber(ArrayList<String> errors) {
     long cardNumber = this.getCardNumber();
     String cardNetwork = this.getCardNetwork();
 
     if (cardNumber < 1000000000000000L) {
-      declineTransaction("Card number must have at least 16 digits");
+      errors.add("Card number must have at least 16 digits");
     } else if (!Objects.equals(cardNetwork, "VISA")
         && !Objects.equals(cardNetwork, "MASTERCARD")) {
-      declineTransaction(cardNetwork);
+      errors.add(cardNetwork);
     }
-    return true;
+    return errors;
   }
 
-  boolean validateCvv() {
+  ArrayList<String> validateCvv(ArrayList<String> errors) {
     if (!(this.getCvv() >= 100) || !(this.getCvv() < 1000)) {
-      declineTransaction("Cvv must be 3 digits");
+      errors.add("Cvv must be 3 digits");
     }
-    return true;
+    return errors;
   }
 
-  boolean validateExpirationDate() {
+  ArrayList<String> validateExpirationDate(ArrayList<String> errors) {
     if (this.getExpiration() == null) {
-      declineTransaction("Expiration field must not be left empty");
+      errors.add("Expiration field must not be left empty");
     }
     String cardExpiration = this.getExpiration().trim();
     Date formattedCardExpiration = null;
@@ -145,28 +153,29 @@ public class CreditCard {
     dateFormat.setLenient(false);
 
     if (cardExpiration.equals("")) {
-      declineTransaction("Expiration field must not be left empty");
+      errors.add("Expiration field must not be left empty");
     } else if (!Pattern.matches("^(0[1-9]|1[0-2])/?([0-9]{2})$", cardExpiration)) {
-      declineTransaction("Expiration input is invalid");
+      errors.add("Expiration input is invalid");
     } else {
       try {
         formattedCardExpiration = dateFormat.parse(cardExpiration);
       } catch (ParseException e) {
         e.printStackTrace();
       }
-    }
-    if (formattedCardExpiration.before(new Date())) {
-      declineTransaction("Card is expired");
+      assert formattedCardExpiration != null;
+      if (formattedCardExpiration.before(new Date())) {
+        errors.add("Card is expired");
+      }
     }
 
-    return true;
+    return errors;
   }
 
-  boolean validateCardholder() {
+  ArrayList<String> validateCardholder(ArrayList<String> errors) {
     if (this.getCardholder() == null || this.getCardholder().trim().equals("")) {
-      declineTransaction("Name field must not be empty");
+      errors.add("Name field must not be empty");
     }
-    return true;
+    return errors;
   }
 
   /**
@@ -191,7 +200,14 @@ public class CreditCard {
    *
    * @param message message detailing what caused validation to fail
    */
-  void declineTransaction(String message) {
+  void declineTransaction(ArrayList<String> errors) {
+    String message = "";
+    for (int i = 0; i < errors.size(); i++) {
+      message += errors.get(i);
+      if (i < errors.size() - 1) {
+        message += ", ";
+      }
+    }
     throw new IllegalArgumentException("Transaction declined - " + message);
   }
 }
