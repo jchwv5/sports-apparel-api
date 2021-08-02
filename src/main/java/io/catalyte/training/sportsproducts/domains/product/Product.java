@@ -294,7 +294,10 @@ public class Product {
     result = 31 * result + (globalProductCode != null ? globalProductCode.hashCode() : 0);
     result = 31 * result + (active != null ? active.hashCode() : 0);
     result = 31 * result + (brand != null ? brand.hashCode() : 0);
+    result = 31 * result + (price != null ? price.hashCode() : 0);
+    result = 31 * result + (imageSrc != null ? imageSrc.hashCode() : 0);
     result = 31 * result + (material != null ? material.hashCode() : 0);
+    result = 31 * result + (quantity != null ? quantity.hashCode() : 0);
     return result;
   }
 
