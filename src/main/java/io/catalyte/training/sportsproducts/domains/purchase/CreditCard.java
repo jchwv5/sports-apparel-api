@@ -109,7 +109,7 @@ public class CreditCard {
    * @return true if all information is valid
    */
   boolean validateCreditCard() {
-    ArrayList<String> errors = new ArrayList();
+    ArrayList<String> errors = new ArrayList<>();
     this.validateCardNumber(errors);
     this.validateCvv(errors);
     this.validateExpirationDate(errors);
@@ -119,11 +119,11 @@ public class CreditCard {
       return true;
     } else {
       declineTransaction(errors);
+      return false;
     }
-    return false;
   }
 
-  ArrayList<String> validateCardNumber(ArrayList<String> errors) {
+  private void validateCardNumber(ArrayList<String> errors) {
     long cardNumber = this.getCardNumber();
     String cardNetwork = this.getCardNetwork();
 
@@ -133,28 +133,29 @@ public class CreditCard {
         && !Objects.equals(cardNetwork, "MASTERCARD")) {
       errors.add(cardNetwork);
     }
-    return errors;
   }
 
-  ArrayList<String> validateCvv(ArrayList<String> errors) {
+  private void validateCvv(ArrayList<String> errors) {
     if (!(this.getCvv() >= 100) || !(this.getCvv() < 1000)) {
       errors.add("Cvv must be 3 digits");
     }
-    return errors;
   }
 
-  ArrayList<String> validateExpirationDate(ArrayList<String> errors) {
-    if (this.getExpiration() == null) {
+  private void validateExpirationDate(ArrayList<String> errors) {
+    String cardExpiration = this.getExpiration();
+
+    if (cardExpiration == null || cardExpiration.trim().equals("")) {
       errors.add("Expiration field must not be left empty");
+      return;
+    } else {
+      cardExpiration = cardExpiration.trim();
     }
-    String cardExpiration = this.getExpiration().trim();
+
     Date formattedCardExpiration = null;
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
     dateFormat.setLenient(false);
 
-    if (cardExpiration.equals("")) {
-      errors.add("Expiration field must not be left empty");
-    } else if (!Pattern.matches("^(0[1-9]|1[0-2])/?([0-9]{2})$", cardExpiration)) {
+    if (!Pattern.matches("^(0[1-9]|1[0-2])/?([0-9]{2})$", cardExpiration)) {
       errors.add("Expiration input is invalid");
     } else {
       try {
@@ -167,15 +168,12 @@ public class CreditCard {
         errors.add("Card is expired");
       }
     }
-
-    return errors;
   }
 
-  ArrayList<String> validateCardholder(ArrayList<String> errors) {
+  private void validateCardholder(ArrayList<String> errors) {
     if (this.getCardholder() == null || this.getCardholder().trim().equals("")) {
       errors.add("Name field must not be empty");
     }
-    return errors;
   }
 
   /**
@@ -184,7 +182,7 @@ public class CreditCard {
    * @return Credit network, or message stating "Unsupported credit network"
    */
   public String getCardNetwork() {
-    int cardNetwork = (int) Math.floor(this.getCardNumber() / 1000000000000000L);
+    int cardNetwork = (int) Math.floor(this.getCardNumber() / 1000000000000000.0);
     switch (cardNetwork) {
       case 4:
         return "VISA";
@@ -198,14 +196,14 @@ public class CreditCard {
   /**
    * Validation helper method to throw exception with appropriate message
    *
-   * @param message message detailing what caused validation to fail
+   * @param errors list of error messages detailing what caused validation to fail
    */
   void declineTransaction(ArrayList<String> errors) {
-    String message = "";
+    StringBuilder message = new StringBuilder();
     for (int i = 0; i < errors.size(); i++) {
-      message += errors.get(i);
+      message.append(errors.get(i));
       if (i < errors.size() - 1) {
-        message += ", ";
+        message.append(", ");
       }
     }
     throw new IllegalArgumentException("Transaction declined - " + message);
