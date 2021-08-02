@@ -170,9 +170,9 @@ public class CreditCard {
   }
 
   /**
-   * Checks if card is a Visa or Mastercard. No other networks currently supported.
+   * Checks if card is a 16-digit Visa or Mastercard. No other networks currently supported.
    *
-   * @return Credit network, or message stating unsupported network
+   * @return Credit network, or message stating "Unsupported credit network"
    */
   public String getCardNetwork() {
     int cardNetwork = (int) Math.floor(this.getCardNumber() / 1000000000000000L);
