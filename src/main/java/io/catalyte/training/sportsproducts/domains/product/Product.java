@@ -313,8 +313,11 @@ public class Product {
         ", styleNumber='" + styleNumber + '\'' +
         ", globalProductCode='" + globalProductCode + '\'' +
         ", brand='" + brand + '\'' +
-        ", brand='" + material + '\'' +
-        ", active='" + active + '\'' +
+        ", material='" + material + '\'' +
+        ", price=" + price +
+        ", quantity=" + quantity +
+        ", imageSrc='" + imageSrc + '\'' +
+        ", active=" + active +
         '}';
   }
 }
