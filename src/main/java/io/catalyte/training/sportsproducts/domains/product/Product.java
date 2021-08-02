@@ -269,11 +269,24 @@ public class Product {
         : product.globalProductCode != null) {
       return false;
     }
-    if (!Objects.equals(brand, product.brand)) {
+    if (imageSrc != null ? !imageSrc.equals(product.imageSrc)
+        : product.imageSrc != null) {
+      return false;
+    }
+    if (price != null ? !price.equals(product.price)
+        : product.price != null) {
+      return false;
+    }
+    if (brand != null ? !brand.equals(product.brand)
+        : product.brand != null) {
       return false;
     }
     if (material != null ? !material.equals(product.material)
         : product.material != null) {
+      return false;
+    }
+    if (quantity != null ? !quantity.equals(product.quantity)
+        : product.quantity != null) {
       return false;
     }
     return active != null ? active.equals(product.active) : product.active == null;
