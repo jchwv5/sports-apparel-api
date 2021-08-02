@@ -131,7 +131,7 @@ public class CreditCard {
       errors.add("Card number must have at least 16 digits");
     } else if (!Objects.equals(cardNetwork, "VISA")
         && !Objects.equals(cardNetwork, "MASTERCARD")) {
-      errors.add(cardNetwork);
+      errors.add(cardNetwork + " or card number is invalid");
     }
   }
 
@@ -145,7 +145,7 @@ public class CreditCard {
     String cardExpiration = this.getExpiration();
 
     if (cardExpiration == null || cardExpiration.trim().equals("")) {
-      errors.add("Expiration field must not be left empty");
+      errors.add("Expiration field must not be empty");
       return;
     } else {
       cardExpiration = cardExpiration.trim();
@@ -203,7 +203,7 @@ public class CreditCard {
     for (int i = 0; i < errors.size(); i++) {
       message.append(errors.get(i));
       if (i < errors.size() - 1) {
-        message.append(", ");
+        message.append("; ");
       }
     }
     throw new IllegalArgumentException("Transaction declined - " + message);

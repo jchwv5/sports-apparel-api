@@ -30,7 +30,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithCardNumberNoInput() {
+  public void validateCardNumberNoInput() {
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
@@ -41,7 +41,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithCardNumberTooShort() {
+  public void validateCardNumberTooShort() {
     testCard.setCardNumber(423456789123L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -53,7 +53,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithCardNumberTooLong() {
+  public void validateCardNumberTooLong() {
     testCard.setCardNumber(423456789123456789L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -61,11 +61,11 @@ public class CreditCardTest {
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Unsupported credit network");
+    assertThat(e).hasMessage("Transaction declined - Unsupported credit network or card number is invalid");
   }
 
   @Test
-  public void validateWithCardOutOfNetwork() {
+  public void validateCardOutOfNetwork() {
     testCard.setCardNumber(1234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -73,11 +73,11 @@ public class CreditCardTest {
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Unsupported credit network");
+    assertThat(e).hasMessage("Transaction declined - Unsupported credit network or card number is invalid");
   }
 
   @Test
-  public void validateWithCvvNoInput() {
+  public void validateCvvNoInput() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
@@ -88,7 +88,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithCvvTooShort() {
+  public void validateCvvTooShort() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(4);
     testCard.setExpiration("01/35");
@@ -100,7 +100,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithCvvTooLong() {
+  public void validateCvvTooLong() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(4556);
     testCard.setExpiration("01/35");
@@ -112,7 +112,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithExpiredCard() {
+  public void validateExpiredCard() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/20");
@@ -124,18 +124,18 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithExpirationNoInput() {
+  public void validateExpirationNoInput() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
+    assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
   }
 
   @Test
-  public void validateWithExpirationEmpty() {
+  public void validateExpirationEmpty() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("");
@@ -143,11 +143,11 @@ public class CreditCardTest {
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
+    assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
   }
 
   @Test
-  public void validateWithExpirationOnlyWhitespace() {
+  public void validateExpirationOnlyWhitespace() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration(" ");
@@ -155,11 +155,11 @@ public class CreditCardTest {
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Expiration field must not be left empty");
+    assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
   }
 
   @Test
-  public void validateWithExpirationInvalidInputLetters() {
+  public void validateExpirationInvalidInputLetters() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("abcdef");
@@ -171,7 +171,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithExpirationInvalidInputDate() {
+  public void validateExpirationInvalidInputDate() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("99/99");
@@ -183,7 +183,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithExpirationInvalidInputAllNumbers() {
+  public void validateExpirationInvalidInputAllNumbers() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("99999");
@@ -195,7 +195,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithCardholderNoInput() {
+  public void validateCardholderNoInput() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -206,7 +206,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithCardholderEmpty() {
+  public void validateCardholderEmpty() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -218,7 +218,7 @@ public class CreditCardTest {
   }
 
   @Test
-  public void validateWithCardholderOnlyWhitespace() {
+  public void validateCardholderOnlyWhitespace() {
     testCard.setCardNumber(4234567891234567L);
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
@@ -227,5 +227,17 @@ public class CreditCardTest {
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testCard.validateCreditCard());
     assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
+  }
+
+  @Test
+  public void validateMultipleInvalidInputs() {
+    testCard.setCardNumber(4234567891234567L);
+    testCard.setCvv(4556);
+    testCard.setExpiration("01/12");
+    testCard.setCardholder(" ");
+
+    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+        () -> testCard.validateCreditCard());
+    assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits; Card is expired; Name field must not be empty");
   }
 }
