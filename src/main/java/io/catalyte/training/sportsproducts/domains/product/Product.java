@@ -1,6 +1,7 @@
 package io.catalyte.training.sportsproducts.domains.product;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +39,8 @@ public class Product {
 
   private String brand;
 
+  private String material;
+
   private BigDecimal price;
 
   private Integer quantity;
@@ -49,119 +52,40 @@ public class Product {
   public Product() {
   }
 
-  public Product(String name, String description,
-      String demographic, String category,
-      String type, String releaseDate, String brand) {
+  public Product(String name,
+      String description,
+      String demographic,
+      String category,
+      String type,
+      String releaseDate,
+      String primaryColorCode,
+      String secondaryColorCode,
+      String styleNumber,
+      String globalProductCode,
+      String brand, String material,
+      BigDecimal price,
+      Integer quantity,
+      String imageSrc,
+      Boolean active) {
     this.name = name;
     this.description = description;
     this.demographic = demographic;
     this.category = category;
     this.type = type;
     this.releaseDate = releaseDate;
-    this.brand = brand;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getDemographic() {
-    return demographic;
-  }
-
-  public void setDemographic(String demographic) {
-    this.demographic = demographic;
-  }
-
-  public String getCategory() {
-    return category;
-  }
-
-  public void setCategory(String category) {
-    this.category = category;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getBrand() { return brand; }
-
-  public void setBrand(String brand) {
-    this.brand = brand;
-  }
-
-  public String getReleaseDate() {
-    return releaseDate;
-  }
-
-  public void setReleaseDate(String releaseDate) {
-    this.releaseDate = releaseDate;
-  }
-
-  public String getPrimaryColorCode() {
-    return primaryColorCode;
-  }
-
-  public void setPrimaryColorCode(String primaryColorCode) {
     this.primaryColorCode = primaryColorCode;
-  }
-
-  public String getSecondaryColorCode() {
-    return secondaryColorCode;
-  }
-
-  public void setSecondaryColorCode(String secondaryColorCode) {
     this.secondaryColorCode = secondaryColorCode;
-  }
-
-  public String getStyleNumber() {
-    return styleNumber;
-  }
-
-  public void setStyleNumber(String styleNumber) {
     this.styleNumber = styleNumber;
-  }
-
-  public String getGlobalProductCode() {
-    return globalProductCode;
-  }
-
-  public void setGlobalProductCode(String globalProductCode) {
     this.globalProductCode = globalProductCode;
-  }
-
-  public Boolean getActive() {
-    return active;
-  }
-
-  public void setActive(Boolean active) {
+    this.brand = brand;
+    this.material = material;
+    this.price = price;
+    this.quantity = quantity;
+    this.imageSrc = imageSrc;
     this.active = active;
   }
+
+
 
   @Override
   public boolean equals(Object o) {
@@ -211,8 +135,11 @@ public class Product {
         : product.globalProductCode != null) {
       return false;
     }
-    if (brand != null ? !brand.equals(product.brand)
-        : product.brand != null) {
+    if (!Objects.equals(brand, product.brand)) {
+      return false;
+    }
+    if (material != null ? !material.equals(product.material)
+        : product.material != null) {
       return false;
     }
     return active != null ? active.equals(product.active) : product.active == null;
@@ -233,6 +160,7 @@ public class Product {
     result = 31 * result + (globalProductCode != null ? globalProductCode.hashCode() : 0);
     result = 31 * result + (active != null ? active.hashCode() : 0);
     result = 31 * result + (brand != null ? brand.hashCode() : 0);
+    result = 31 * result + (material != null ? material.hashCode() : 0);
     return result;
   }
 
@@ -251,6 +179,7 @@ public class Product {
         ", styleNumber='" + styleNumber + '\'' +
         ", globalProductCode='" + globalProductCode + '\'' +
         ", brand='" + brand + '\'' +
+        ", brand='" + material + '\'' +
         ", active='" + active + '\'' +
         '}';
   }
