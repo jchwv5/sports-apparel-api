@@ -85,7 +85,141 @@ public class Product {
     this.active = active;
   }
 
+  public Long getId() {
+    return id;
+  }
 
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getDemographic() {
+    return demographic;
+  }
+
+  public void setDemographic(String demographic) {
+    this.demographic = demographic;
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public void setCategory(String category) {
+    this.category = category;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getReleaseDate() {
+    return releaseDate;
+  }
+
+  public void setReleaseDate(String releaseDate) {
+    this.releaseDate = releaseDate;
+  }
+
+  public String getPrimaryColorCode() {
+    return primaryColorCode;
+  }
+
+  public void setPrimaryColorCode(String primaryColorCode) {
+    this.primaryColorCode = primaryColorCode;
+  }
+
+  public String getSecondaryColorCode() {
+    return secondaryColorCode;
+  }
+
+  public void setSecondaryColorCode(String secondaryColorCode) {
+    this.secondaryColorCode = secondaryColorCode;
+  }
+
+  public String getStyleNumber() {
+    return styleNumber;
+  }
+
+  public void setStyleNumber(String styleNumber) {
+    this.styleNumber = styleNumber;
+  }
+
+  public String getGlobalProductCode() {
+    return globalProductCode;
+  }
+
+  public void setGlobalProductCode(String globalProductCode) {
+    this.globalProductCode = globalProductCode;
+  }
+
+  public String getBrand() {
+    return brand;
+  }
+
+  public void setBrand(String brand) {
+    this.brand = brand;
+  }
+
+  public String getMaterial() {
+    return material;
+  }
+
+  public void setMaterial(String material) {
+    this.material = material;
+  }
+
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
+
+  public Integer getQuantity() {
+    return quantity;
+  }
+
+  public void setQuantity(Integer quantity) {
+    this.quantity = quantity;
+  }
+
+  public String getImageSrc() {
+    return imageSrc;
+  }
+
+  public void setImageSrc(String imageSrc) {
+    this.imageSrc = imageSrc;
+  }
+
+  public Boolean getActive() {
+    return active;
+  }
+
+  public void setActive(Boolean active) {
+    this.active = active;
+  }
 
   @Override
   public boolean equals(Object o) {
