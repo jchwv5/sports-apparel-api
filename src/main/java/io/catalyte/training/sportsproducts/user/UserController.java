@@ -53,21 +53,7 @@ public class UserController {
    return new ResponseEntity<>(userServiceImpl.getUserById(id), HttpStatus.OK);
   }
 
-  @DeleteMapping(value = "/{id}")
-  @ResponseStatus(value = HttpStatus.OK)
-  public void deleteUserById(@PathVariable Long id) {
-    logger.info("Request received for deleteUsersById: " + id);
-    userServiceImpl.deleteUserById(id);
-  }
 
-  @PutMapping(path = "/{id}")
-  @ResponseStatus(value = HttpStatus.OK)
-  public void updateUser(
-      @PathVariable("id") Long id,
-      @RequestBody User user){
-    logger.debug("User"+user);
-    userServiceImpl.updateUser(id, user);
-  }
 }
 
 
