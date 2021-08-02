@@ -1,6 +1,7 @@
 package io.catalyte.training.sportsproducts.domains.product;
 
 import static io.catalyte.training.sportsproducts.constants.Paths.PRODUCTS_PATH;
+import static io.catalyte.training.sportsproducts.constants.Paths.PURCHASES_PATH;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,4 +40,15 @@ public class ProductApiTest {
     mockMvc.perform(get(PRODUCTS_PATH + "/1"))
         .andExpect(status().isOk());
   }
+
+  @Test
+  public void findPurchasesByEmailReturns404() throws Exception {
+    mockMvc.perform(get(PURCHASES_PATH)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void findPurchasesByEmailReturns200() throws Exception {
+    mockMvc.perform(get(PURCHASES_PATH + "/?email=joe@gmail.com")).andExpect(status().isOk());
+  }
+
 }
