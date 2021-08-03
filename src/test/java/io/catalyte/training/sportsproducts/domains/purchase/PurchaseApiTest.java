@@ -1,8 +1,10 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
+import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -11,6 +13,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static io.catalyte.training.sportsproducts.constants.Paths.PURCHASES_PATH;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,4 +43,16 @@ public class PurchaseApiTest {
         mockMvc.perform(get(PURCHASES_PATH + "/?email=joe@gmail.com")).andExpect(status().isOk());
     }
 
-}
+    @Test
+    public void findPurchasesByEmailReturnsDataAccessException()  {
+        try {
+            mockMvc.perform(get(PURCHASES_PATH + "/?email=joe@gmail.com"));
+            fail();
+        } catch (Exception e) {
+            assertThat(e.getMessage(), is(new ServerError(e.getMessage())));
+        }
+    }
+    }
+
+
+
