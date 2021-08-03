@@ -51,13 +51,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
-
-    try {
-      newPurchase.checkForInactiveProducts();
-    } catch (RuntimeException e) {
-      logger.error(e.getMessage());
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
-    }
+    newPurchase.checkForInactiveProducts();
 
     validatePurchase(newPurchase.getCreditCard());
 
