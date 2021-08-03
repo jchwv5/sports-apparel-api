@@ -22,7 +22,7 @@ public class PurchaseController {
 
   Logger logger = LogManager.getLogger(PurchaseController.class);
 
-  private PurchaseService purchaseService;
+  private final PurchaseService purchaseService;
 
   @Autowired
   public PurchaseController(PurchaseService purchaseService) {

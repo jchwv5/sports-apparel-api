@@ -39,4 +39,9 @@ public class ProductApiTest {
     mockMvc.perform(get(PRODUCTS_PATH + "/1"))
         .andExpect(status().isOk());
   }
+  @Test
+  public void getCategories() throws Exception {
+    mockMvc.perform(get(PRODUCTS_PATH + "/category/categories"))
+        .andExpect(status().isOk());
+  }
 }

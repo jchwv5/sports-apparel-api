@@ -25,6 +25,10 @@ public class ProductServiceImpl implements ProductService {
     this.productRepository = productRepository;
   }
 
+  public ProductServiceImpl() {
+
+  }
+
   /**
    * Retrieves all products from the database, optionally making use of an example if it is passed.
    *
@@ -66,12 +70,9 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public List<String> getProductByCategory() {
-    Product category = null;
     try {
-      assert category != null;
       return productRepository.getProductByCategory();
-    }
-    catch (DataAccessException e) {
+    } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
@@ -83,8 +84,7 @@ public class ProductServiceImpl implements ProductService {
     try {
       assert type != null;
       return productRepository.getProductByTypes();
-    }
-    catch  (DataAccessException e){
+    } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
