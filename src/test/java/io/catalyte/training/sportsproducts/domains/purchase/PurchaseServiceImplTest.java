@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 public class PurchaseServiceImplTest {
-
   private final CreditCard testCard = new CreditCard();
   private final PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null, null);
   private final PurchaseServiceImpl validating = mock(PurchaseServiceImpl.class);

@@ -186,7 +186,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    *
    * @return Credit network, or message stating "Unsupported credit network"
    */
-  public String getCardNetwork(CreditCard ccToValidate) {
+  private String getCardNetwork(CreditCard ccToValidate) {
     int cardNetwork = (int) Math.floor(ccToValidate.getCardNumber() / 1000000000000000.0);
     switch (cardNetwork) {
       case 4:
@@ -203,7 +203,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    *
    * @param errors list of error messages detailing what caused validation to fail
    */
-  void declineTransaction(ArrayList<String> errors) {
+  private void declineTransaction(ArrayList<String> errors) {
     StringBuilder message = new StringBuilder();
     for (int i = 0; i < errors.size(); i++) {
       message.append(errors.get(i));
