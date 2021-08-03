@@ -51,18 +51,6 @@ public class ExceptionController {
     return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  /**
-   *
-   * @param exception response thrown
-   * @return string UNPROCESSABLE_ENTITY_ERROR, date and exception message
-   */
-  @ExceptionHandler(UnprocessableEntityError.class)
-  protected ResponseEntity<ExceptionResponse> unprocessableEntityError(UnprocessableEntityError exception) {
-    ExceptionResponse response =
-        new ExceptionResponse("UNPROCESSABLE_ENTITY_ERROR", new Date(), exception.getMessage());
-
-    return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
-  }
 
   /**
    * @param ex exception response.

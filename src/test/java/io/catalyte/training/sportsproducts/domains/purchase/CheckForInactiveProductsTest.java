@@ -1,11 +1,15 @@
-package io.catalyte.training.sportsproducts.domains.product;
+package io.catalyte.training.sportsproducts.domains.purchase;
 
+import io.catalyte.training.sportsproducts.domains.product.Product;
+import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.domains.purchase.LineItem;
 import io.catalyte.training.sportsproducts.domains.purchase.Purchase;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 
 public class CheckForInactiveProductsTest {
@@ -29,10 +33,29 @@ public class CheckForInactiveProductsTest {
   Set<LineItem> s1 = new HashSet<>();
 
   @Test
-  public void test1() {
+  public void checkForInactiveProductsEmptyPurchase() {
+    purch1.setProducts(s1);
+    Assertions.assertDoesNotThrow(()-> purch1.checkForInactiveProducts());
+  }
+
+  @Test
+  public void checkForInactiveProductsAllProductsInactive() {
+    s1.add(lineItem1); s1.add(lineItem2); s1.add(lineItem3);
+    purch1.setProducts(s1);
+    prod1.setActive(false); prod2.setActive(false); prod3.setActive(false);
+    RuntimeException e = Assertions.assertThrows(RuntimeException.class, ()-> purch1.checkForInactiveProducts());
+    assert(e.getMessage().contains("The following products in the purchase are inactive: Colorful Hockey Visor"+"\n"+"Skateboarding Jacket"+"\n"
+        + "Next Gen Weightlifting"));
+  }
+
+  @Test
+  public void checkForInactiveProductsNotAllProductsInactive() {
     s1.add(lineItem1); s1.add(lineItem2); s1.add(lineItem3);
     purch1.setProducts(s1);
     prod1.setActive(true); prod2.setActive(false); prod3.setActive(false);
     RuntimeException e = Assertions.assertThrows(RuntimeException.class, ()-> purch1.checkForInactiveProducts());
+    assert(e.getMessage().contains("The following products in the purchase are inactive: Skateboarding Jacket"+"\n"
+        + "Next Gen Weightlifting"));
   }
+  
 }

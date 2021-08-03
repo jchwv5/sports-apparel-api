@@ -3,18 +3,15 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
-import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -59,7 +56,7 @@ public class PurchaseServiceImpl implements PurchaseService {
       newPurchase.checkForInactiveProducts();
     } catch (RuntimeException e) {
       logger.error(e.getMessage());
-      throw new UnprocessableEntityError(e.getMessage());
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
     }
 
     validatePurchase(newPurchase.getCreditCard());
