@@ -80,9 +80,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public List<String> getProductTypes() {
-    Product type = null;
     try {
-      assert type != null;
       return productRepository.getProductByTypes();
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
