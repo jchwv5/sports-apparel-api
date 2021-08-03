@@ -56,7 +56,7 @@ public class PurchaseServiceImpl implements PurchaseService {
   public Purchase savePurchase(Purchase newPurchase) {
 
     try {
-      checkForInactiveProducts(newPurchase);
+      newPurchase.checkForInactiveProducts();
     } catch (RuntimeException e) {
       logger.error(e.getMessage());
       throw new UnprocessableEntityError(e.getMessage());
@@ -125,33 +125,8 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
   }
 
-  /**
-   * Checks the purchase for inactive products
-   *
-   * @param purchase - the purchase object to check for inactive products
-   */
-  private void checkForInactiveProducts(Purchase purchase) {
 
-    String errorMessage = "The following products in the purchase are inactive: ";
-    boolean inactiveProductPresent = false;
-
-    Set<LineItem> itemsList = purchase.getProducts();
-    if (itemsList != null) {
-      for (LineItem lineItem : itemsList) {
-        Product product = productService.getProductById(lineItem.getProduct().getId());
-
-        if (product.getActive()) {
-          inactiveProductPresent = true;
-          errorMessage = errorMessage + product.getName() + "\n";
-        }
-      }
-    }
-
-    if(inactiveProductPresent) {
-      throw new RuntimeException(errorMessage);
-    }
-  }
-}
+ }
 
 
 

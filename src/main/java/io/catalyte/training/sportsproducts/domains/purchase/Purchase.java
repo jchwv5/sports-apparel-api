@@ -1,5 +1,8 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
+import io.catalyte.training.sportsproducts.domains.product.Product;
+import io.catalyte.training.sportsproducts.domains.product.ProductService;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
@@ -78,6 +81,30 @@ public class Purchase {
         ", billingAddress=" + billingAddress +
         ", creditCard=" + creditCard +
         '}';
+  }
+
+  /**
+   * Checks the purchase for inactive products
+   */
+  public void checkForInactiveProducts() {
+
+    String errorMessage = "The following products in the purchase are inactive: ";
+    boolean inactiveProductPresent = false;
+
+    Set<LineItem> itemsList = this.getProducts();
+    if (itemsList != null) {
+      for (LineItem lineItem : itemsList) {
+        Product product = lineItem.getProduct();
+        if (!product.getActive()) {
+          inactiveProductPresent = true;
+          errorMessage = errorMessage + product.getName() + "\n";
+        }
+      }
+    }
+
+    if (inactiveProductPresent) {
+      throw new RuntimeException(errorMessage);
+    }
   }
 }
 
@@ -224,4 +251,8 @@ class BillingAddress {
   public void setPhone(String phone) {
     this.phone = phone;
   }
+
 }
+
+
+
