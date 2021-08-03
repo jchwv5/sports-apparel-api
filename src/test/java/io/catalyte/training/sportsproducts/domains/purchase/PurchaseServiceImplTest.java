@@ -1,13 +1,20 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
-public class CreditCardTest {
-  CreditCard testCard = new CreditCard();
+class PurchaseServiceImplTest {
+
+  private CreditCard testCard = new CreditCard();
+  private PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null, null);
+  private PurchaseServiceImpl validating = mock(PurchaseServiceImpl.class);
 
   @Test
   public void validateValidCardVisa() {
@@ -16,7 +23,9 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    assertTrue(testCard.validateCreditCard());
+    doNothing().when(validating).validatePurchase(testCard);
+    validating.validatePurchase(testCard);
+    verify(validating, times(1)).validatePurchase(testCard);
   }
 
   @Test
@@ -26,7 +35,9 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    assertTrue(testCard.validateCreditCard());
+    doNothing().when(validating).validatePurchase(testCard);
+    validating.validatePurchase(testCard);
+    verify(validating, times(1)).validatePurchase(testCard);
   }
 
   @Test
@@ -36,7 +47,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Card number must have at least 16 digits");
   }
 
@@ -48,7 +59,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Card number must have at least 16 digits");
   }
 
@@ -60,8 +71,9 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Unsupported credit network or card number is invalid");
+        () -> testPurchaseValidation.validatePurchase(testCard));
+    assertThat(e).hasMessage(
+        "Transaction declined - Unsupported credit network or card number is invalid");
   }
 
   @Test
@@ -72,8 +84,9 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Unsupported credit network or card number is invalid");
+        () -> testPurchaseValidation.validatePurchase(testCard));
+    assertThat(e).hasMessage(
+        "Transaction declined - Unsupported credit network or card number is invalid");
   }
 
   @Test
@@ -83,7 +96,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
 
@@ -95,7 +108,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
 
@@ -107,7 +120,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
   }
 
@@ -119,7 +132,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Card is expired");
   }
 
@@ -130,7 +143,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
   }
 
@@ -142,7 +155,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
   }
 
@@ -154,7 +167,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
   }
 
@@ -166,7 +179,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
   }
 
@@ -178,7 +191,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
   }
 
@@ -190,7 +203,7 @@ public class CreditCardTest {
     testCard.setCardholder("Test User");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
   }
 
@@ -201,7 +214,7 @@ public class CreditCardTest {
     testCard.setExpiration("01/35");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
   }
 
@@ -213,7 +226,7 @@ public class CreditCardTest {
     testCard.setCardholder("");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
   }
 
@@ -225,7 +238,7 @@ public class CreditCardTest {
     testCard.setCardholder(" ");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
+        () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
   }
 
@@ -237,7 +250,16 @@ public class CreditCardTest {
     testCard.setCardholder(" ");
 
     IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
-        () -> testCard.validateCreditCard());
-    assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits; Card is expired; Name field must not be empty");
+        () -> testPurchaseValidation.validatePurchase(testCard));
+    assertThat(e).hasMessage(
+        "Transaction declined - Cvv must be 3 digits; Card is expired; Name field must not be empty");
+  }
+
+  @Test
+  void getCardNetwork() {
+  }
+
+  @Test
+  void declineTransaction() {
   }
 }
