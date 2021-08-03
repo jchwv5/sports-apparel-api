@@ -1,4 +1,4 @@
-package io.catalyte.training.sportsproducts.user;
+package io.catalyte.training.sportsproducts.domains.user;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
