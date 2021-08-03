@@ -41,14 +41,4 @@ public class ProductApiTest {
         .andExpect(status().isOk());
   }
 
-  @Test
-  public void findPurchasesByEmailReturns404() throws Exception {
-    mockMvc.perform(get(PURCHASES_PATH)).andExpect(status().isNotFound());
-  }
-
-  @Test
-  public void findPurchasesByEmailReturns200() throws Exception {
-    mockMvc.perform(get(PURCHASES_PATH + "/?email=joe@gmail.com")).andExpect(status().isOk());
-  }
-
 }
