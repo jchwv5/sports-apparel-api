@@ -123,9 +123,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     validateExpirationDate(errors, ccToValidate);
     validateCardholder(errors, ccToValidate);
 
-    if (errors.isEmpty()) {
-      return;
-    } else {
+    if (!errors.isEmpty()) {
       declineTransaction(errors);
     }
   }

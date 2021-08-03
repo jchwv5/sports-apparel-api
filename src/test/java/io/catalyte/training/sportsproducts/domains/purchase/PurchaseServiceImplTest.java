@@ -1,20 +1,19 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
-class PurchaseServiceImplTest {
+public class PurchaseServiceImplTest {
 
-  private CreditCard testCard = new CreditCard();
-  private PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null, null);
-  private PurchaseServiceImpl validating = mock(PurchaseServiceImpl.class);
+  private final CreditCard testCard = new CreditCard();
+  private final PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null, null);
+  private final PurchaseServiceImpl validating = mock(PurchaseServiceImpl.class);
 
   @Test
   public void validateValidCardVisa() {
@@ -253,13 +252,5 @@ class PurchaseServiceImplTest {
         () -> testPurchaseValidation.validatePurchase(testCard));
     assertThat(e).hasMessage(
         "Transaction declined - Cvv must be 3 digits; Card is expired; Name field must not be empty");
-  }
-
-  @Test
-  void getCardNetwork() {
-  }
-
-  @Test
-  void declineTransaction() {
   }
 }
