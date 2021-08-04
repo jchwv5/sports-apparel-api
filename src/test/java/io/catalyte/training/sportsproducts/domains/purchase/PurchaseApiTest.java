@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -42,17 +43,8 @@ public class PurchaseApiTest {
     public void findPurchasesByEmailReturns200() throws Exception {
         mockMvc.perform(get(PURCHASES_PATH + "/?email=joe@gmail.com")).andExpect(status().isOk());
     }
+}
 
-    @Test
-    public void findPurchasesByEmailReturnsDataAccessException()  {
-        try {
-            mockMvc.perform(get(PURCHASES_PATH + "/?email=joe@gmail.com"));
-            fail();
-        } catch (Exception e) {
-            assertThat(e.getMessage(), is(new ServerError(e.getMessage())));
-        }
-    }
-    }
 
 
 

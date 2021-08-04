@@ -36,7 +36,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return
    */
   public List<Purchase> findPurchasesByEmail(String email) {
-    if (email == null || email == ""){
+    if (email == null || email.equals("")){
       throw new ResourceNotFound("No email specified for request.");
     }
     try {return purchaseRepository.findPurchasesByBillingAddressEmail(email);
