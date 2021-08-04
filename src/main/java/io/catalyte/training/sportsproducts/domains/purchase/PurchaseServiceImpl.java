@@ -3,6 +3,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
 import java.util.List;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
@@ -51,11 +52,12 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
+
     try {
       checkForInactiveProducts(newPurchase);
-    } catch (IllegalArgumentException e) {
+    } catch (ResponseStatusException e) {
       logger.error(e.getMessage());
-      throw  new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+      throw  new UnprocessableEntityError(e.getMessage());
     }
 
     validatePurchase(newPurchase.getCreditCard());
@@ -142,7 +144,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     if (inactiveProductPresent) {
-      throw new IllegalArgumentException(errorMessage);
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, errorMessage);
     }
   }
 }

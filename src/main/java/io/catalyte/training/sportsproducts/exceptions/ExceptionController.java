@@ -2,6 +2,7 @@ package io.catalyte.training.sportsproducts.exceptions;
 
 import static io.catalyte.training.sportsproducts.constants.StringConstants.NOT_FOUND;
 import static io.catalyte.training.sportsproducts.constants.StringConstants.SERVER_ERROR;
+import static io.catalyte.training.sportsproducts.constants.StringConstants.UNPROCESSABLE_ENTITY;
 
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,18 @@ public class ExceptionController {
         new ExceptionResponse(SERVER_ERROR, new Date(), exception.getMessage());
 
     return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  /**
+   * @param exception response thrown
+   * @return string constant UNPROCESSABLE_ENTITY, date, and exception message
+   */
+  @ExceptionHandler(UnprocessableEntityError.class)
+  protected ResponseEntity<ExceptionResponse> unprocessableEntityError(UnprocessableEntityError exception) {
+    ExceptionResponse response =
+        new ExceptionResponse(UNPROCESSABLE_ENTITY, new Date(), exception.getMessage());
+
+    return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
 

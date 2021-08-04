@@ -17,14 +17,31 @@ public class PurchaseServiceImplTest {
   Purchase purch3 = new Purchase();
   Purchase purch4 = new Purchase();
 
-  Product prod1 = new Product("Colorful Hockey Visor", "This hockey visor for kids is colorful.", "Kids",
-      "Hockey", "Visor", "2019-04-20");
-  Product prod2 = new Product("Next Gen Weightlifting", "You're going to love it!", "Women", "Weightlifting",
-      "Belt", "2020-07-22");
-  Product prod3 = new Product("Skateboarding Jacket", "jacket for women", "Women",
-      "Skateboarding", "Jacket", "2019-06-27");
-  Product prod4 = new Product("", "noodle for men", "Men",
-      "Hockey","Pool Noodle","2017-03-01");
+  Product prod1 = new Product("Colorful Hockey Visor",
+      "This hockey visor for kids is colorful.",
+      "Kids",
+
+      "Hockey",
+      "Visor",
+      "2019-04-20");
+  Product prod2 = new Product("Next Gen Weightlifting",
+      "You're going to love it!",
+      "Women",
+      "Weightlifting",
+      "Belt",
+      "2020-07-22");
+  Product prod3 = new Product("Skateboarding Jacket",
+      "jacket for women",
+      "Women",
+      "Skateboarding",
+      "Jacket",
+      "2019-06-27");
+  Product prod4 = new Product("",
+      "noodle for men",
+      "Men",
+      "Hockey",
+      "Pool Noodle",
+      "2017-03-01");
 
   LineItem lineItem1 = new LineItem(101L, purch2, prod1, 5);
   LineItem lineItem2 = new LineItem(102L, purch2, prod2, 3);
