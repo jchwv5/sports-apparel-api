@@ -51,7 +51,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
-    newPurchase.checkForInactiveProducts();
+    checkForInactiveProducts(newPurchase);
 
     validatePurchase(newPurchase.getCreditCard());
 
@@ -116,8 +116,34 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
   }
 
+  /**
+   * Checks the purchase for inactive products
+   */
+  public void checkForInactiveProducts(Purchase purchase) {
 
- }
+    String errorMessage = "The following products in the purchase are inactive: ";
+    boolean inactiveProductPresent = false;
+
+    Set<LineItem> itemList = purchase.getProducts();
+
+    if (itemList != null) {
+      for (LineItem lineItem : itemList) {
+        Product product = lineItem.getProduct();
+        if (!product.getActive()) {
+          inactiveProductPresent = true;
+          errorMessage = errorMessage + product.getName() + "\n";
+        }
+      }
+    }
+
+    if (inactiveProductPresent) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, errorMessage);
+    }
+  }
+}
+
+
+
 
 
 

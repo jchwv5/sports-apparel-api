@@ -83,30 +83,6 @@ public class Purchase {
         '}';
   }
 
-  /**
-   * Checks the purchase for inactive products
-   */
-  public void checkForInactiveProducts() {
-
-    String errorMessage = "The following products in the purchase are inactive: ";
-    boolean inactiveProductPresent = false;
-
-    Set<LineItem> itemList = this.getProducts();
-
-    if (itemList != null) {
-      for (LineItem lineItem : itemList) {
-        Product product = lineItem.getProduct();
-        if (!product.getActive()) {
-          inactiveProductPresent = true;
-          errorMessage = errorMessage + product.getName() + "\n";
-        }
-      }
-    }
-
-    if (inactiveProductPresent) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, errorMessage);
-    }
-  }
 }
 
 /**
