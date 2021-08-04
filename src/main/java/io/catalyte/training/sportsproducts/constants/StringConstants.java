@@ -8,4 +8,5 @@ public class StringConstants {
   public static final String CONFLICT = "409 Conflict";
   public static final String SERVER_ERROR = "500 An unexpected error occurred.";
   public static final String SERVICE_UNAVAILABLE = "503 Service Unavailable";
+  public static final String UNPROCESSABLE_ENTITY = "422 Unprocessable Entity Error";
 }

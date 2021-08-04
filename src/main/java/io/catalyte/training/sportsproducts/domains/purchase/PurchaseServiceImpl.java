@@ -51,7 +51,12 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
-    checkForInactiveProducts(newPurchase);
+    try {
+      checkForInactiveProducts(newPurchase);
+    } catch (IllegalArgumentException e) {
+      logger.error(e.getMessage());
+      throw  new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+    }
 
     validatePurchase(newPurchase.getCreditCard());
 
@@ -137,7 +142,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     if (inactiveProductPresent) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, errorMessage);
+      throw new IllegalArgumentException(errorMessage);
     }
   }
 }
