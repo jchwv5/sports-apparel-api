@@ -78,6 +78,9 @@ public class PurchaseServiceImplTest {
 
     }
 
+    /**
+     * Test that findAllPurchasesByEmail is returning the list of associated emails
+     */
     @Test
     public void findPurchasesByEmailReturnsJack() {
         ArrayList<Purchase> expected = new ArrayList<>();
@@ -86,13 +89,19 @@ public class PurchaseServiceImplTest {
         Assert.assertEquals(expected, result);
     }
 
+    /**
+     * Test that finaAllPurchasesByEmail returns a 404 error when given an empty string
+     */
     @Test (expected = ResourceNotFound.class)
     public void findPurchasesByEmailReturns404() {
         mockPurchaseServiceImpl.findPurchasesByEmail("");
     }
 
+    /**
+     * Test that findAllPurchasesByEmail returns a server error when catching a DataAccessException
+     */
     @Test(expected = ServerError.class)
-    public void findPurchasesByEmailReturnsDataAccessException() throws Exception {
+    public void findPurchasesByEmailReturnsDataAccessException()  {
         Mockito.when(mockPurchaseRepository.findPurchasesByBillingAddressEmail(anyString())).thenThrow(Mockito.mock(DataAccessException.class));
         mockPurchaseServiceImpl.findPurchasesByEmail("joe@gmail.com");
     }

@@ -34,11 +34,19 @@ public class PurchaseApiTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
+    /**
+     * Test that PurchaseController returns a 404 error when given a null or empty string parameter for email
+     * @throws Exception
+     */
     @Test
     public void findPurchasesByEmailReturns404() throws Exception {
         mockMvc.perform(get(PURCHASES_PATH)).andExpect(status().isNotFound());
     }
 
+    /**
+     * Test that PurchaseController returns a status:200 when given an email parameter
+     * @throws Exception
+     */
     @Test
     public void findPurchasesByEmailReturns200() throws Exception {
         mockMvc.perform(get(PURCHASES_PATH + "/?email=joe@gmail.com")).andExpect(status().isOk());

@@ -31,9 +31,10 @@ public class PurchaseServiceImpl implements PurchaseService {
   }
 
   /**
-   * Retrieves all purchases from the database
+   * Retrieves all purchases from the database with associated email matching request parameter
    *
-   * @return
+   * @param email email to find all associated purchases for
+   * @return list of all purchases with matching email
    */
   public List<Purchase> findPurchasesByEmail(String email) {
     if (email == null || email.equals("")){
