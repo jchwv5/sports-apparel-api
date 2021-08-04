@@ -1,30 +1,57 @@
 package io.catalyte.training.sportsproducts.domains.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 /**
  * This class is a representation of a user.
  */
 @Entity
 @Table(name = "User", schema = "public")
+@JsonInclude(Include.NON_NULL)
 public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-
   private Long id;
+
+  @NotBlank(message = "First Name may not be blank, empty or null")
+  @Pattern(regexp = "^([A-Za-z])[A-Za-z '-]*$", message = "Invalid Input. Name may only allow letters, apostrophes, spaces, hyphens (-)")
   private String firstName;
+
+  @NotBlank(message = "Last Name may not be blank, empty or null")
+  @Pattern(regexp = "^([A-Za-z])[A-Za-z '-]*$", message = "Invalid Input. Name may only allow letters, apostrophes, spaces, hyphens (-)")
   private String lastName;
+
+  @NotBlank(message = "email is required")
+  @Email
   private String email;
+
+  @NotBlank(message = "Street address is required")
   private String streetAddress;
+
   private String StreetAddress2;
+
+  @NotBlank(message = "City is required")
+  @Pattern(regexp = "^([A-Za-z])[A-Za-z '-]*$", message = "Invalid Input. City may only allow letters, apostrophes, spaces, hyphens (-)")
   private String city;
+
+  @State
   private String state;
+
+  @NotBlank(message = "Zip code may not be blank")
+  @Pattern(regexp = "^[0-9]{5}(?:-[0-9]{4})?$", message = "Invalid Input.")
   private String zipCode;
+
+  @Pattern(regexp = "^\\d{3}-\\d{3}-\\d{4}$", message = "Invalid Input.")
   private String phoneNumber;
 
   public User() {
@@ -124,7 +151,6 @@ public class User {
   public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
   }
-
 
 
   @Override

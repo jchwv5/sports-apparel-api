@@ -2,11 +2,17 @@ package io.catalyte.training.sportsproducts.domains.user;
 
 import static io.catalyte.training.sportsproducts.constants.Paths.USERS_PATH;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +43,7 @@ public class UserController {
 
   @PostMapping
   @ResponseStatus(value = HttpStatus.OK)
-  public ResponseEntity<User> addUserByEmail(@RequestBody User user) {
+  public ResponseEntity<User> addUserByEmail(@Valid @RequestBody User user) {
     logger.info("Request received for addUsersByEmail: " + user.getEmail());
 
     return new ResponseEntity<>(userServiceImpl.addUserByEmail(user), HttpStatus.OK);
@@ -49,6 +55,19 @@ public class UserController {
     logger.info("Request received for getUsersById: " + id);
 
    return new ResponseEntity<>(userServiceImpl.getUserById(id), HttpStatus.OK);
+  }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public Map<String, String> handleValidationExceptions(
+      MethodArgumentNotValidException ex) {
+    Map<String, String> errors = new HashMap<>();
+    ex.getBindingResult().getAllErrors().forEach((error) -> {
+      String fieldName = ((FieldError) error).getField();
+      String errorMessage = error.getDefaultMessage();
+      errors.put(fieldName, errorMessage);
+    });
+    return errors;
   }
 
 
