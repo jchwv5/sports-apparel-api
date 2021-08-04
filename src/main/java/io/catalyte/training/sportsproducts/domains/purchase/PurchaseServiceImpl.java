@@ -3,6 +3,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import io.catalyte.training.sportsproducts.exceptions.BadRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,10 +57,10 @@ public class PurchaseServiceImpl implements PurchaseService {
    */
   public Purchase savePurchase(Purchase newPurchase) {
     try {
-      validatePurchase(newPurchase.getCreditCard());
+      validateCreditCard(newPurchase.getCreditCard());
     } catch (IllegalArgumentException e) {
       logger.error(e.getMessage());
-      throw new ServerError(e.getMessage());
+      throw new BadRequest(e.getMessage());
     }
 
     try {
@@ -109,16 +110,11 @@ public class PurchaseServiceImpl implements PurchaseService {
   }
 
   /**
-   * Validates purchase is able to be saved
+   * Validates credit card before purchase is able to be saved
    *
    * @param ccToValidate - the credit card information to validate
    */
-  void validatePurchase(CreditCard ccToValidate) {
-    validateCreditCard(ccToValidate);
-    //TO-DO: validate inactive items goes here (Card fo4s-29)
-  }
-
-  private void validateCreditCard(CreditCard ccToValidate){
+  void validateCreditCard(CreditCard ccToValidate) {
     if (ccToValidate == null) {
       throw new RuntimeException("Transaction Declined - No credit card provided");
     }
