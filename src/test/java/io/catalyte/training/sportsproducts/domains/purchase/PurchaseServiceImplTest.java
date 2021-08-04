@@ -47,7 +47,6 @@ public class PurchaseServiceImplTest {
     purch4.setProducts(s1);
     prod1.setActive(false);
     ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class, ()-> testPurchaseValidation.checkForInactiveProducts(purch4));
-    assert(e1.getMessage().contains("The following products in the purchase are inactive: Colorful Hockey Visor"));
     assert(e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
   }
 
@@ -57,7 +56,6 @@ public class PurchaseServiceImplTest {
     purch2.setProducts(s1);
     prod1.setActive(false); prod2.setActive(false); prod3.setActive(false);
     ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class, ()-> testPurchaseValidation.checkForInactiveProducts(purch2));
-    assert(e1.getMessage().contains("The following products in the purchase are inactive: "));
     assert(e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
   }
 
@@ -67,7 +65,6 @@ public class PurchaseServiceImplTest {
     purch3.setProducts(s1);
     prod4.setActive(true); prod1.setActive(false); prod2.setActive(false);
     ResponseStatusException e2 = Assertions.assertThrows(ResponseStatusException.class, ()-> testPurchaseValidation.checkForInactiveProducts(purch3));
-    assert(e2.getMessage().contains("The following products in the purchase are inactive: "));
     assert(e2.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
   }
 
