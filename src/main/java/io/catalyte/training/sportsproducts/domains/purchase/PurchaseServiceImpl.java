@@ -114,6 +114,11 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @param ccToValidate - the credit card information to validate
    */
   void validatePurchase(CreditCard ccToValidate) {
+    validateCreditCard(ccToValidate);
+    //TO-DO: validate inactive items goes here (Card fo4s-29)
+  }
+
+  private void validateCreditCard(CreditCard ccToValidate){
     if (ccToValidate == null) {
       throw new RuntimeException("Transaction Declined - No credit card provided");
     }

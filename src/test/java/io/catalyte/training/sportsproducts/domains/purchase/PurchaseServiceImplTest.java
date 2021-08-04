@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Assertions;
 public class PurchaseServiceImplTest {
   private final CreditCard testCard = new CreditCard();
   private final PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null, null);
-  private final PurchaseServiceImpl validating = mock(PurchaseServiceImpl.class);
+  private final PurchaseServiceImpl mockValidator = mock(PurchaseServiceImpl.class);
 
   @Test
   public void validateValidCardVisa() {
@@ -21,9 +21,9 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    doNothing().when(validating).validatePurchase(testCard);
-    validating.validatePurchase(testCard);
-    verify(validating, times(1)).validatePurchase(testCard);
+    doNothing().when(mockValidator).validatePurchase(testCard);
+    mockValidator.validatePurchase(testCard);
+    verify(mockValidator, times(1)).validatePurchase(testCard);
   }
 
   @Test
@@ -33,9 +33,9 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    doNothing().when(validating).validatePurchase(testCard);
-    validating.validatePurchase(testCard);
-    verify(validating, times(1)).validatePurchase(testCard);
+    doNothing().when(mockValidator).validatePurchase(testCard);
+    mockValidator.validatePurchase(testCard);
+    verify(mockValidator, times(1)).validatePurchase(testCard);
   }
 
   @Test
