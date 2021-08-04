@@ -1,5 +1,6 @@
 package io.catalyte.training.sportsproducts.exceptions;
 
+import static io.catalyte.training.sportsproducts.constants.StringConstants.BAD_REQUEST;
 import static io.catalyte.training.sportsproducts.constants.StringConstants.NOT_FOUND;
 import static io.catalyte.training.sportsproducts.constants.StringConstants.SERVER_ERROR;
 
@@ -13,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
 
 /**
  * A controller advice allows you to use exactly the same exception handling techniques but apply
@@ -49,6 +51,18 @@ public class ExceptionController {
         new ExceptionResponse(SERVER_ERROR, new Date(), exception.getMessage());
 
     return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  /**
+   * @param exception response thrown
+   * @return string constant BAD_REQUEST, date, and exception message
+   */
+  @ExceptionHandler(BadRequest.class)
+  protected ResponseEntity<ExceptionResponse> badRequest(BadRequest exception) {
+    ExceptionResponse response =
+        new ExceptionResponse(BAD_REQUEST, new Date(), exception.getMessage());
+
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
   /**
