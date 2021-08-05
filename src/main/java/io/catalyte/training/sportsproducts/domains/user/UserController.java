@@ -24,15 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * The UserController exposes endpoints for user related actions.
  */
-
-
 @RestController
 @RequestMapping(value = USERS_PATH)
 public class UserController {
-
   Logger logger = LogManager.getLogger(UserController.class);
-
-
   private UserServiceImpl userServiceImpl;
 
   @Autowired
@@ -44,8 +39,7 @@ public class UserController {
   @PostMapping
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<User> addUserByEmail(@Valid @RequestBody User user) {
-    logger.info("Request received for addUsersByEmail: " + user.getEmail());
-
+    logger.info("Request received for addUserByEmail: " + user.getEmail());
     return new ResponseEntity<>(userServiceImpl.addUserByEmail(user), HttpStatus.OK);
   }
 
@@ -53,14 +47,12 @@ public class UserController {
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<User> getUserById(@PathVariable Long id) {
     logger.info("Request received for getUsersById: " + id);
-
-   return new ResponseEntity<>(userServiceImpl.getUserById(id), HttpStatus.OK);
+    return new ResponseEntity<>(userServiceImpl.getUserById(id), HttpStatus.OK);
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public Map<String, String> handleValidationExceptions(
-      MethodArgumentNotValidException ex) {
+  public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach((error) -> {
       String fieldName = ((FieldError) error).getField();
@@ -69,7 +61,6 @@ public class UserController {
     });
     return errors;
   }
-
 
 }
 

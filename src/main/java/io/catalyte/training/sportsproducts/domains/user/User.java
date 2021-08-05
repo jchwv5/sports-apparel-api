@@ -38,7 +38,7 @@ public class User {
   @NotBlank(message = "Street address is required")
   private String streetAddress;
 
-  private String StreetAddress2;
+  private String streetAddress2;
 
   @NotBlank(message = "City is required")
   @Pattern(regexp = "^([A-Za-z])[A-Za-z '-]*$", message = "Invalid Input. City may only allow letters, apostrophes, spaces, hyphens (-)")
@@ -57,15 +57,14 @@ public class User {
   public User() {
   }
 
-  public User(Long id, String firstName, String lastName, String email,
-      String streetAddress, String StreetAddress2, String city, String state,
+  public User(String firstName, String lastName, String email,
+      String streetAddress, String streetAddress2, String city, String state,
       String zipCode, String phoneNumber) {
-    this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.streetAddress = streetAddress;
-    this.StreetAddress2 = StreetAddress2;
+    this.streetAddress2 = streetAddress2;
     this.city = city;
     this.state = state;
     this.zipCode = zipCode;
@@ -112,12 +111,12 @@ public class User {
     this.streetAddress = streetAddress;
   }
 
-  public String GetStreetAddress2() {
-    return StreetAddress2;
+  public String getStreetAddress2() {
+    return streetAddress2;
   }
 
-  public void setGetStreetAddress2(String getStreetAddress2) {
-    this.StreetAddress2 = getStreetAddress2;
+  public void setStreetAddress2(String StreetAddress2) {
+    this.streetAddress2 = StreetAddress2;
   }
 
   public String getCity() {
@@ -161,7 +160,7 @@ public class User {
         ", lastName='" + lastName + '\'' +
         ", email='" + email + '\'' +
         ", streetAddress='" + streetAddress + '\'' +
-        ", getStreetAddress2='" + StreetAddress2 + '\'' +
+        ", StreetAddress2='" + streetAddress2 + '\'' +
         ", city='" + city + '\'' +
         ", street='" + state + '\'' +
         ", zipCode='" + zipCode + '\'' +
