@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = USERS_PATH)
 public class UserController {
+
   Logger logger = LogManager.getLogger(UserController.class);
   private UserServiceImpl userServiceImpl;
 
@@ -50,13 +51,18 @@ public class UserController {
     return new ResponseEntity<>(userServiceImpl.getUserById(id), HttpStatus.OK);
   }
 
+  /*
+  This method handles validation and exception, making sure custom error message will display
+   */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach((error) -> {
       String fieldName = ((FieldError) error).getField();
       String errorMessage = error.getDefaultMessage();
+      logger.error("errorMessage {}", errorMessage);
       errors.put(fieldName, errorMessage);
     });
     return errors;

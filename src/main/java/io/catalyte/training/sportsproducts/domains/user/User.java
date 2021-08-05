@@ -31,7 +31,7 @@ public class User {
   @Pattern(regexp = "^([A-Za-z])[A-Za-z '-]*$", message = "Invalid Input. Name may only allow letters, apostrophes, spaces, hyphens (-)")
   private String lastName;
 
-  @NotBlank(message = "email is required")
+  @NotBlank(message = "Email is required")
   @Email
   private String email;
 

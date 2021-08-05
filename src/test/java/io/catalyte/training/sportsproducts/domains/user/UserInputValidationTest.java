@@ -23,7 +23,6 @@ public class UserInputValidationTest {
   private static ValidatorFactory validatorFactory;
   private static Validator validator;
 
-
   @BeforeClass
   public static void createValidator(){
     validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -207,7 +206,6 @@ public class UserInputValidationTest {
     Set<ConstraintViolation<User>> violations = validator.validate(user);
     assertEquals(violations.isEmpty(), true);
   }
-
 
 
   @Test
@@ -605,7 +603,7 @@ public class UserInputValidationTest {
   }
 
   @Test
-  public void zipCodeIsFourDigitsPlusOneDigits(){
+  public void zipCodeIsFiveDigitsPlusOneDigits(){
     User user = new User();
     user.setFirstName("dg-");
     user.setLastName("smith");
@@ -665,7 +663,7 @@ public class UserInputValidationTest {
   }
 
   @Test
-  public void phoneNumberIsLessNumbers(){
+  public void phoneNumberHasLessNumbers(){
     User user = new User();
     user.setFirstName("dg-");
     user.setLastName("smith");
