@@ -1,5 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.product;
 
+import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,20 +36,52 @@ public class Product {
 
   private String globalProductCode;
 
+  private String brand;
+
+  private String material;
+
+  private BigDecimal price;
+
+  private Integer quantity;
+
+  private String imageSrc;
+
   private Boolean active;
 
   public Product() {
   }
 
-  public Product(String name, String description,
-      String demographic, String category,
-      String type, String releaseDate) {
+  public Product(String name,
+      String description,
+      String demographic,
+      String category,
+      String type,
+      String releaseDate,
+      String primaryColorCode,
+      String secondaryColorCode,
+      String styleNumber,
+      String globalProductCode,
+      String brand, String material,
+      BigDecimal price,
+      Integer quantity,
+      String imageSrc,
+      Boolean active) {
     this.name = name;
     this.description = description;
     this.demographic = demographic;
     this.category = category;
     this.type = type;
     this.releaseDate = releaseDate;
+    this.primaryColorCode = primaryColorCode;
+    this.secondaryColorCode = secondaryColorCode;
+    this.styleNumber = styleNumber;
+    this.globalProductCode = globalProductCode;
+    this.brand = brand;
+    this.material = material;
+    this.price = price;
+    this.quantity = quantity;
+    this.imageSrc = imageSrc;
+    this.active = active;
   }
 
   public Long getId() {
@@ -139,6 +172,46 @@ public class Product {
     this.globalProductCode = globalProductCode;
   }
 
+  public String getBrand() {
+    return brand;
+  }
+
+  public void setBrand(String brand) {
+    this.brand = brand;
+  }
+
+  public String getMaterial() {
+    return material;
+  }
+
+  public void setMaterial(String material) {
+    this.material = material;
+  }
+
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
+
+  public Integer getQuantity() {
+    return quantity;
+  }
+
+  public void setQuantity(Integer quantity) {
+    this.quantity = quantity;
+  }
+
+  public String getImageSrc() {
+    return imageSrc;
+  }
+
+  public void setImageSrc(String imageSrc) {
+    this.imageSrc = imageSrc;
+  }
+
   public Boolean getActive() {
     return active;
   }
@@ -195,8 +268,29 @@ public class Product {
         : product.globalProductCode != null) {
       return false;
     }
+    if (imageSrc != null ? !imageSrc.equals(product.imageSrc)
+        : product.imageSrc != null) {
+      return false;
+    }
+    if (price != null ? !price.equals(product.price)
+        : product.price != null) {
+      return false;
+    }
+    if (brand != null ? !brand.equals(product.brand)
+        : product.brand != null) {
+      return false;
+    }
+    if (material != null ? !material.equals(product.material)
+        : product.material != null) {
+      return false;
+    }
+    if (quantity != null ? !quantity.equals(product.quantity)
+        : product.quantity != null) {
+      return false;
+    }
     return active != null ? active.equals(product.active) : product.active == null;
   }
+
 
   @Override
   public int hashCode() {
@@ -211,6 +305,11 @@ public class Product {
     result = 31 * result + (styleNumber != null ? styleNumber.hashCode() : 0);
     result = 31 * result + (globalProductCode != null ? globalProductCode.hashCode() : 0);
     result = 31 * result + (active != null ? active.hashCode() : 0);
+    result = 31 * result + (brand != null ? brand.hashCode() : 0);
+    result = 31 * result + (price != null ? price.hashCode() : 0);
+    result = 31 * result + (imageSrc != null ? imageSrc.hashCode() : 0);
+    result = 31 * result + (material != null ? material.hashCode() : 0);
+    result = 31 * result + (quantity != null ? quantity.hashCode() : 0);
     return result;
   }
 
@@ -228,7 +327,12 @@ public class Product {
         ", secondaryColorCode='" + secondaryColorCode + '\'' +
         ", styleNumber='" + styleNumber + '\'' +
         ", globalProductCode='" + globalProductCode + '\'' +
-        ", active='" + active + '\'' +
+        ", brand='" + brand + '\'' +
+        ", material='" + material + '\'' +
+        ", price=" + price +
+        ", quantity=" + quantity +
+        ", imageSrc='" + imageSrc + '\'' +
+        ", active=" + active +
         '}';
   }
 }
