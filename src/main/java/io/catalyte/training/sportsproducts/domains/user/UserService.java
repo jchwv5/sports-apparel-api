@@ -5,10 +5,10 @@ package io.catalyte.training.sportsproducts.domains.user;
  */
 public interface UserService {
 
-  public User updateUser(String credentials, Long id, User user);
+  User updateUser(String credentials, Long id, User user);
 
-  public User loginUser(String credentials, User user);
+  User loginUser(String credentials, User user);
 
-  public User createUser(User user);
+  User createUser(User user);
 
 }

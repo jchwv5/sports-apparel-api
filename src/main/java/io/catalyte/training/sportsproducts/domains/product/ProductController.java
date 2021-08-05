@@ -41,4 +41,17 @@ public class ProductController {
     return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
   }
 
+  @GetMapping(value = "/category/{categories}")
+  @ResponseStatus(value = HttpStatus.OK)
+  public ResponseEntity<List<String>> getCategories(Product category) {
+    logger.info("Request received for getCategories...");
+    return new ResponseEntity<>(productService.getProductByCategory(), HttpStatus.OK);
+  }
+
+  @GetMapping(value = "/type/{types}")
+  @ResponseStatus(value = HttpStatus.OK)
+  public ResponseEntity<List<String>> getTypes(Product type) {
+    logger.info("Request received for getTypes...");
+    return new ResponseEntity<>(productService.getProductTypes(), HttpStatus.OK);
+  }
 }
