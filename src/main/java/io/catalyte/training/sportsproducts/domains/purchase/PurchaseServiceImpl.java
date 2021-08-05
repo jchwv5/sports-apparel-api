@@ -3,6 +3,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
 import io.catalyte.training.sportsproducts.exceptions.BadRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,7 +17,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -56,6 +59,13 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
+    try {
+      checkForInactiveProducts(newPurchase);
+    } catch (ResponseStatusException e) {
+      logger.error(e.getMessage());
+      throw  new UnprocessableEntityError(e.getMessage());
+    }
+
     try {
       validateCreditCard(newPurchase.getCreditCard());
     } catch (IllegalArgumentException e) {
@@ -176,6 +186,30 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
   }
 
+  /**
+   * Checks the purchase for inactive products
+   */
+  public void checkForInactiveProducts(Purchase purchase) {
+    String errorMessage = "The following products in the purchase are inactive: ";
+    boolean inactiveProductPresent = false;
+
+    Set<LineItem> itemList = purchase.getProducts();
+
+    if (itemList != null) {
+      for (LineItem lineItem : itemList) {
+        Product product = lineItem.getProduct();
+        if (!product.getActive()) {
+          inactiveProductPresent = true;
+          errorMessage = errorMessage + product.getName() + "\n";
+        }
+      }
+    }
+
+    if (inactiveProductPresent) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, errorMessage);
+    }
+  }
+
   private void validateCardholder(ArrayList<String> errors, CreditCard ccToValidate) {
     if (ccToValidate.getCardholder() == null || ccToValidate.getCardholder().trim().equals("")) {
       errors.add("Name field must not be empty");
@@ -215,5 +249,4 @@ public class PurchaseServiceImpl implements PurchaseService {
     throw new IllegalArgumentException("Transaction declined - " + message);
   }
 }
-
 
