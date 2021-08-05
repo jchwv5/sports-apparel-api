@@ -1,7 +1,9 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
+import io.catalyte.training.sportsproducts.data.ProductFactory;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.Test;
@@ -11,37 +13,17 @@ import org.springframework.web.server.ResponseStatusException;
 public class PurchaseServiceImplTest {
 
   private final PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null, null);
+  private final ProductFactory productFactory = new ProductFactory();
+  List<Product> productList = productFactory.generateRandomProducts(4);
 
   Purchase purch1 = new Purchase();
   Purchase purch2 = new Purchase();
   Purchase purch3 = new Purchase();
-  Purchase purch4 = new Purchase();
 
-  Product prod1 = new Product("Colorful Hockey Visor",
-      "This hockey visor for kids is colorful.",
-      "Kids",
-
-      "Hockey",
-      "Visor",
-      "2019-04-20");
-  Product prod2 = new Product("Next Gen Weightlifting",
-      "You're going to love it!",
-      "Women",
-      "Weightlifting",
-      "Belt",
-      "2020-07-22");
-  Product prod3 = new Product("Skateboarding Jacket",
-      "jacket for women",
-      "Women",
-      "Skateboarding",
-      "Jacket",
-      "2019-06-27");
-  Product prod4 = new Product("Nikadidas Pool Noodle",
-      "noodle for men",
-      "Men",
-      "Hockey",
-      "Pool Noodle",
-      "2017-03-01");
+  Product prod1 = productList.get(0);
+  Product prod2 = productList.get(1);
+  Product prod3 = productList.get(2);
+  Product prod4 = productList.get(3);
 
   LineItem lineItem1 = new LineItem(101L, purch2, prod1, 5);
   LineItem lineItem2 = new LineItem(102L, purch2, prod2, 3);
@@ -79,7 +61,6 @@ public class PurchaseServiceImplTest {
     purch3.setProducts(s1);
     prod4.setActive(false);
     ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class, ()-> testPurchaseValidation.checkForInactiveProducts(purch3));
-    assert(e1.getMessage().contains("The following products in the purchase are inactive: Nikadidas Pool Noodle"));
     assert(e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
   }
 
