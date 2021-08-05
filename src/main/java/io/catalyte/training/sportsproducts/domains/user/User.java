@@ -54,12 +54,14 @@ public class User {
   @Pattern(regexp = "^\\d{3}-\\d{3}-\\d{4}$", message = "Invalid Input.")
   private String phoneNumber;
 
+  private String role;
+
   public User() {
   }
 
   public User(String firstName, String lastName, String email,
       String streetAddress, String streetAddress2, String city, String state,
-      String zipCode, String phoneNumber) {
+      String zipCode, String phoneNumber, String role) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
@@ -69,6 +71,7 @@ public class User {
     this.state = state;
     this.zipCode = zipCode;
     this.phoneNumber = phoneNumber;
+    this.role = role;
   }
 
   public Long getId() {
@@ -149,6 +152,14 @@ public class User {
 
   public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
+  }
+
+  public String getRole() {
+    return role;
+  }
+
+  public void setRole(String role) {
+    this.role = role;
   }
 
 

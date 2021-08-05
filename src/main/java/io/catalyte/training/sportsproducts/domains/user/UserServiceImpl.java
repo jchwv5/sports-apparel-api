@@ -1,6 +1,5 @@
 package io.catalyte.training.sportsproducts.domains.user;
 
-
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import java.util.Optional;
@@ -9,23 +8,37 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import static io.catalyte.training.sportsproducts.constants.Roles.CUSTOMER;
+
+import io.catalyte.training.sportsproducts.auth.*;
+import io.catalyte.training.sportsproducts.exceptions.*;
+import org.apache.logging.log4j.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.dao.*;
+import org.springframework.http.*;
+import org.springframework.stereotype.*;
+import org.springframework.web.server.*;
 
 
 /**
  * This class provides the implementation for the UserService interface.
- */
+=======
+*/
+
 @Service
 public class UserServiceImpl implements UserService {
 
-  private final Logger logger = LogManager.getLogger(UserServiceImpl.class);
-
-  private final UserRepository userRepository;
+  private final Logger logger2 = LogManager.getLogger(UserServiceImpl.class);
 
   @Autowired
+  private final UserRepository userRepository;
+
+  Logger logger = LogManager.getLogger(UserController.class);
+  private final GoogleAuthService googleAuthService = new GoogleAuthService();
+
   public UserServiceImpl(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
-
 
   /**
    * Retrieves the user with the provided id from the database.
@@ -38,13 +51,13 @@ public class UserServiceImpl implements UserService {
     try {
       user = userRepository.findById(id).orElse(null);
     } catch (DataAccessException e) {
-      logger.error(e.getMessage());
+      logger2.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
     if (user != null) {
       return user;
     } else {
-      logger.info("Get by id failed, id does not exist in the database: " + id);
+      logger2.info("Get by id failed, id does not exist in the database: " + id);
       throw new ResourceNotFound("Get by id failed. id " + id + " does not exist in the database: ");
     }
   }
@@ -57,7 +70,7 @@ public class UserServiceImpl implements UserService {
   public User addUserByEmail(User user) {
     Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
     if (userOptional.isPresent()) {
-      logger.info("Add new user failed, email already exists in the database: " + user.getEmail());
+      logger2.info("Add new user failed, email already exists in the database: " + user.getEmail());
       throw new IllegalStateException("Email already exists: " + user.getEmail() );
     }
     userRepository.save(user);
@@ -65,6 +78,150 @@ public class UserServiceImpl implements UserService {
     return user;
   }
 
+
+  /**
+   * Updates a User given they are given the right credentials
+   *
+   * @param bearerToken String value in the Authorization property of the header
+   * @param id          Id of the user to update
+   * @param updatedUser User to update
+   * @return User - Updated user
+   */
+  @Override
+  public User updateUser(String bearerToken, Long id, User updatedUser) {
+
+    // AUTHENTICATES USER - SAME EMAIL, SAME PERSON
+    String token = googleAuthService.getTokenFromHeader(bearerToken);
+    boolean isAuthenticated = googleAuthService.authenticateUser(token, updatedUser);
+
+    if (!isAuthenticated) {
+      logger.error("Email in the request body does not match email from JWT");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Email in the request body does not match email from JWT Token");
+    }
+
+    // UPDATES USER
+    User existingUser;
+
+    try {
+      existingUser = userRepository.findById(id).orElse(null);
+    } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
+      throw new ServerError(dae.getMessage());
+    }
+
+    if (existingUser == null) {
+      logger.error("User with id: " + id + " does not exist");
+      throw new ResourceNotFound("User with id: " + id + " does not exist");
+    }
+
+    // TEMPORARY LOGIC TO PREVENT USER FROM UPDATING THEIR ROLE
+    updatedUser.setRole(existingUser.getRole());
+
+    // GIVE THE USER ID IF NOT SPECIFIED IN BODY TO AVOID DUPLICATE USERS
+    if (updatedUser.getId() == null) {
+      updatedUser.setId(id);
+    }
+
+    try {
+      logger.info("Saved user to");
+      return userRepository.save(updatedUser);
+    } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
+      throw new ServerError(dae.getMessage());
+    }
+
+  }
+
+  /**
+   * Logs user in with Google Auth - Returns existing user information or creates a new user
+   *
+   * @param bearerToken String value in the Authorization property of the header
+   * @param user        User to login
+   * @return User
+   */
+  @Override
+  public User loginUser(String bearerToken, User user) {
+
+    // AUTHENTICATES USER
+    // Authenticating the user ensures that the user is using Google to sign in
+    String token = googleAuthService.getTokenFromHeader(bearerToken);
+    boolean isAuthenticated = googleAuthService.authenticateUser(token, user);
+
+    if (!isAuthenticated) {
+      logger.error("Email in the request body does not match email from JWT");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Email in the request body does not match email from JWT Token");
+    }
+
+    // SEE IF USER EXISTS
+    User existingUser;
+
+    try {
+      existingUser = userRepository.findByEmail(user.getEmail());
+    } catch (DataAccessException dae) {
+      logger.info(dae.getMessage());
+      throw new ServerError(dae.getMessage());
+    }
+
+    // IF USER EXISTS, RETURN EXISTING USER
+    if (existingUser != null) {
+      logger.info("Existing user has been found");
+      return existingUser;
+    }
+
+    // ELSE CREATE NEW USER
+    return createUser(user);
+  }
+
+  /**
+   * Creates a user in the database, given email is not null and not taken
+   *
+   * @param user User to create
+   * @return User
+   */
+  @Override
+  public User createUser(User user) {
+
+    String email = user.getEmail();
+
+    // CHECK TO MAKE SURE EMAIL EXISTS ON INCOMING USER
+    if (email == null) {
+      logger.error("User must have an email field");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have an email field");
+    }
+
+    // CHECK TO MAKE SURE USER EMAIL IS NOT TAKEN
+    User existingUser;
+
+    try {
+      existingUser = userRepository.findByEmail(user.getEmail());
+    } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
+      throw new ServerError(dae.getMessage());
+    }
+
+    if (existingUser != null) {
+      logger.error("Email is taken");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is taken");
+    }
+
+    // SET DEFAULT ROLE TO CUSTOMER
+    // NOT RUNNING CONDITIONAL DUE TO SOMEONE ASSIGNING THEMSELVES A ROLE
+    // if (user.getRole() == null) {
+    user.setRole(CUSTOMER);
+    // }
+
+    // SAVE USER
+    try {
+      logger.info("Saved user");
+      return userRepository.save(user);
+    } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
+      throw new ServerError(dae.getMessage());
+    }
+
+  }
 
 
 }
