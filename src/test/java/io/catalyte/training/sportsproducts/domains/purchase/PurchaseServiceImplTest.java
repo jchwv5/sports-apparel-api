@@ -1,24 +1,24 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
-import io.catalyte.training.sportsproducts.data.ProductFactory;
-import io.catalyte.training.sportsproducts.domains.product.Product;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.junit.jupiter.api.Assertions;
-import org.junit.Test;
-import org.springframework.web.server.ResponseStatusException;
-
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import io.catalyte.training.sportsproducts.data.ProductFactory;
+import io.catalyte.training.sportsproducts.domains.product.Product;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.web.server.ResponseStatusException;
+
 public class PurchaseServiceImplTest {
 
-  private final PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null, null);
+  private final PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null,
+      null);
   private final ProductFactory productFactory = new ProductFactory();
   List<Product> productList = productFactory.generateRandomProducts(4);
   private final CreditCard testCard = new CreditCard();
@@ -43,24 +43,33 @@ public class PurchaseServiceImplTest {
   @Test
   public void checkForInactiveProductsEmptyPurchase() {
     purch1.setProducts(s1);
-    Assertions.assertDoesNotThrow(()-> testPurchaseValidation.checkForInactiveProducts(purch1));
+    Assertions.assertDoesNotThrow(() -> testPurchaseValidation.checkForInactiveProducts(purch1));
   }
 
   @Test
   public void checkForInactiveProductsAllProductsActive() {
-    s1.add(lineItem1); s1.add(lineItem2); s1.add(lineItem3);
+    s1.add(lineItem1);
+    s1.add(lineItem2);
+    s1.add(lineItem3);
     purch2.setProducts(s1);
-    prod1.setActive(true); prod2.setActive(true); prod3.setActive(true);
-    Assertions.assertDoesNotThrow(()-> testPurchaseValidation.checkForInactiveProducts(purch2));
+    prod1.setActive(true);
+    prod2.setActive(true);
+    prod3.setActive(true);
+    Assertions.assertDoesNotThrow(() -> testPurchaseValidation.checkForInactiveProducts(purch2));
   }
 
   @Test
   public void checkForInactiveProductsAllProductsInactive() {
-    s1.add(lineItem1); s1.add(lineItem2); s1.add(lineItem3);
+    s1.add(lineItem1);
+    s1.add(lineItem2);
+    s1.add(lineItem3);
     purch2.setProducts(s1);
-    prod1.setActive(false); prod2.setActive(false); prod3.setActive(false);
-    ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class, ()-> testPurchaseValidation.checkForInactiveProducts(purch2));
-    assert(e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    prod1.setActive(false);
+    prod2.setActive(false);
+    prod3.setActive(false);
+    ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class,
+        () -> testPurchaseValidation.checkForInactiveProducts(purch2));
+    assert (e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
   }
 
   @Test
@@ -68,17 +77,23 @@ public class PurchaseServiceImplTest {
     s1.add(lineItem4);
     purch3.setProducts(s1);
     prod4.setActive(false);
-    ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class, ()-> testPurchaseValidation.checkForInactiveProducts(purch3));
-    assert(e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class,
+        () -> testPurchaseValidation.checkForInactiveProducts(purch3));
+    assert (e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
   }
 
   @Test
   public void checkForInactiveProductsNotAllProductsInactive() {
-    s1.add(lineItem1); s1.add(lineItem1); s1.add(lineItem3);
+    s1.add(lineItem1);
+    s1.add(lineItem1);
+    s1.add(lineItem3);
     purch2.setProducts(s1);
-    prod1.setActive(true); prod2.setActive(false); prod3.setActive(false);
-    ResponseStatusException e2 = Assertions.assertThrows(ResponseStatusException.class, ()-> testPurchaseValidation.checkForInactiveProducts(purch2));
-    assert(e2.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    prod1.setActive(true);
+    prod2.setActive(false);
+    prod3.setActive(false);
+    ResponseStatusException e2 = Assertions.assertThrows(ResponseStatusException.class,
+        () -> testPurchaseValidation.checkForInactiveProducts(purch2));
+    assert (e2.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
   }
 
   @Test
