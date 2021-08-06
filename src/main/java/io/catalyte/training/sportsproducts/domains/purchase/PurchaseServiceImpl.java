@@ -4,14 +4,23 @@ import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
+import io.catalyte.training.sportsproducts.exceptions.BadRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
@@ -54,7 +63,20 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return the persisted purchase with ids
    */
   public Purchase savePurchase(Purchase newPurchase) {
-//    validatePurchase(newPurchase.getCreditCard());
+    try {
+      checkForInactiveProducts(newPurchase);
+    } catch (ResponseStatusException e) {
+      logger.error(e.getMessage());
+      throw  new UnprocessableEntityError(e.getMessage());
+    }
+
+    try {
+      validateCreditCard(newPurchase.getCreditCard());
+    } catch (IllegalArgumentException e) {
+      logger.error(e.getMessage());
+      throw new BadRequest(e.getMessage());
+    }
+
     try {
       purchaseRepository.save(newPurchase);
     } catch (DataAccessException e) {
@@ -102,18 +124,133 @@ public class PurchaseServiceImpl implements PurchaseService {
   }
 
   /**
-   * Validates credit card information
+   * Validates credit card before purchase is able to be saved
    *
    * @param ccToValidate - the credit card information to validate
    */
-  private void validatePurchase(CreditCard ccToValidate) {
-    if (ccToValidate == null
-        || ccToValidate.getCardholder() == null || ccToValidate.getCardholder().equals("")
-        || ccToValidate.getCardNumber() < 1000000000000000L
-        || ccToValidate.getCvv() < 100
-        || ccToValidate.getExpiration() == null || ccToValidate.getExpiration().equals("")) {
-      throw new RuntimeException("Transaction declined - invalid credit card information");
+  void validateCreditCard(CreditCard ccToValidate) {
+    if (ccToValidate == null) {
+      throw new RuntimeException("Transaction Declined - No credit card provided");
     }
+    ArrayList<String> errors = new ArrayList<>();
+    validateCardNumber(errors, ccToValidate);
+    validateCvv(errors, ccToValidate);
+    validateExpirationDate(errors, ccToValidate);
+    validateCardholder(errors, ccToValidate);
+
+    if (!errors.isEmpty()) {
+      declineTransaction(errors);
+    }
+  }
+
+  private void validateCardNumber(ArrayList<String> errors, CreditCard ccToValidate) {
+    long cardNumber = ccToValidate.getCardNumber();
+    String cardNetwork = getCardNetwork(ccToValidate);
+
+    if (cardNumber < 1000000000000000L) {
+      errors.add("Card number must have at least 16 digits");
+    } else if (!Objects.equals(cardNetwork, "VISA")
+        && !Objects.equals(cardNetwork, "MASTERCARD")) {
+      errors.add(cardNetwork + " or card number is invalid");
+    }
+  }
+
+  private void validateCvv(ArrayList<String> errors, CreditCard ccToValidate) {
+    if (!(ccToValidate.getCvv() >= 100) || !(ccToValidate.getCvv() < 1000)) {
+      errors.add("Cvv must be 3 digits");
+    }
+  }
+
+  private void validateExpirationDate(ArrayList<String> errors, CreditCard ccToValidate) {
+    String cardExpiration = ccToValidate.getExpiration();
+
+    if (cardExpiration == null || cardExpiration.trim().equals("")) {
+      errors.add("Expiration field must not be empty");
+      return;
+    } else {
+      cardExpiration = cardExpiration.trim();
+    }
+
+    Date formattedCardExpiration = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
+    dateFormat.setLenient(false);
+
+    if (!Pattern.matches("^(0[1-9]|1[0-2])/?([0-9]{2})$", cardExpiration)) {
+      errors.add("Expiration input is invalid");
+    } else {
+      try {
+        formattedCardExpiration = dateFormat.parse(cardExpiration);
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+      assert formattedCardExpiration != null;
+      if (formattedCardExpiration.before(new Date())) {
+        errors.add("Card is expired");
+      }
+    }
+  }
+
+  /**
+   * Checks the purchase for inactive products
+   */
+  public void checkForInactiveProducts(Purchase purchase) {
+    String errorMessage = "The following products in the purchase are inactive: ";
+    boolean inactiveProductPresent = false;
+
+    Set<LineItem> itemList = purchase.getProducts();
+
+    if (itemList != null) {
+      for (LineItem lineItem : itemList) {
+        Product product = lineItem.getProduct();
+        if (!product.getActive()) {
+          inactiveProductPresent = true;
+          errorMessage = errorMessage + product.getName() + "\n";
+        }
+      }
+    }
+
+    if (inactiveProductPresent) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, errorMessage);
+    }
+  }
+
+  private void validateCardholder(ArrayList<String> errors, CreditCard ccToValidate) {
+    if (ccToValidate.getCardholder() == null || ccToValidate.getCardholder().trim().equals("")) {
+      errors.add("Name field must not be empty");
+    }
+  }
+
+  /**
+   * Checks if card is a 16-digit Visa or Mastercard. No other networks currently supported.
+   *
+   * @return Credit network, or message stating "Unsupported credit network"
+   */
+  private String getCardNetwork(CreditCard ccToValidate) {
+    int cardNetwork = (int) Math.floor(ccToValidate.getCardNumber() / 1000000000000000.0);
+    switch (cardNetwork) {
+      case 4:
+        return "VISA";
+      case 5:
+        return "MASTERCARD";
+      default:
+        return "Unsupported credit network";
+    }
+  }
+
+  /**
+   * Validation helper method to throw exception with appropriate message
+   *
+   * @param errors list of error messages detailing what caused validation to fail
+   */
+  private void declineTransaction(ArrayList<String> errors) {
+    StringBuilder message = new StringBuilder();
+    for (int i = 0; i < errors.size(); i++) {
+      message.append(errors.get(i));
+      if (i < errors.size() - 1) {
+        message.append("; ");
+      }
+    }
+    throw new IllegalArgumentException("Transaction declined - " + message);
   }
 }
 

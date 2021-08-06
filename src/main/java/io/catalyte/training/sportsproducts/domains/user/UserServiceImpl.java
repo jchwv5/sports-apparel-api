@@ -1,34 +1,85 @@
 package io.catalyte.training.sportsproducts.domains.user;
 
+import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
+import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
 import static io.catalyte.training.sportsproducts.constants.Roles.CUSTOMER;
 
-import io.catalyte.training.sportsproducts.auth.*;
-import io.catalyte.training.sportsproducts.exceptions.*;
-import org.apache.logging.log4j.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.dao.*;
-import org.springframework.http.*;
-import org.springframework.stereotype.*;
-import org.springframework.web.server.*;
+import io.catalyte.training.sportsproducts.auth.GoogleAuthService;
+import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
+import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 
 /**
- * Implements user service interface
- */
+ * This class provides the implementation for the UserService interface.
+=======
+*/
+
 @Service
 public class UserServiceImpl implements UserService {
+
+  private final Logger logger2 = LogManager.getLogger(UserServiceImpl.class);
 
   @Autowired
   private final UserRepository userRepository;
 
   Logger logger = LogManager.getLogger(UserController.class);
-
   private final GoogleAuthService googleAuthService = new GoogleAuthService();
 
   public UserServiceImpl(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
-  // METHODS
+  /**
+   * Retrieves the user with the provided id from the database.
+   *
+   * @param id - the id of the user to retrieve
+   * @return - the user
+   */
+  public User getUserById(Long id) {
+    User user;
+    try {
+      user = userRepository.findById(id).orElse(null);
+    } catch (DataAccessException e) {
+      logger2.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+    if (user != null) {
+      return user;
+    } else {
+      logger2.info("Get by id failed, id does not exist in the database: " + id);
+      throw new ResourceNotFound("Get by id failed. id " + id + " does not exist in the database: ");
+    }
+  }
+  /**
+   * Adds a new user with unique email to the database.
+   *
+   * @param user - the user
+   * @return - the user
+   */
+  public User addUserByEmail(User user) {
+    Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
+    if (userOptional.isPresent()) {
+      logger2.info("Add new user failed, email already exists in the database: " + user.getEmail());
+      throw new IllegalStateException("Email already exists: " + user.getEmail() );
+    }
+    userRepository.save(user);
+    System.out.println(user);
+    return user;
+  }
+
 
   /**
    * Updates a User given they are given the right credentials
@@ -173,5 +224,6 @@ public class UserServiceImpl implements UserService {
     }
 
   }
+
 
 }
