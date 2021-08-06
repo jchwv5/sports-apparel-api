@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.rmi.ServerException;
@@ -43,7 +44,8 @@ public class PurchaseController {
 
 
   @GetMapping
-  public ResponseEntity findAllPurchases() {
-    return new ResponseEntity<>(purchaseService.findAllPurchases(), HttpStatus.OK);
+  public ResponseEntity findPurchasesByEmail(
+      @RequestParam (required = false) String email) {
+    return new ResponseEntity<>(purchaseService.findPurchasesByEmail(email), HttpStatus.OK);
   }
 }

@@ -3,6 +3,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.exceptions.BadRequest;
+import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
 import java.text.ParseException;
@@ -39,13 +40,17 @@ public class PurchaseServiceImpl implements PurchaseService {
   }
 
   /**
-   * Retrieves all purchases from the database
+   * Retrieves all purchases from the database with associated email matching request parameter
    *
-   * @return
+   * @param email email to find all associated purchases for
+   * @return list of all purchases with matching email
    */
-  public List<Purchase> findAllPurchases() {
+  public List<Purchase> findPurchasesByEmail(String email) {
+    if (email == null || email.equals("")) {
+      throw new ResourceNotFound("No email specified for request.");
+    }
     try {
-      return purchaseRepository.findAll();
+      return purchaseRepository.findPurchasesByBillingAddressEmail(email);
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());

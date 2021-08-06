@@ -1,6 +1,7 @@
 package io.catalyte.training.sportsproducts.domains.product;
 
 import static io.catalyte.training.sportsproducts.constants.Paths.PRODUCTS_PATH;
+import static io.catalyte.training.sportsproducts.constants.Paths.PURCHASES_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
