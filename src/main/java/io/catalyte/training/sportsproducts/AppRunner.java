@@ -2,6 +2,7 @@ package io.catalyte.training.sportsproducts;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -10,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * This class is the main application. Running this class will start the SpringBoot server.
  */
 @SpringBootApplication
-public class AppRunner {
+public class AppRunner extends SpringBootServletInitializer {
 
   /**
    * The main method
@@ -33,5 +34,4 @@ public class AppRunner {
       }
     };
   }
-
 }

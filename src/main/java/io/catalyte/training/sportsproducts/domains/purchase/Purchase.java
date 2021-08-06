@@ -1,5 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
+import io.catalyte.training.sportsproducts.domains.product.Product;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
@@ -7,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Describes a purchase object that holds the information for a transaction
@@ -79,6 +82,7 @@ public class Purchase {
         ", creditCard=" + creditCard +
         '}';
   }
+
 }
 
 /**
@@ -224,4 +228,8 @@ class BillingAddress {
   public void setPhone(String phone) {
     this.phone = phone;
   }
+
 }
+
+
+

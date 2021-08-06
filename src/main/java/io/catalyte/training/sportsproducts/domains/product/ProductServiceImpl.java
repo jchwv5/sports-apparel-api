@@ -25,6 +25,10 @@ public class ProductServiceImpl implements ProductService {
     this.productRepository = productRepository;
   }
 
+  public ProductServiceImpl() {
+
+  }
+
   /**
    * Retrieves all products from the database, optionally making use of an example if it is passed.
    *
@@ -61,6 +65,26 @@ public class ProductServiceImpl implements ProductService {
     } else {
       logger.info("Get by id failed, it does not exist in the database: " + id);
       throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
+    }
+  }
+
+  @Override
+  public List<String> getProductByCategory() {
+    try {
+      return productRepository.getProductByCategory();
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+  }
+
+  @Override
+  public List<String> getProductTypes() {
+    try {
+      return productRepository.getProductByTypes();
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
     }
   }
 }

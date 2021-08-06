@@ -5,20 +5,23 @@ import static io.catalyte.training.sportsproducts.constants.StringConstants.GOOG
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.gson.*;
-import io.catalyte.training.sportsproducts.domains.user.*;
-import java.security.*;
-import java.util.*;
-import org.apache.logging.log4j.*;
-import org.springframework.http.*;
-import org.springframework.stereotype.*;
-import org.springframework.web.server.*;
+import com.google.api.client.json.gson.GsonFactory;
+import io.catalyte.training.sportsproducts.domains.user.User;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class GoogleAuthService {
 
   Logger logger = LogManager.getLogger(GoogleAuthService.class);
-  public GoogleAuthService() {};
+
+  public GoogleAuthService() {
+  }
 
   /**
    * Parses authorization header value and returns token
@@ -35,7 +38,8 @@ public class GoogleAuthService {
     }
 
     logger.error("JWT Token does not begin with the Bearer String");
-    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Authorization Header must start with 'Bearer ' ");
+    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "Authorization Header must start with 'Bearer ' ");
   }
 
   /**
@@ -66,7 +70,8 @@ public class GoogleAuthService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, gse.getMessage());
     } catch (Exception e) {
       logger.error("There was a problem reading the token");
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There was a problem reading the token");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "There was a problem reading the token");
     }
 
     if (idToken == null) {
