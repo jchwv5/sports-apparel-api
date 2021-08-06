@@ -66,7 +66,7 @@ public class PurchaseServiceImpl implements PurchaseService {
   public Purchase savePurchase(Purchase newPurchase) {
     try {
       checkForInactiveProducts(newPurchase);
-    } catch (ResponseStatusException e) {
+    } catch (IllegalArgumentException e) {
       logger.error(e.getMessage());
       throw new UnprocessableEntityError(e.getMessage());
     }
@@ -207,13 +207,16 @@ public class PurchaseServiceImpl implements PurchaseService {
         Product product = lineItem.getProduct();
         if (!product.getActive()) {
           inactiveProductPresent = true;
-          errorMessage = errorMessage + product.getName() + "\n";
+          errorMessage = errorMessage + product.getName() + ", ";
         }
       }
     }
 
     if (inactiveProductPresent) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, errorMessage);
+      if(errorMessage.endsWith(", ")) {
+        errorMessage = errorMessage.substring(0, errorMessage.length() - 2) + ".";
+      }
+      throw new IllegalArgumentException(errorMessage);
     }
   }
 
