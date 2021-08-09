@@ -2,10 +2,10 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
+import io.catalyte.training.sportsproducts.exceptions.BadRequest;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
-import io.catalyte.training.sportsproducts.exceptions.BadRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,10 +46,11 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @return list of all purchases with matching email
    */
   public List<Purchase> findPurchasesByEmail(String email) {
-    if (email == null || email.equals("")){
+    if (email == null || email.equals("")) {
       throw new ResourceNotFound("No email specified for request.");
     }
-    try {return purchaseRepository.findPurchasesByBillingAddressEmail(email);
+    try {
+      return purchaseRepository.findPurchasesByBillingAddressEmail(email);
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
@@ -65,9 +66,9 @@ public class PurchaseServiceImpl implements PurchaseService {
   public Purchase savePurchase(Purchase newPurchase) {
     try {
       checkForInactiveProducts(newPurchase);
-    } catch (ResponseStatusException e) {
+    } catch (IllegalArgumentException e) {
       logger.error(e.getMessage());
-      throw  new UnprocessableEntityError(e.getMessage());
+      throw new UnprocessableEntityError(e.getMessage());
     }
 
     try {
@@ -129,10 +130,12 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @param ccToValidate - the credit card information to validate
    */
   void validateCreditCard(CreditCard ccToValidate) {
-    if (ccToValidate == null) {
-      throw new RuntimeException("Transaction Declined - No credit card provided");
-    }
     ArrayList<String> errors = new ArrayList<>();
+    if (ccToValidate == null) {
+      errors.add("No credit card provided");
+      declineTransaction(errors);
+    }
+
     validateCardNumber(errors, ccToValidate);
     validateCvv(errors, ccToValidate);
     validateExpirationDate(errors, ccToValidate);
@@ -204,13 +207,16 @@ public class PurchaseServiceImpl implements PurchaseService {
         Product product = lineItem.getProduct();
         if (!product.getActive()) {
           inactiveProductPresent = true;
-          errorMessage = errorMessage + product.getName() + "\n";
+          errorMessage = errorMessage + product.getName() + ", ";
         }
       }
     }
 
     if (inactiveProductPresent) {
-      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, errorMessage);
+      if(errorMessage.endsWith(", ")) {
+        errorMessage = errorMessage.substring(0, errorMessage.length() - 2) + ".";
+      }
+      throw new IllegalArgumentException(errorMessage);
     }
   }
 
@@ -250,7 +256,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         message.append("; ");
       }
     }
-    throw new IllegalArgumentException("Transaction declined - " + message);
+    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction declined - " + message);
   }
 }
 
