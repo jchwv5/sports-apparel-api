@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -22,7 +23,7 @@ public class PurchaseController {
 
   Logger logger = LogManager.getLogger(PurchaseController.class);
 
-  private PurchaseService purchaseService;
+  private  PurchaseService purchaseService;
 
   @Autowired
   public PurchaseController(PurchaseService purchaseService) {
@@ -38,7 +39,8 @@ public class PurchaseController {
   }
 
   @GetMapping
-  public ResponseEntity findAllPurchases() {
-    return new ResponseEntity<>(purchaseService.findAllPurchases(), HttpStatus.OK);
+  public ResponseEntity findPurchasesByEmail(
+      @RequestParam (required = false) String email) {
+    return new ResponseEntity<>(purchaseService.findPurchasesByEmail(email), HttpStatus.OK);
   }
 }
