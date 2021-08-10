@@ -45,13 +45,13 @@ public class ProductApiTest {
 
   @Test
   public void getCategoriesIsUp() throws Exception {
-    mockMvc.perform(get(PRODUCTS_PATH + "/category/categories"))
+    mockMvc.perform(get(PRODUCTS_PATH + "/categories"))
         .andExpect(status().isOk());
   }
 
   @Test
   public void getCategoriesByName() throws Exception {
-    MvcResult result = mockMvc.perform(get(PRODUCTS_PATH + "/category/categories"))
+    MvcResult result = mockMvc.perform(get(PRODUCTS_PATH + "/categories"))
         .andReturn();
     String content = result.getResponse().getContentAsString();
     String expected = "[\"Baseball\",\"Basketball\",\"Boxing\",\"Football\",\"Golf\",\"Hockey\",\"Running\",\"Skateboarding\",\"Soccer\",\"Weightlifting\"]";
@@ -60,13 +60,13 @@ public class ProductApiTest {
 
   @Test
   public void getTypesIsUp() throws Exception {
-    mockMvc.perform(get(PRODUCTS_PATH + "/type/types"))
+    mockMvc.perform(get(PRODUCTS_PATH + "/types"))
         .andExpect(status().isOk());
   }
 
   @Test
   public void getTypesByName() throws Exception {
-    MvcResult result = mockMvc.perform(get(PRODUCTS_PATH + "/type/types"))
+    MvcResult result = mockMvc.perform(get(PRODUCTS_PATH + "/types"))
         .andReturn();
     String content = result.getResponse().getContentAsString();
     String expected = "[\"Belt\",\"Elbow Pad\",\"Flip Flop\",\"Glove\",\"Hat\",\"Headband\",\"Helmet\",\"Hoodie\",\"Jacket\",\"Pant\",\"Pool Noodle\",\"Shin Guard\",\"Shoe\",\"Short\",\"Sock\",\"Sunglasses\",\"Tank Top\",\"Visor\",\"Wristband\"]";
