@@ -236,6 +236,7 @@ public class ProductFactory {
     product.setCategory(category);
     product.setName(adjective + " " + category + " " + type);
     product.setType(type);
+    product.setPrice(getPrice());
     product.setDemographic(demographic);
     product.setPrimaryColorCode(ProductFactory.getColorCode());
     product.setSecondaryColorCode(ProductFactory.getColorCode());
