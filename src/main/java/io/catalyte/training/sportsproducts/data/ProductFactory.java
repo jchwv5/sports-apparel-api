@@ -162,6 +162,11 @@ private static final String[] brand = {
         .setScale(2, RoundingMode.HALF_UP);
   }
 
+  public static double getQuantity(double min, double max){
+    double quantity = (int)(Math.random()*((max-min)+1))+min;
+    return quantity;
+  }
+
   /**
    * Generates a random product offering id.
    *
@@ -252,6 +257,7 @@ private static final String[] brand = {
     product.setType(type);
     product.setPrice(getPrice());
     product.setBrand(getBrand());
+    product.setQuantity((int) getQuantity(0,99));
     product.setDemographic(demographic);
     product.setPrimaryColorCode(ProductFactory.getColorCode());
     product.setSecondaryColorCode(ProductFactory.getColorCode());
