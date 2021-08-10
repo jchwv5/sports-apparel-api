@@ -86,7 +86,18 @@ public class ProductFactory {
       "Flip Flop",
       "Pool Noodle"
   };
-
+private static final String[] brand = {
+    "Adidas",
+    "Nike",
+    "Puma",
+    "Under Armour",
+    "Reebok",
+    "New Balance",
+    "Jordan",
+    "Champion",
+    "Columbia Sportswear",
+    "Patagonia"
+};
   /**
    * Returns a random demographic from the list of demographics.
    *
@@ -136,7 +147,10 @@ public class ProductFactory {
     Random randomGenerator = new Random();
     return colors[randomGenerator.nextInt(colors.length)];
   }
-
+  public static String getBrand() {
+    Random randomGenerator = new Random();
+    return brand[randomGenerator.nextInt(brand.length)];
+  }
   /**
    * Returns a random price from within a range.
    *
@@ -237,6 +251,7 @@ public class ProductFactory {
     product.setName(adjective + " " + category + " " + type);
     product.setType(type);
     product.setPrice(getPrice());
+    product.setBrand(getBrand());
     product.setDemographic(demographic);
     product.setPrimaryColorCode(ProductFactory.getColorCode());
     product.setSecondaryColorCode(ProductFactory.getColorCode());
