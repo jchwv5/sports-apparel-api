@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.coyote.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,9 +133,11 @@ public class PurchaseServiceImplTest {
     prod1.setActive(false);
     prod2.setActive(false);
     prod3.setActive(false);
-    ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class,
+    IllegalArgumentException e1 = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testPurchaseValidation.checkForInactiveProducts(purch2));
-    assert (e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    assert (e1.getMessage().contains("The following products in the purchase are inactive"));
+
+
   }
 
   @Test
@@ -142,9 +145,9 @@ public class PurchaseServiceImplTest {
     s1.add(lineItem4);
     purch3.setProducts(s1);
     prod4.setActive(false);
-    ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class,
+    IllegalArgumentException e1 = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testPurchaseValidation.checkForInactiveProducts(purch3));
-    assert (e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    assert (e1.getMessage().contains("The following products in the purchase are inactive"));
   }
 
   @Test
@@ -156,9 +159,9 @@ public class PurchaseServiceImplTest {
     prod1.setActive(true);
     prod2.setActive(false);
     prod3.setActive(false);
-    ResponseStatusException e2 = Assertions.assertThrows(ResponseStatusException.class,
+    IllegalArgumentException e2 = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testPurchaseValidation.checkForInactiveProducts(purch2));
-    assert (e2.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    assert (e2.getMessage().contains("The following products in the purchase are inactive"));
   }
 
   @Test
