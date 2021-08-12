@@ -65,40 +65,7 @@ public class ProductFactory {
       "Wicking",
       "Heavy Duty"
   };
-  private static final String[] types = {
-      "Pant",
-      "Short",
-      "Shoe",
-      "Glove",
-      "Jacket",
-      "Tank Top",
-      "Sock",
-      "Sunglasses",
-      "Hat",
-      "Helmet",
-      "Belt",
-      "Visor",
-      "Shin Guard",
-      "Elbow Pad",
-      "Headband",
-      "Wristband",
-      "Hoodie",
-      "Flip Flop",
-      "Pool Noodle"
-  };
-  private static final String[] materials = {
-      "Cotton",
-      "Polyester",
-      "Neoprene",
-      "Microfiber",
-      "Elastic",
-      "Leather",
-      "Imitation leather",
-      "Plastic",
-      "Rubber",
-      "Metal",
-      "Foam"
-  };
+
   private static final String[] brands = {
     "Adidas",
     "Nike",
@@ -111,14 +78,6 @@ public class ProductFactory {
     "Columbia Sportswear",
     "Patagonia"
 };
-  public static final String[] images = {
-      "img1.jpg",
-      "img2.jpg",
-      "img3.jpg",
-      "img4.jpg",
-      "img5.jpg",
-      "img6.jpg"
-  };
 
   /**
    * Returns a random demographic from the list of demographics.
@@ -135,14 +94,8 @@ public class ProductFactory {
    *
    * @return - a type string
    */
-  public static String getType() {
-    Random randomGenerator = new Random();
-    return types[randomGenerator.nextInt(types.length)];
-  }
-
-  public static String getMaterial() {
-    Random randomGenerator = new Random();
-    return materials[randomGenerator.nextInt(materials.length)];
+  public static ProductType getType() {
+    return ProductType.values()[new Random().nextInt(ProductType.values().length)];
   }
 
   /**
@@ -251,6 +204,10 @@ public class ProductFactory {
     return between(start, end);
   }
 
+  /**
+   * Random generates if a product active or not
+   * @return Boolean true or false
+   */
   public static Boolean getActive() {
     Random randomGenerator = new Random();
     return randomGenerator.nextInt(2) == 1 ? Boolean.TRUE : Boolean.FALSE;
@@ -282,9 +239,10 @@ public class ProductFactory {
     Product product = new Product();
     String category = ProductFactory.getCategory();
     String adjective = ProductFactory.getAdjective();
-    String type = ProductFactory.getType();
+    ProductType productType = ProductFactory.getType();
+    String type = productType.getTitle();
     String demographic = ProductFactory.getDemographic();
-    String material = ProductFactory.getMaterial();
+    String material = productType.getRandomMaterial().getTitle();
 
     product.setDescription("This " + category.toLowerCase() + " "
         + type.toLowerCase()
@@ -294,7 +252,6 @@ public class ProductFactory {
     product.setCategory(category);
     product.setName(adjective + " " + category + " " + type);
     product.setType(type);
-    product.getImageSrc();
     product.setMaterial(material);
     product.setPrice(getPrice());
     product.setBrand(getBrand());

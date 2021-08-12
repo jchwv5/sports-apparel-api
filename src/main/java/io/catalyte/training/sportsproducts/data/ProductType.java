@@ -57,7 +57,7 @@ public enum ProductType {
 
   /**
    * Returns the list of materials.
-   * @return
+   * @return materials
    */
   public List<Material> getMaterials() {
     return materials;
