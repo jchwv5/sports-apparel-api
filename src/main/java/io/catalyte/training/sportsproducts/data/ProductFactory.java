@@ -86,7 +86,20 @@ public class ProductFactory {
       "Flip Flop",
       "Pool Noodle"
   };
-private static final String[] brand = {
+  private static final String[] materials = {
+      "Cotton",
+      "Polyester",
+      "Neoprene",
+      "Microfiber",
+      "Elastic",
+      "Leather",
+      "Imitation leather",
+      "Plastic",
+      "Rubber",
+      "Metal",
+      "Foam"
+  };
+  private static final String[] brands = {
     "Adidas",
     "Nike",
     "Puma",
@@ -98,6 +111,15 @@ private static final String[] brand = {
     "Columbia Sportswear",
     "Patagonia"
 };
+  public static final String[] images = {
+      "img1.jpg",
+      "img2.jpg",
+      "img3.jpg",
+      "img4.jpg",
+      "img5.jpg",
+      "img6.jpg"
+  };
+
   /**
    * Returns a random demographic from the list of demographics.
    *
@@ -116,6 +138,11 @@ private static final String[] brand = {
   public static String getType() {
     Random randomGenerator = new Random();
     return types[randomGenerator.nextInt(types.length)];
+  }
+
+  public static String getMaterial() {
+    Random randomGenerator = new Random();
+    return materials[randomGenerator.nextInt(materials.length)];
   }
 
   /**
@@ -147,9 +174,15 @@ private static final String[] brand = {
     Random randomGenerator = new Random();
     return colors[randomGenerator.nextInt(colors.length)];
   }
+
+  /**
+   * Returns a random brand from the list of brands.
+   *
+   * @return a brand string
+   */
   public static String getBrand() {
     Random randomGenerator = new Random();
-    return brand[randomGenerator.nextInt(brand.length)];
+    return brands[randomGenerator.nextInt(brands.length)];
   }
   /**
    * Returns a random price from within a range.
@@ -162,9 +195,14 @@ private static final String[] brand = {
         .setScale(2, RoundingMode.HALF_UP);
   }
 
+  /**
+   *
+   * @param min quantity of product
+   * @param max quantity of product
+   * @return random quantity of product
+   */
   public static double getQuantity(double min, double max){
-    double quantity = (int)(Math.random()*((max-min)+1))+min;
-    return quantity;
+    return (int)(Math.random()*((max-min)+1))+min;
   }
 
   /**
@@ -246,6 +284,7 @@ private static final String[] brand = {
     String adjective = ProductFactory.getAdjective();
     String type = ProductFactory.getType();
     String demographic = ProductFactory.getDemographic();
+    String material = ProductFactory.getMaterial();
 
     product.setDescription("This " + category.toLowerCase() + " "
         + type.toLowerCase()
@@ -255,6 +294,8 @@ private static final String[] brand = {
     product.setCategory(category);
     product.setName(adjective + " " + category + " " + type);
     product.setType(type);
+    product.getImageSrc();
+    product.setMaterial(material);
     product.setPrice(getPrice());
     product.setBrand(getBrand());
     product.setQuantity((int) getQuantity(0,99));
