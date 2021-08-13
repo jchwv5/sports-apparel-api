@@ -253,6 +253,7 @@ public class ProductFactory {
     product.setName(adjective + " " + category + " " + type);
     product.setType(type);
     product.setMaterial(material);
+    product.setImageSrc(productType.getUrl());
     product.setPrice(getPrice());
     product.setBrand(getBrand());
     product.setQuantity((int) getQuantity(0,99));
