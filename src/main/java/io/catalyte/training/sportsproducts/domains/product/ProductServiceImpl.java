@@ -25,10 +25,6 @@ public class ProductServiceImpl implements ProductService {
     this.productRepository = productRepository;
   }
 
-  public ProductServiceImpl() {
-
-  }
-
   /**
    * Retrieves all products from the database, optionally making use of an example if it is passed.
    *
@@ -87,4 +83,21 @@ public class ProductServiceImpl implements ProductService {
       throw new ServerError(e.getMessage());
     }
   }
+
+  /**
+   * Insert and save a new Product to database.
+   * @param product saved product
+   */
+  @Override
+  public Product saveProduct(Product product) {
+    try {
+      productRepository.save(product);
+      logger.info("Saved product");
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+    return product;
+  }
+
 }
