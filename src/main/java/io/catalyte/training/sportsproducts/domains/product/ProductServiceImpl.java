@@ -28,7 +28,6 @@ public class ProductServiceImpl implements ProductService {
   public ProductServiceImpl() {
 
   }
-
   /**
    * Retrieves all products from the database, optionally making use of an example if it is passed.
    *
@@ -87,4 +86,17 @@ public class ProductServiceImpl implements ProductService {
       throw new ServerError(e.getMessage());
     }
   }
+
+  @Override
+  public Product saveProduct(Product newProduct) {
+    try {
+      productRepository.save(newProduct);
+      logger.info("Saved product");
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+    return newProduct;
+  }
+
 }
