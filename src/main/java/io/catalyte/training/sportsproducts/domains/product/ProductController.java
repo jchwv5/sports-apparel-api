@@ -27,10 +27,6 @@ public class ProductController {
 
   @Autowired
   private ProductService productService;
-  @Autowired
-  public ProductController(ProductService productService) {
-    this.productService = productService;
-  }
 
   @GetMapping
   public ResponseEntity<List<Product>> getProducts(Product product) {
@@ -61,7 +57,6 @@ public class ProductController {
     return new ResponseEntity<>(productService.getProductTypes(), HttpStatus.OK);
   }
   @PostMapping
-  // @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity saveProduct(@RequestBody Product product) {
 
     productService.saveProduct(product);
