@@ -45,6 +45,7 @@ public class ProductController {
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<List<String>> getCategories(Product category) {
     logger.info("Request received for getCategories...");
+
     return new ResponseEntity<>(productService.getProductByCategory(), HttpStatus.OK);
   }
 
@@ -52,6 +53,7 @@ public class ProductController {
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<List<String>> getTypes(Product type) {
     logger.info("Request received for getTypes...");
+
     return new ResponseEntity<>(productService.getProductTypes(), HttpStatus.OK);
   }
 }
