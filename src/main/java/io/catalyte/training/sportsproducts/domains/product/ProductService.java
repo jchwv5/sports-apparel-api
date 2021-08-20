@@ -14,4 +14,6 @@ public interface ProductService {
   List<String> getProductByCategory();
 
   List<String> getProductTypes();
+
+  Product saveProduct(Product product);
 }
