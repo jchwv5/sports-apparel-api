@@ -69,7 +69,7 @@ public class ProductApiTest {
     MvcResult result = mockMvc.perform(get(PRODUCTS_PATH + "/types"))
         .andReturn();
     String content = result.getResponse().getContentAsString();
-    String expected = "[\"Belt\",\"Elbow Pad\",\"Flip Flop\",\"Glove\",\"Hat\",\"Headband\",\"Helmet\",\"Hoodie\",\"Jacket\",\"Pant\",\"Pool Noodle\",\"Shin Guard\",\"Shoe\",\"Short\",\"Sock\",\"Sunglasses\",\"Tank Top\",\"Visor\",\"Wristband\"]";
+    String expected = "[\"Belt\",\"Elbow Pad\",\"Flip Flop\",\"Glove\",\"Hat\",\"Headband\",\"Helmet\",\"Hoodie\",\"Jacket\",\"Pant\",\"Pool Noodle\",\"Shin Guard\",\"Shoe\",\"Shorts\",\"Sock\",\"Sunglasses\",\"Tank Top\",\"Visor\",\"Wristband\"]";
     assertEquals(expected, content);
   }
 }
