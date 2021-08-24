@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.coyote.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,9 +133,11 @@ public class PurchaseServiceImplTest {
     prod1.setActive(false);
     prod2.setActive(false);
     prod3.setActive(false);
-    ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class,
+    IllegalArgumentException e1 = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testPurchaseValidation.checkForInactiveProducts(purch2));
-    assert (e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    assert (e1.getMessage().contains("The following products in the purchase are inactive"));
+
+
   }
 
   @Test
@@ -142,9 +145,9 @@ public class PurchaseServiceImplTest {
     s1.add(lineItem4);
     purch3.setProducts(s1);
     prod4.setActive(false);
-    ResponseStatusException e1 = Assertions.assertThrows(ResponseStatusException.class,
+    IllegalArgumentException e1 = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testPurchaseValidation.checkForInactiveProducts(purch3));
-    assert (e1.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    assert (e1.getMessage().contains("The following products in the purchase are inactive"));
   }
 
   @Test
@@ -156,9 +159,9 @@ public class PurchaseServiceImplTest {
     prod1.setActive(true);
     prod2.setActive(false);
     prod3.setActive(false);
-    ResponseStatusException e2 = Assertions.assertThrows(ResponseStatusException.class,
+    IllegalArgumentException e2 = Assertions.assertThrows(IllegalArgumentException.class,
         () -> testPurchaseValidation.checkForInactiveProducts(purch2));
-    assert (e2.getStatus().toString().equals("422 UNPROCESSABLE_ENTITY"));
+    assert (e2.getMessage().contains("The following products in the purchase are inactive"));
   }
 
   @Test
@@ -191,9 +194,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Card number must have at least 16 digits");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Card number must have at least 16 digits\"");
   }
 
   @Test
@@ -203,9 +207,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Card number must have at least 16 digits");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Card number must have at least 16 digits\"");
   }
 
   @Test
@@ -215,10 +220,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
     assertThat(e).hasMessage(
-        "Transaction declined - Unsupported credit network or card number is invalid");
+        "400 BAD_REQUEST \"Transaction declined - Unsupported credit network or card number is invalid\"");
   }
 
   @Test
@@ -228,10 +233,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
     assertThat(e).hasMessage(
-        "Transaction declined - Unsupported credit network or card number is invalid");
+        "400 BAD_REQUEST \"Transaction declined - Unsupported credit network or card number is invalid\"");
   }
 
   @Test
@@ -240,9 +245,9 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
+    assertThat(e).hasMessage("400 BAD_REQUEST \"Transaction declined - Cvv must be 3 digits\"");
   }
 
   @Test
@@ -252,9 +257,9 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
+    assertThat(e).hasMessage("400 BAD_REQUEST \"Transaction declined - Cvv must be 3 digits\"");
   }
 
   @Test
@@ -264,9 +269,9 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Cvv must be 3 digits");
+    assertThat(e).hasMessage("400 BAD_REQUEST \"Transaction declined - Cvv must be 3 digits\"");
   }
 
   @Test
@@ -276,9 +281,9 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/20");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Card is expired");
+    assertThat(e).hasMessage("400 BAD_REQUEST \"Transaction declined - Card is expired\"");
   }
 
   @Test
@@ -287,9 +292,10 @@ public class PurchaseServiceImplTest {
     testCard.setCvv(455);
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Expiration field must not be empty\"");
   }
 
   @Test
@@ -299,9 +305,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Expiration field must not be empty\"");
   }
 
   @Test
@@ -311,9 +318,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration(" ");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Expiration field must not be empty");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Expiration field must not be empty\"");
   }
 
   @Test
@@ -323,9 +331,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("abcdef");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Expiration input is invalid\"");
   }
 
   @Test
@@ -335,9 +344,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("99/99");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Expiration input is invalid\"");
   }
 
   @Test
@@ -347,9 +357,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("99999");
     testCard.setCardholder("Test User");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Expiration input is invalid");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Expiration input is invalid\"");
   }
 
   @Test
@@ -358,9 +369,10 @@ public class PurchaseServiceImplTest {
     testCard.setCvv(455);
     testCard.setExpiration("01/35");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Name field must not be empty\"");
   }
 
   @Test
@@ -370,9 +382,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder("");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Name field must not be empty\"");
   }
 
   @Test
@@ -382,9 +395,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/35");
     testCard.setCardholder(" ");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
-    assertThat(e).hasMessage("Transaction declined - Name field must not be empty");
+    assertThat(e).hasMessage(
+        "400 BAD_REQUEST \"Transaction declined - Name field must not be empty\"");
   }
 
   @Test
@@ -394,10 +408,10 @@ public class PurchaseServiceImplTest {
     testCard.setExpiration("01/12");
     testCard.setCardholder(" ");
 
-    IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class,
+    ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class,
         () -> testPurchaseValidation.validateCreditCard(testCard));
     assertThat(e).hasMessage(
-        "Transaction declined - Cvv must be 3 digits; Card is expired; Name field must not be empty");
+        "400 BAD_REQUEST \"Transaction declined - Cvv must be 3 digits; Card is expired; Name field must not be empty\"");
   }
 
   /**

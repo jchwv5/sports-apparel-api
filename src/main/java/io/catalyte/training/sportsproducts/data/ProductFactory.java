@@ -65,27 +65,19 @@ public class ProductFactory {
       "Wicking",
       "Heavy Duty"
   };
-  private static final String[] types = {
-      "Pant",
-      "Short",
-      "Shoe",
-      "Glove",
-      "Jacket",
-      "Tank Top",
-      "Sock",
-      "Sunglasses",
-      "Hat",
-      "Helmet",
-      "Belt",
-      "Visor",
-      "Shin Guard",
-      "Elbow Pad",
-      "Headband",
-      "Wristband",
-      "Hoodie",
-      "Flip Flop",
-      "Pool Noodle"
-  };
+
+  private static final String[] brands = {
+    "Adidas",
+    "Nike",
+    "Puma",
+    "Under Armour",
+    "Reebok",
+    "New Balance",
+    "Jordan",
+    "Champion",
+    "Columbia Sportswear",
+    "Patagonia"
+};
 
   /**
    * Returns a random demographic from the list of demographics.
@@ -102,9 +94,8 @@ public class ProductFactory {
    *
    * @return - a type string
    */
-  public static String getType() {
-    Random randomGenerator = new Random();
-    return types[randomGenerator.nextInt(types.length)];
+  public static ProductType getType() {
+    return ProductType.values()[new Random().nextInt(ProductType.values().length)];
   }
 
   /**
@@ -138,6 +129,15 @@ public class ProductFactory {
   }
 
   /**
+   * Returns a random brand from the list of brands.
+   *
+   * @return a brand string
+   */
+  public static String getBrand() {
+    Random randomGenerator = new Random();
+    return brands[randomGenerator.nextInt(brands.length)];
+  }
+  /**
    * Returns a random price from within a range.
    *
    * @return - a BigDecimal price
@@ -146,6 +146,16 @@ public class ProductFactory {
     Random gen = new Random();
     return BigDecimal.valueOf(19.99 + (129.99 - 19.99) * gen.nextDouble())
         .setScale(2, RoundingMode.HALF_UP);
+  }
+
+  /**
+   *
+   * @param min quantity of product
+   * @param max quantity of product
+   * @return random quantity of product
+   */
+  public static double getQuantity(double min, double max){
+    return (int)(Math.random()*((max-min)+1))+min;
   }
 
   /**
@@ -194,6 +204,10 @@ public class ProductFactory {
     return between(start, end);
   }
 
+  /**
+   * Random generates if a product active or not
+   * @return Boolean true or false
+   */
   public static Boolean getActive() {
     Random randomGenerator = new Random();
     return randomGenerator.nextInt(2) == 1 ? Boolean.TRUE : Boolean.FALSE;
@@ -225,8 +239,10 @@ public class ProductFactory {
     Product product = new Product();
     String category = ProductFactory.getCategory();
     String adjective = ProductFactory.getAdjective();
-    String type = ProductFactory.getType();
+    ProductType productType = ProductFactory.getType();
+    String type = productType.getTitle();
     String demographic = ProductFactory.getDemographic();
+    String material = productType.getRandomMaterial().getTitle();
 
     product.setDescription("This " + category.toLowerCase() + " "
         + type.toLowerCase()
@@ -236,6 +252,11 @@ public class ProductFactory {
     product.setCategory(category);
     product.setName(adjective + " " + category + " " + type);
     product.setType(type);
+    product.setMaterial(material);
+    product.setImageSrc(productType.getUrl());
+    product.setPrice(getPrice());
+    product.setBrand(getBrand());
+    product.setQuantity((int) getQuantity(0,99));
     product.setDemographic(demographic);
     product.setPrimaryColorCode(ProductFactory.getColorCode());
     product.setSecondaryColorCode(ProductFactory.getColorCode());

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,17 +43,26 @@ public class ProductController {
     return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
   }
 
-  @GetMapping(value = "/category/{categories}")
+  @GetMapping(value = "/categories")
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<List<String>> getCategories(Product category) {
     logger.info("Request received for getCategories...");
+
     return new ResponseEntity<>(productService.getProductByCategory(), HttpStatus.OK);
   }
 
-  @GetMapping(value = "/type/{types}")
+  @GetMapping(value = "/types")
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<List<String>> getTypes(Product type) {
     logger.info("Request received for getTypes...");
+
     return new ResponseEntity<>(productService.getProductTypes(), HttpStatus.OK);
+  }
+  @PostMapping
+  public ResponseEntity saveProduct(@RequestBody Product product) {
+
+    productService.saveProduct(product);
+
+    return new ResponseEntity<>(product, HttpStatus.CREATED);
   }
 }
