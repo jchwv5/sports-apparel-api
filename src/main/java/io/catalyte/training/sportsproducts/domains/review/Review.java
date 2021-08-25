@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
 /**
  * This class represents a sports apparel product review.
@@ -21,14 +20,12 @@ public class Review {
 
   private Long productId;
 
-  @Required
   private Integer rating;
 
   private String title;
 
   private String comment;
 
-  @Required
   private Date date;
 
   public Review() {

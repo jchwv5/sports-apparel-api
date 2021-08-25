@@ -7,9 +7,11 @@ import java.util.List;
  */
 public interface ReviewService {
 
-  List<Review> getReviews(Review review);
+  List<Review> getAllReviews(Review review);
 
-  Review getReviewByProductId(Long id);
+//  List<Review> getReviewsByProductId(Long id);
+//
+//  List<Review> getReviewsByProductName(String productName);
 
   Review saveReview(Review review);
 }
