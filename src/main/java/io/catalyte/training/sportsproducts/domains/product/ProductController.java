@@ -35,7 +35,7 @@ public class ProductController {
     return new ResponseEntity<>(productService.getProducts(product), HttpStatus.OK);
   }
 
-  @GetMapping(value = "/{id}")
+  @GetMapping(value = "/{product_id}")
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<Product> getProductById(@PathVariable Long id) {
     logger.info("Request received for getProductsById: " + id);

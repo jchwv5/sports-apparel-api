@@ -2,10 +2,13 @@ package io.catalyte.training.sportsproducts.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import io.catalyte.training.sportsproducts.domains.review.Review;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -55,6 +58,9 @@ public class User {
   private String phoneNumber;
 
   private String role;
+
+  @OneToMany(mappedBy="userId")
+  private List<Review> reviews;
 
   public User() {
   }

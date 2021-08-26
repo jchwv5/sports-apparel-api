@@ -8,9 +8,8 @@ import org.springframework.stereotype.Repository;
 public interface ReviewRepository
     extends JpaRepository<Review, Long> {
 
-//  @Query("SELECT DISTINCT id FROM Review ORDER BY id")
-//  List<Review> getReviewsByProductId(Long id);
-//
+  List<Review> getReviewsByProductId(Long id);
+
 //  @Query("SELECT DISTINCT product_name FROM Review ORDER BY product_name")
 //  List<Review> getReviewsByProductName(String productName);
 }

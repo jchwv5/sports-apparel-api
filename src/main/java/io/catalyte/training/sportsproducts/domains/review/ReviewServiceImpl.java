@@ -1,5 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.review;
 
+import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -39,23 +40,23 @@ public class ReviewServiceImpl implements ReviewService {
     }
   }
 
-//  public List<Review> getReviewsByProductId(Long id) {
-//    List<Review> review;
-//
-//    try {
-//      review = reviewRepository.getReviewsByProductId(id);
-//    } catch (DataAccessException e) {
-//      logger.error(e.getMessage());
-//      throw new ServerError(e.getMessage());
-//    }
-//
-//    if (review != null) {
-//      return review;
-//    } else {
-//      logger.info("Get by id failed, it does not exist in the database: " + id);
-//      throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
-//    }
-//  }
+  public List<Review> getReviewsByProductId(Long id) {
+    List<Review> review;
+
+    try {
+      review = reviewRepository.getReviewsByProductId(id);
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+
+    if (review != null) {
+      return review;
+    } else {
+      logger.info("Get by id failed, it does not exist in the database: " + id);
+      throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
+    }
+  }
 //
 //  public List<Review> getReviewsByProductName(String productName) {
 //    List<Review> review;
