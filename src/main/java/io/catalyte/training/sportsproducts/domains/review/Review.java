@@ -1,11 +1,13 @@
 package io.catalyte.training.sportsproducts.domains.review;
 
+import java.time.LocalDate;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
+import org.apache.tomcat.jni.Local;
 
 /**
  * This class represents a sports apparel product review.
@@ -31,7 +33,7 @@ public class Review {
   private String comment;
 
   @Required
-  private Date date;
+  private LocalDate date;
 
   public Review() {
   }
@@ -43,7 +45,7 @@ public class Review {
       Integer rating,
       String title,
       String comment,
-      Date date) {
+      LocalDate date) {
     this.id = id;
     this.userId = userId;
     this.productId = productId;
@@ -101,11 +103,11 @@ public class Review {
     this.comment = comment;
   }
 
-  public Date getDate() {
+  public LocalDate getDate() {
     return date;
   }
 
-  public void setDate(Date date) {
+  public void setDate(LocalDate date) {
     this.date = date;
   }
 

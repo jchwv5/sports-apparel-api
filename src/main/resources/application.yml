@@ -14,7 +14,7 @@ users:
   load: true
 
 reviews:
-  maxPerProduct: 10
+  maxPerProduct: 15
   load: true
 
 logging:

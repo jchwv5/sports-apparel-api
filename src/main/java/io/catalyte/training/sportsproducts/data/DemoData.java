@@ -73,7 +73,7 @@ public class DemoData implements CommandLineRunner {
       maxReviewsPerProduct = Integer.parseInt(env.getProperty("reviews.maxPerProduct"));
     } catch (NumberFormatException nfe) {
       // If it's not a string, set it to be a default value
-      maxReviewsPerProduct = 5;
+      maxReviewsPerProduct = 2;
     }
 
     // Generate products
@@ -90,8 +90,10 @@ public class DemoData implements CommandLineRunner {
     logger.info("Loading reviews for products product...");
 
     //Generate reviews for the products in the repository
-    List<Review> reviewList = reviewFactory.generateRandomReviews(maxReviewsPerProduct,
-        productRepository);
+    List<Review> reviewList = reviewFactory.generateRandomReviews(
+        productRepository,
+        maxReviewsPerProduct,
+        numberOfUsers);
 
     // Persist them to the database
     reviewRepository.saveAll(reviewList);
