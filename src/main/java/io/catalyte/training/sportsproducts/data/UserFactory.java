@@ -2,12 +2,8 @@ package io.catalyte.training.sportsproducts.data;
 
 import io.catalyte.training.sportsproducts.domains.user.User;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
-import java.util.Set;
-import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * This class provides tools for random generation of users.
@@ -62,26 +58,29 @@ public class UserFactory {
    *
    * @return - a last name
    */
-  public static String getLastName(String firstName) {
-    return firstName + "son";
+  public static String getLastName() {
+    Random randomGenerator = new Random();
+    return generateName(randomGenerator.nextInt(12));
   }
 
   /**
-   * Returns an email address based on first and last name
+   * Returns an email address based on first and last name.
    *
-   * @return - a category string
+   * @return - an email string
    */
   public static String getEmail(String firstName, String lastName) {
+    Random randomGenerator = new Random();
     StringBuilder email = new StringBuilder();
 
     email.append(firstName.charAt(0));
     email.append(lastName);
-    email.append("@seeddataemail.com");
+    email.append(randomGenerator.nextInt(999));
+    email.append("@fakedataemail.com");
     return email.toString();
   }
 
   /**
-   * Returns a random color code from the list of color codes.
+   * Returns a random fake street address.
    *
    * @return - a color string
    */
@@ -89,7 +88,7 @@ public class UserFactory {
     Random randomGenerator = new Random();
     StringBuilder address = new StringBuilder();
 
-    address.append(randomGenerator.nextInt(999));
+    address.append(randomGenerator.nextInt(9999));
     address.append(" Tester ");
     address.append(suffix[randomGenerator.nextInt(suffix.length)]);
 
@@ -97,19 +96,18 @@ public class UserFactory {
   }
 
   /**
-   * Returns a random brand from the list of brands.
+   * Returns a randomized fake city.
    *
-   * @return a brand string
+   * @return a city string
    */
   public static String getCity() {
-    Random randomGenerator = new Random();
-    return generateName(randomGenerator.nextInt(5));
+    return generateName(5);
   }
 
   /**
-   * Returns a random brand from the list of brands.
+   * Returns a random state from the list of states.
    *
-   * @return a brand string
+   * @return a state string
    */
   public static String getState() {
     Random randomGenerator = new Random();
@@ -117,9 +115,9 @@ public class UserFactory {
   }
 
   /**
-   * Returns a random price from within a range.
+   * Returns a random 10-digit phone number.
    *
-   * @return - a BigDecimal price
+   * @return - a phone number string
    */
   public static String getPhoneNumber() {
     Random randomGenerator = new Random();
@@ -135,18 +133,17 @@ public class UserFactory {
   }
 
   /**
-   * @param min quantity of product
-   * @param max quantity of product
-   * @return random quantity of product
+   * @param min lowest random zip
+   * @param max highest random zip
+   * @return random set of 5 numbers representing a zip code
    */
   public static String getZipCode(double min, double max) {
     return String.valueOf((int) ((Math.random() * ((max - min) + 1)) + min));
   }
 
-  private static String generateName(int lengthOffset) {
+  public static String generateName(int lengthOffset) {
     final Random nameLength = new Random();
     final String lexicon = "abcdefghijklmnopqrstvwy";
-    final Set<String> identifiers = new HashSet<>();
     StringBuilder name = new StringBuilder();
 
     while (name.toString().length() == 0) {
@@ -154,12 +151,8 @@ public class UserFactory {
       for (int i = 0; i < length; i++) {
         name.append(lexicon.charAt(nameLength.nextInt(lexicon.length())));
       }
-      if (identifiers.contains(name.toString())) {
-        name = new StringBuilder();
-      }
     }
     return name.substring(0, 1).toUpperCase() + name.substring(1);
-
   }
 
   /**
@@ -180,14 +173,14 @@ public class UserFactory {
   }
 
   /**
-   * Uses random generators to build a product.
+   * Uses random generators to build a user.
    *
-   * @return - a randomly generated product
+   * @return - a randomly generated user
    */
   public User createRandomUser() {
     User user = new User();
     String firstName = UserFactory.getFirstName();
-    String lastName = UserFactory.getLastName(firstName);
+    String lastName = UserFactory.getLastName();
     String email = UserFactory.getEmail(firstName, lastName);
     String streetAddress = UserFactory.getStreetAddress();
     String city = UserFactory.getCity();

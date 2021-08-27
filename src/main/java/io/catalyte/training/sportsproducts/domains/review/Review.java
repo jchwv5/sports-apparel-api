@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
 /**
  * This class represents a sports apparel product review.
@@ -17,16 +17,20 @@ public class Review {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Required
   private Long userId;
 
+  @Required
   private Long productId;
 
+  @Required
   private Integer rating;
 
   private String title;
 
   private String comment;
 
+  @Required
   private Date date;
 
   public Review() {

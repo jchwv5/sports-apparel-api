@@ -59,7 +59,7 @@ public class User {
 
   private String role;
 
-  @OneToMany(mappedBy="userId")
+  @OneToMany(mappedBy = "userId")
   private List<Review> reviews;
 
   public User() {
@@ -67,7 +67,7 @@ public class User {
 
   public User(String firstName, String lastName, String email,
       String streetAddress, String streetAddress2, String city, String state,
-      String zipCode, String phoneNumber, String role) {
+      String zipCode, String phoneNumber, String role, List<Review> reviews) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
@@ -78,6 +78,7 @@ public class User {
     this.zipCode = zipCode;
     this.phoneNumber = phoneNumber;
     this.role = role;
+    this.reviews = reviews;
   }
 
   public Long getId() {
@@ -168,6 +169,13 @@ public class User {
     this.role = role;
   }
 
+  public List<Review> getReviews() {
+    return reviews;
+  }
+
+  public void setReviews(List<Review> reviews) {
+    this.reviews = reviews;
+  }
 
   @Override
   public String toString() {

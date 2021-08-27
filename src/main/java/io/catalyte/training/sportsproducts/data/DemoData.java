@@ -2,6 +2,8 @@ package io.catalyte.training.sportsproducts.data;
 
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductRepository;
+import io.catalyte.training.sportsproducts.domains.review.Review;
+import io.catalyte.training.sportsproducts.domains.review.ReviewRepository;
 import io.catalyte.training.sportsproducts.domains.user.User;
 import io.catalyte.training.sportsproducts.domains.user.UserRepository;
 import java.util.List;
@@ -25,10 +27,13 @@ public class DemoData implements CommandLineRunner {
   private final Logger logger = LogManager.getLogger(DemoData.class);
   ProductFactory productFactory = new ProductFactory();
   UserFactory userFactory = new UserFactory();
+  ReviewFactory reviewFactory = new ReviewFactory();
   @Autowired
   private ProductRepository productRepository;
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private ReviewRepository reviewRepository;
   @Autowired
   private Environment env;
 
@@ -45,6 +50,7 @@ public class DemoData implements CommandLineRunner {
   private void seedDatabase() {
     int numberOfProducts;
     int numberOfUsers;
+    int maxReviewsPerProduct;
 
     try {
       // Retrieve the value of custom property in application.yml
@@ -62,10 +68,18 @@ public class DemoData implements CommandLineRunner {
       numberOfUsers = 50;
     }
 
+    try {
+      // Retrieve the value of custom property in application.yml
+      maxReviewsPerProduct = Integer.parseInt(env.getProperty("reviews.maxPerProduct"));
+    } catch (NumberFormatException nfe) {
+      // If it's not a string, set it to be a default value
+      maxReviewsPerProduct = 5;
+    }
+
     // Generate products
     List<Product> productList = productFactory.generateRandomProducts(numberOfProducts);
 
-    //Generate users
+    // Generate users
     List<User> userList = userFactory.generateRandomUsers(numberOfUsers);
 
     // Persist them to the database
@@ -73,6 +87,14 @@ public class DemoData implements CommandLineRunner {
     productRepository.saveAll(productList);
     logger.info("Loading " + numberOfUsers + " users...");
     userRepository.saveAll(userList);
+    logger.info("Loading reviews for products product...");
+
+    //Generate reviews for the products in the repository
+    List<Review> reviewList = reviewFactory.generateRandomReviews(maxReviewsPerProduct,
+        productRepository);
+
+    // Persist them to the database
+    reviewRepository.saveAll(reviewList);
     logger.info("Data load completed. You can make requests now.");
   }
 
