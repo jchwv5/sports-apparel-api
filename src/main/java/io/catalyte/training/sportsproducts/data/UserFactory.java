@@ -4,6 +4,7 @@ import io.catalyte.training.sportsproducts.domains.user.User;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -61,9 +62,8 @@ public class UserFactory {
    *
    * @return - a last name
    */
-  public static String getLastName() {
-    Random randomGenerator = new Random();
-    return generateName(randomGenerator.nextInt(12));
+  public static String getLastName(String firstName) {
+    return firstName + "son";
   }
 
   /**
@@ -74,7 +74,7 @@ public class UserFactory {
   public static String getEmail(String firstName, String lastName) {
     StringBuilder email = new StringBuilder();
 
-    email.append(firstName);
+    email.append(firstName.charAt(0));
     email.append(lastName);
     email.append("@seeddataemail.com");
     return email.toString();
@@ -144,24 +144,21 @@ public class UserFactory {
   }
 
   private static String generateName(int lengthOffset) {
-    // class variable
-    final String lexicon = "ABDEFGHIJLMOPQRSTVWYZ";
-
     final Random nameLength = new Random();
-
-    // consider using a Map<String,Boolean> to say whether the identifier is being used or not
+    final String lexicon = "abcdefghijklmnopqrstvwy";
     final Set<String> identifiers = new HashSet<>();
-    StringBuilder builder = new StringBuilder();
-    while (builder.toString().length() == 0) {
+    StringBuilder name = new StringBuilder();
+
+    while (name.toString().length() == 0) {
       int length = nameLength.nextInt(5) + lengthOffset;
       for (int i = 0; i < length; i++) {
-        builder.append(lexicon.charAt(nameLength.nextInt(lexicon.length())));
+        name.append(lexicon.charAt(nameLength.nextInt(lexicon.length())));
       }
-      if (identifiers.contains(builder.toString())) {
-        builder = new StringBuilder();
+      if (identifiers.contains(name.toString())) {
+        name = new StringBuilder();
       }
     }
-    return builder.toString();
+    return name.substring(0, 1).toUpperCase() + name.substring(1);
 
   }
 
@@ -190,7 +187,7 @@ public class UserFactory {
   public User createRandomUser() {
     User user = new User();
     String firstName = UserFactory.getFirstName();
-    String lastName = UserFactory.getLastName();
+    String lastName = UserFactory.getLastName(firstName);
     String email = UserFactory.getEmail(firstName, lastName);
     String streetAddress = UserFactory.getStreetAddress();
     String city = UserFactory.getCity();
