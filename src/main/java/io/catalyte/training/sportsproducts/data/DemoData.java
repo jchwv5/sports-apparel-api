@@ -87,7 +87,7 @@ public class DemoData implements CommandLineRunner {
     productRepository.saveAll(productList);
     logger.info("Loading " + numberOfUsers + " users...");
     userRepository.saveAll(userList);
-    logger.info("Loading reviews for products product...");
+    logger.info("Loading reviews for products...");
 
     //Generate reviews for the products in the repository
     List<Review> reviewList = reviewFactory.generateRandomReviews(
