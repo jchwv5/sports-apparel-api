@@ -18,6 +18,7 @@ public class ProductServiceImpl implements ProductService {
 
   private final Logger logger = LogManager.getLogger(ProductServiceImpl.class);
 
+  @Autowired
   ProductRepository productRepository;
 
   @Autowired

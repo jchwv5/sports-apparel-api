@@ -13,7 +13,5 @@ public interface ReviewService {
 
   List<Review> getReviewsByProductId(Long id);
 
-//  List<Review> getReviewsByProductName(String productName);
-
   Review saveReview(Review review);
 }
