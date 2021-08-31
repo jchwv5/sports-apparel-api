@@ -66,6 +66,19 @@ public class UserFactory {
       "Zamora"
   };
 
+  private static final String[] emailProviders = {
+      "aol",
+      "gmail",
+      "hotmail",
+      "icloud",
+      "mail",
+      "msn",
+      "outlook",
+      "proton",
+      "rocketmail",
+      "yahoo",
+  };
+
   private static final String[] states = {
       "AL", "AK", "AZ", "AR",
       "CA", "CO", "CT",
@@ -162,7 +175,9 @@ public class UserFactory {
     email.append(firstName.charAt(0));
     email.append(lastName);
     email.append(randomGenerator.nextInt(999));
-    email.append("@fakedataemail.com");
+    email.append("@");
+    email.append(emailProviders[randomGenerator.nextInt(emailProviders.length)]);
+    email.append(".com");
     return email.toString();
   }
 
