@@ -78,19 +78,6 @@ public class ReviewFactory {
       " passable"
   };
 
-  private static final String[] predicates = {
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
-  };
-
   /**
    * Returns a random product rating.
    *
@@ -168,8 +155,8 @@ public class ReviewFactory {
    *
    * @return - a LocalDate
    */
-  public static LocalDate getReviewDate() {
-    LocalDate start = LocalDate.of(2017, Month.JANUARY, 1);
+  public static LocalDate getReviewDate(String productRelease) {
+    LocalDate start = LocalDate.parse(productRelease);
     LocalDate end = LocalDate.now();
     return between(start, end);
   }
@@ -205,7 +192,7 @@ public class ReviewFactory {
     Long userId = ReviewFactory.getUserId(userRepositoryLength);
     Integer rating = ReviewFactory.getRating();
     String comment = ReviewFactory.getComment(rating);
-    LocalDate reviewDate = ReviewFactory.getReviewDate();
+    LocalDate reviewDate = ReviewFactory.getReviewDate(product.getReleaseDate());
 
     review.setProductId(productId);
     review.setUserId(userId);

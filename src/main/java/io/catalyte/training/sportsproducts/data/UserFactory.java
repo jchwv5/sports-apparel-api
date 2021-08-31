@@ -10,6 +10,56 @@ import java.util.Random;
  */
 public class UserFactory {
 
+  private static final String[] firstNames = {
+      "Adael", "Ajani", "Akshaya", "Alaura", "Alayiah", "Aliya", "Amaia", "Andres", "Ani", "Ania", "Antonino", "Arie", "Ariyah", "Arlan", "Azael", "Aziyah",
+      "Blake", "Blessing", "Brylie", "Bryson",
+      "Cache", "Calee", "Cameron", "Chloe", "Chloey", "Claudia", "Corben", "Cristiano",
+      "Dalton", "Demarco", "Dina",
+      "Eliam", "Eloise", "Emery", "Emmy", "Eriana",
+      "Finnley", "Forever",
+      "Galilee", "Gwendolyn",
+      "Hafsah", "Hardy",
+      "Ignacio", "Ilyas",
+      "Javier", "Jaycen", "Joey", "Juliet",
+      "Kade", "Kaisley", "Kaison", "Kalina", "Karl", "Kayzlee", "Keston", "Khloey", "Kimora", "Kylee", "Kyngston", "Kynzleigh",
+      "Laci", "Ladarius", "Lenox",
+      "Mack", "Margo", "Mason", "Maylin", "Meliah", "Mikael", "Miriam", "Mohammed", "Moira",
+      "Naia", "Naimah", "Naliyah", "Niamh",
+      "Othniel", "Otis", "Paolo",
+      "Rebekah", "Riley", "Rishik", "Rodney", "Ryli",
+      "Samantha", "Sameera", "Saul", "Stormie",
+      "Taj", "Tehilla", "Theodore", "Thorin", "Ty",
+      "Unique",
+      "Vishnu", "Vladislav",
+      "Wren",
+      "Yohana",
+      "Zailynn", "Zayden",
+  };
+
+  private static final String[] lastNames = {
+      "Anglin", "Athey",
+      "Blackford", "Board", "Bourne", "Brinkerhoff", "Bristow", "Brunelle", "Buckley", "Burleson", "Byars",
+      "Campana", "Carlsen", "Carpio", "Carswell", "Cathey", "Chabot", "Dennison", "Dickson", "Dove", "Dover", "Dubose",
+      "Eckstein", "Eldred",
+      "Fasano", "Flynn", "Fuentes", "Fullmer", "Fuson",
+      "Gales", "Galligan", "Gish", "Gong", "Grams", "Gray", "Gruver",
+      "Hacker", "Hafer", "Helmer", "Henriquez", "Hinds", "Hixon", "Householder", "Hutchens",
+      "Judge",
+      "Kerner", "Kinder", "Kutz",
+      "Lindahl", "Loggins", "Luckett", "Lykins",
+      "Matlock", "Mayo", "Mcclellan", "Mckeown", "Mcmillion", "Mcpeak", "Millican", "Milton", "Monreal", "Morel", "Mosby", "Mulder", "Mullinax",
+      "Newell",
+      "Oman", "Otoole",
+      "Peavy", "Penn", "Plumb",
+      "Quackenbush", "Queen",
+      "Race", "Reis", "Rideout", "Roeder", "Rust",
+      "Salvador", "Sauls", "Schott", "Settles", "Shea", "Shumate", "Sivesh", "Souza", "Sturdivant", "Swisher", "Switzer",
+      "Theodore", "Truong",
+      "Villareal", "Visser", "Vollmer",
+      "Wages", "Waller", "Walz", "Whitt", "Wilkins",
+      "Zamora"
+  };
+
   private static final String[] states = {
       "AL", "AK", "AZ", "AR",
       "CA", "CO", "CT",
@@ -43,24 +93,55 @@ public class UserFactory {
       "Way"
   };
 
+  private static final String[] cityBases = {
+      "Arbor",
+      "Ash",
+      "Bass",
+      "Birch",
+      "Cherry",
+      "Chestnut",
+      "Elm",
+      "Fir",
+      "Hickory",
+      "Maple",
+      "Oak",
+      "Spruce",
+      "Willow"
+  };
+
+  private static final String[] cityMods = {
+      "mond",
+      "land",
+      "oh",
+      " Rock",
+      "ron",
+      "son",
+      "ster",
+      "tia",
+      "ton",
+      "town",
+      "ville",
+      "wood"
+  };
+
   /**
    * Returns a random first name.
    *
-   * @return - a first name
+   * @return - a first name from the firstNames library
    */
   public static String getFirstName() {
     Random randomGenerator = new Random();
-    return generateName(randomGenerator.nextInt(7));
+    return firstNames[randomGenerator.nextInt(firstNames.length)];
   }
 
   /**
    * Returns a random last name.
    *
-   * @return - a last name
+   * @return - a last name from the lastNames library
    */
   public static String getLastName() {
     Random randomGenerator = new Random();
-    return generateName(randomGenerator.nextInt(12));
+    return lastNames[randomGenerator.nextInt(lastNames.length)];
   }
 
   /**
@@ -96,12 +177,18 @@ public class UserFactory {
   }
 
   /**
-   * Returns a randomized fake city.
+   * Returns a random city name.
    *
-   * @return a city string
+   * @return a city string built from the cityBases and cityMods library
    */
   public static String getCity() {
-    return generateName(5);
+    Random randomGenerator = new Random();
+    StringBuilder cityName = new StringBuilder();
+
+    cityName.append(cityBases[randomGenerator.nextInt(cityBases.length)]);
+    cityName.append(cityMods[randomGenerator.nextInt(cityMods.length)]);
+
+    return cityName.toString();
   }
 
   /**
@@ -120,16 +207,12 @@ public class UserFactory {
    * @return - a phone number string
    */
   public static String getPhoneNumber() {
-    Random randomGenerator = new Random();
-    StringBuilder phoneNumber = new StringBuilder();
 
-    phoneNumber.append((int) (Math.random() * ((999 - 111) + 1)) + 111);
-    phoneNumber.append("-");
-    phoneNumber.append((int) (Math.random() * ((999 - 111) + 1)) + 111);
-    phoneNumber.append("-");
-    phoneNumber.append((int) (Math.random() * ((9999 - 1111) + 1)) + 1111);
-
-    return phoneNumber.toString();
+    return ((int) (Math.random() * ((999 - 111) + 1)) + 111)
+        + "-"
+        + ((int) (Math.random() * ((999 - 111) + 1)) + 111)
+        + "-"
+        + ((int) (Math.random() * ((9999 - 1111) + 1)) + 1111);
   }
 
   /**
@@ -141,9 +224,9 @@ public class UserFactory {
     return String.valueOf((int) ((Math.random() * ((max - min) + 1)) + min));
   }
 
-  public static String generateName(int lengthOffset) {
+  public static String generateUniqueUserName(int lengthOffset) {
     final Random nameLength = new Random();
-    final String lexicon = "abcdefghijklmnopqrstvwy";
+    final String lexicon = "abcdefghijklmnopqrstvwyz1234567890";
     StringBuilder name = new StringBuilder();
 
     while (name.toString().length() == 0) {

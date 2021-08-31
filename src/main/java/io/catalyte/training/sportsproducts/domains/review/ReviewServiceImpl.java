@@ -141,6 +141,7 @@ public class ReviewServiceImpl implements ReviewService {
         return false;
       }
     } catch (NullPointerException e) {
+      logger.error(e.getMessage());
       errors.add("Review must have a product ID associated with it");
       return false;
     }
@@ -176,7 +177,7 @@ public class ReviewServiceImpl implements ReviewService {
         errors.add("Review cannot be before product release date");
       }
     } catch (IllegalArgumentException e) {
-      return;
+      logger.error(e.getMessage());
     }
   }
 
