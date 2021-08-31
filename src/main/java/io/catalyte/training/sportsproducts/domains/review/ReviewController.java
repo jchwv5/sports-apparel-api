@@ -2,9 +2,7 @@ package io.catalyte.training.sportsproducts.domains.review;
 
 import static io.catalyte.training.sportsproducts.constants.Paths.REVIEWS_PATH;
 
-import io.catalyte.training.sportsproducts.domains.product.Product;
 import java.util.List;
-import javax.persistence.OneToMany;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

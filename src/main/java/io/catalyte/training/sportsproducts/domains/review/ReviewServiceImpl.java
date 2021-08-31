@@ -53,6 +53,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
   }
 
+  /**
+   * Retrieves all reviews associated with a specific product ID.
+   *
+   * @param id - product ID used to query the database
+   * @return - a list of all reviews for a given product
+   */
   public List<Review> getReviewsByProductId(Long id) {
     List<Review> review;
 
@@ -66,8 +72,9 @@ public class ReviewServiceImpl implements ReviewService {
     if (review != null) {
       return review;
     } else {
-      logger.info("Get by id failed, it does not exist in the database: " + id);
-      throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
+      logger.info("Get review by product ID: " + id + " failed, it does not exist in the database");
+      throw new ResourceNotFound(
+          "Get review by product ID: " + id + " failed, it does not exist in the database");
     }
   }
 
@@ -96,9 +103,9 @@ public class ReviewServiceImpl implements ReviewService {
   }
 
   /**
-   * Validates credit card before purchase is able to be saved
+   * Validates review fields before it is saved
    *
-   * @param review - the credit card information to validate
+   * @param review - the review to validate
    */
   void validateReview(Review review) {
     ArrayList<String> errors = new ArrayList<>();
@@ -121,6 +128,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
   }
 
+  /**
+   * Validates a user ID is provided and that it exists in the database.
+   *
+   * @param errors - running list of errors
+   * @param review - review being verified
+   */
   private void validateUserId(ArrayList<String> errors, Review review) {
     try {
       Long userId = review.getUserId();
@@ -132,7 +145,13 @@ public class ReviewServiceImpl implements ReviewService {
     }
   }
 
-
+  /**
+   * Validates a product ID is provided and that it exists in the database.
+   *
+   * @param errors - running list of errors
+   * @param review - review being verified
+   * @return - boolean if the product ID is valid or not
+   */
   private boolean validateProductId(ArrayList<String> errors, Review review) {
     try {
       Long productId = review.getProductId();
@@ -148,6 +167,12 @@ public class ReviewServiceImpl implements ReviewService {
     return true;
   }
 
+  /**
+   * Validates a rating is provided and that it is a positive integer between 1 and 5.
+   *
+   * @param errors - running list of errors
+   * @param review - review being verified
+   */
   private void validateRating(ArrayList<String> errors, Review review) {
     Integer rating = review.getRating();
 
@@ -156,6 +181,13 @@ public class ReviewServiceImpl implements ReviewService {
     }
   }
 
+  /**
+   * Validates the review has a date, and that the date is between the product release and today's
+   * date. This method requires the review having a valid product ID associated with it.
+   *
+   * @param errors - running list of errors
+   * @param review - review being verified
+   */
   private void validateReviewDate(ArrayList<String> errors, Review review) {
     try {
       LocalDate reviewDate = review.getDate();
@@ -184,7 +216,7 @@ public class ReviewServiceImpl implements ReviewService {
   /**
    * Validation helper method to throw exception with appropriate message
    *
-   * @param errors list of error messages detailing what caused validation to fail
+   * @param errors - running list of error messages detailing what caused validation to fail
    */
   private void rejectReview(ArrayList<String> errors) {
     StringBuilder message = new StringBuilder();

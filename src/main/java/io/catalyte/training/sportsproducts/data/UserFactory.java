@@ -11,7 +11,8 @@ import java.util.Random;
 public class UserFactory {
 
   private static final String[] firstNames = {
-      "Adael", "Ajani", "Akshaya", "Alaura", "Alayiah", "Aliya", "Amaia", "Andres", "Ani", "Ania", "Antonino", "Arie", "Ariyah", "Arlan", "Azael", "Aziyah",
+      "Adael", "Ajani", "Akshaya", "Alaura", "Alayiah", "Aliya", "Amaia", "Andres", "Ani", "Ania",
+      "Antonino", "Arie", "Ariyah", "Arlan", "Azael", "Aziyah",
       "Blake", "Blessing", "Brylie", "Bryson",
       "Cache", "Calee", "Cameron", "Chloe", "Chloey", "Claudia", "Corben", "Cristiano",
       "Dalton", "Demarco", "Dina",
@@ -21,7 +22,8 @@ public class UserFactory {
       "Hafsah", "Hardy",
       "Ignacio", "Ilyas",
       "Javier", "Jaycen", "Joey", "Juliet",
-      "Kade", "Kaisley", "Kaison", "Kalina", "Karl", "Kayzlee", "Keston", "Khloey", "Kimora", "Kylee", "Kyngston", "Kynzleigh",
+      "Kade", "Kaisley", "Kaison", "Kalina", "Karl", "Kayzlee", "Keston", "Khloey", "Kimora",
+      "Kylee", "Kyngston", "Kynzleigh",
       "Laci", "Ladarius", "Lenox",
       "Mack", "Margo", "Mason", "Maylin", "Meliah", "Mikael", "Miriam", "Mohammed", "Moira",
       "Naia", "Naimah", "Naliyah", "Niamh",
@@ -38,8 +40,10 @@ public class UserFactory {
 
   private static final String[] lastNames = {
       "Anglin", "Athey",
-      "Blackford", "Board", "Bourne", "Brinkerhoff", "Bristow", "Brunelle", "Buckley", "Burleson", "Byars",
-      "Campana", "Carlsen", "Carpio", "Carswell", "Cathey", "Chabot", "Dennison", "Dickson", "Dove", "Dover", "Dubose",
+      "Blackford", "Board", "Bourne", "Brinkerhoff", "Bristow", "Brunelle", "Buckley", "Burleson",
+      "Byars",
+      "Campana", "Carlsen", "Carpio", "Carswell", "Cathey", "Chabot", "Dennison", "Dickson", "Dove",
+      "Dover", "Dubose",
       "Eckstein", "Eldred",
       "Fasano", "Flynn", "Fuentes", "Fullmer", "Fuson",
       "Gales", "Galligan", "Gish", "Gong", "Grams", "Gray", "Gruver",
@@ -47,13 +51,15 @@ public class UserFactory {
       "Judge",
       "Kerner", "Kinder", "Kutz",
       "Lindahl", "Loggins", "Luckett", "Lykins",
-      "Matlock", "Mayo", "Mcclellan", "Mckeown", "Mcmillion", "Mcpeak", "Millican", "Milton", "Monreal", "Morel", "Mosby", "Mulder", "Mullinax",
+      "Matlock", "Mayo", "Mcclellan", "Mckeown", "Mcmillion", "Mcpeak", "Millican", "Milton",
+      "Monreal", "Morel", "Mosby", "Mulder", "Mullinax",
       "Newell",
       "Oman", "Otoole",
       "Peavy", "Penn", "Plumb",
       "Quackenbush", "Queen",
       "Race", "Reis", "Rideout", "Roeder", "Rust",
-      "Salvador", "Sauls", "Schott", "Settles", "Shea", "Shumate", "Sivesh", "Souza", "Sturdivant", "Swisher", "Switzer",
+      "Salvador", "Sauls", "Schott", "Settles", "Shea", "Shumate", "Sivesh", "Souza", "Sturdivant",
+      "Swisher", "Switzer",
       "Theodore", "Truong",
       "Villareal", "Visser", "Vollmer",
       "Wages", "Waller", "Walz", "Whitt", "Wilkins",
@@ -216,6 +222,8 @@ public class UserFactory {
   }
 
   /**
+   * Generates a random zip code.
+   *
    * @param min lowest random zip
    * @param max highest random zip
    * @return random set of 5 numbers representing a zip code
@@ -224,7 +232,14 @@ public class UserFactory {
     return String.valueOf((int) ((Math.random() * ((max - min) + 1)) + min));
   }
 
-  public static String generateUniqueUserName(int lengthOffset) {
+  /**
+   * Generates a random unique user code.
+   *
+   * @param lengthOffset - desired minimum length of code
+   *
+   * @return - a randomized user code
+   */
+  public static String generateUniqueUserCode(int lengthOffset) {
     final Random nameLength = new Random();
     final String lexicon = "abcdefghijklmnopqrstvwyz1234567890";
     StringBuilder name = new StringBuilder();
