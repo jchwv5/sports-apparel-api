@@ -13,5 +13,7 @@ public interface ReviewService {
 
   List<Review> getReviewsByProductId(Long id);
 
+  List<Review> getReviewsByUserId(Long id);
+
   Review saveReview(Review review);
 }

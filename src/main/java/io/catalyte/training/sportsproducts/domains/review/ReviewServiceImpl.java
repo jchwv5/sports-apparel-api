@@ -79,6 +79,31 @@ public class ReviewServiceImpl implements ReviewService {
   }
 
   /**
+   * Retrieves all reviews associated with a specific product ID.
+   *
+   * @param id - product ID used to query the database
+   * @return - a list of all reviews for a given product
+   */
+  public List<Review> getReviewsByUserId(Long id) {
+    List<Review> review;
+
+    try {
+      review = reviewRepository.getReviewsByUserId(id);
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+
+    if (review != null) {
+      return review;
+    } else {
+      logger.info("Get review by user ID: " + id + " failed, it does not exist in the database");
+      throw new ResourceNotFound(
+          "Get review by user ID: " + id + " failed, it does not exist in the database");
+    }
+  }
+
+  /**
    * Persists a review to the database
    *
    * @param review - The review to be persisted

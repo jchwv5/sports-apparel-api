@@ -10,4 +10,6 @@ public interface ReviewRepository
 
   List<Review> getReviewsByProductId(Long id);
 
+  List<Review> getReviewsByUserId(Long id);
+
 }

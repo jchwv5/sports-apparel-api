@@ -42,6 +42,14 @@ public class ReviewController {
     return new ResponseEntity<>(reviewService.getReviewsByProductId(productId), HttpStatus.OK);
   }
 
+  @GetMapping(value = "/{user_id}")
+  @ResponseStatus(value = HttpStatus.OK)
+  public ResponseEntity<List<Review>> getReviewsByUserId(@PathVariable Long userId) {
+    logger.info("Request received for getting reviews with user id: " + userId);
+
+    return new ResponseEntity<>(reviewService.getReviewsByUserId(userId), HttpStatus.OK);
+  }
+
   @PostMapping
   public ResponseEntity saveReview(@RequestBody Review review) {
 
