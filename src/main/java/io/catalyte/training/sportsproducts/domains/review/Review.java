@@ -1,10 +1,12 @@
 package io.catalyte.training.sportsproducts.domains.review;
 
 import java.time.LocalDate;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 
 /**
  * This class represents a sports apparel product review.
@@ -16,16 +18,21 @@ public class Review {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Required
   private Long userId;
 
+  @Required
   private Long productId;
 
+  @Required
   private Integer rating;
 
   private String title;
 
+  @Column(columnDefinition = "TEXT")
   private String comment;
 
+  @Required
   private LocalDate date;
 
   public Review() {

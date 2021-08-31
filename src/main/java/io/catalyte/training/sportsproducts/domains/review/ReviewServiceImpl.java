@@ -26,16 +26,16 @@ public class ReviewServiceImpl implements ReviewService {
 
   private final Logger logger = LogManager.getLogger(ReviewServiceImpl.class);
 
-  @Autowired
-  private ProductRepository productRepository;
-  @Autowired
-  private ReviewRepository reviewRepository;
-  @Autowired
-  private UserRepository userRepository;
+  private final ProductRepository productRepository;
+  private final ReviewRepository reviewRepository;
+  private final UserRepository userRepository;
 
   @Autowired
-  public ReviewServiceImpl(ReviewRepository reviewRepository) {
+  public ReviewServiceImpl(ProductRepository productRepository, ReviewRepository reviewRepository,
+      UserRepository userRepository) {
+    this.productRepository = productRepository;
     this.reviewRepository = reviewRepository;
+    this.userRepository = userRepository;
   }
 
   /**
@@ -122,6 +122,7 @@ public class ReviewServiceImpl implements ReviewService {
     if (productIdIsValid) {
       validateReviewDate(errors, review);
     }
+    validateTitle(errors, review);
 
     if (!errors.isEmpty()) {
       rejectReview(errors);
@@ -210,6 +211,14 @@ public class ReviewServiceImpl implements ReviewService {
       }
     } catch (IllegalArgumentException e) {
       logger.error(e.getMessage());
+    }
+  }
+
+  private void validateTitle(ArrayList<String> errors, Review review) {
+    int titleLength = review.getTitle().length();
+
+    if (titleLength > 255) {
+      errors.add("Review title character length exceeded (max 255 characters)");
     }
   }
 
