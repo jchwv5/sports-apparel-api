@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ReviewService {
 
-  List<Review> getAllReviews(Review review);
-
   List<Review> getReviewsByProductId(Long id);
 
   List<Review> getReviewsByUserId(Long id);

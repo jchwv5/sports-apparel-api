@@ -2,10 +2,8 @@ package io.catalyte.training.sportsproducts.data;
 
 
 import io.catalyte.training.sportsproducts.domains.product.Product;
-import io.catalyte.training.sportsproducts.domains.product.ProductRepository;
 import io.catalyte.training.sportsproducts.domains.review.Review;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,7 +21,6 @@ public class ReviewFactory {
       "My husband",
       "My son"
   };
-
   private static final String[] verbs = {
       "bought",
       "played with",
@@ -34,13 +31,11 @@ public class ReviewFactory {
       "built",
       "wanted"
   };
-
   private static final String[] references = {
       "this",
       "it",
       "these"
   };
-
   private static final String[] positiveAdjectives = {
       "brilliant",
       "comfortable",
@@ -53,7 +48,6 @@ public class ReviewFactory {
       "smashing",
       "wonderful"
   };
-
   private static final String[] negativeAdjectives = {
       "appalling",
       "atrocious",
@@ -67,7 +61,6 @@ public class ReviewFactory {
       "terrible",
       "unacceptable"
   };
-
   private static final String[] neutralAdjectives = {
       " alright",
       " just ok",
@@ -81,7 +74,7 @@ public class ReviewFactory {
   /**
    * Returns a random product rating.
    *
-   * @return - a product rating int
+   * @return a product rating int
    */
   public static Long getUserId(int userRepositoryLength) {
     Random randomGenerator = new Random();
@@ -91,20 +84,20 @@ public class ReviewFactory {
   /**
    * Returns a random product rating.
    *
-   * @return - a product rating int
+   * @return a product rating int
    */
   public static Integer getRating() {
     Random randomGenerator = new Random();
     return randomGenerator.nextInt(5) + 1;
   }
 
-  public static String getTitle() {
-    StringBuilder title = new StringBuilder();
-
-
-    return title.toString();
-  };
-
+  /**
+   * Generates a random comment built from a list of word libraries.<br/> - rating 1 or 2 = negative
+   * comment<br/> - rating 3 = neutral comment<br/> - rating 4 or 5 = positive comment
+   *
+   * @param rating product rating used to determine library to be used
+   * @return a product comment
+   */
   public static String getComment(Integer rating) {
     StringBuilder comment = new StringBuilder();
     Random randomGenerator = new Random();
@@ -136,9 +129,9 @@ public class ReviewFactory {
   /**
    * Finds a random date between two date bounds.
    *
-   * @param startInclusive - the beginning bound
-   * @param endExclusive   - the ending bound
-   * @return - a random date as a LocalDate
+   * @param startInclusive the beginning bound
+   * @param endExclusive   the ending bound
+   * @return a random date as a LocalDate
    */
   private static LocalDate between(LocalDate startInclusive, LocalDate endExclusive) {
     long startEpochDay = startInclusive.toEpochDay();
@@ -151,9 +144,9 @@ public class ReviewFactory {
   }
 
   /**
-   * Determines a random review date between the two given bounds.
+   * Determines a random review date between the product release date and the current local date.
    *
-   * @return - a LocalDate
+   * @return a LocalDate
    */
   public static LocalDate getReviewDate(String productRelease) {
     LocalDate start = LocalDate.parse(productRelease);
@@ -161,40 +154,44 @@ public class ReviewFactory {
     return between(start, end);
   }
 
-  public List<Review> generateRandomReviews(
-      ProductRepository productRepository,
-      Integer maxReviewsPerProduct,
-      int userRepositoryLength
-  ) {
-
+  /**
+   * Generates a random number of randomized reviews for a given product.
+   *
+   * @param product              the product to create reviews for
+   * @param maxReviewsPerProduct specified upper limit of reviews to be generated for the product
+   * @param userCount            current number of users in the database
+   * @return a list of randomized reviews
+   */
+  public List<Review> generateRandomReviews(Product product, Integer maxReviewsPerProduct,
+      Integer userCount) {
     Random randomGenerator = new Random();
     List<Review> reviewList = new ArrayList<>();
-    int reviewsPerProduct;
 
-    for (int pId = 1; pId < productRepository.count(); pId++) {
-      reviewsPerProduct = randomGenerator.nextInt(maxReviewsPerProduct);
-      for (int j = 0; j < reviewsPerProduct; j++) {
-        reviewList.add(createRandomReview(productRepository, pId, userRepositoryLength));
-      }
+    int reviewsPerProduct = randomGenerator.nextInt(maxReviewsPerProduct);
+    for (int j = 0; j < reviewsPerProduct; j++) {
+      reviewList.add(createRandomReview(product, userCount));
     }
 
     return reviewList;
   }
 
-  public Review createRandomReview(
-      ProductRepository productRepository,
-      int pId,
-      int userRepositoryLength) {
+  /**
+   * Builds a random review for a given product and assigns a random user ID to the review based on
+   * the given number of users in the database.
+   *
+   * @param product   the product to create the review for
+   * @param userCount current number of users in the database
+   * @return a randomized review
+   */
+  public Review createRandomReview(Product product, Integer userCount) {
     Review review = new Review();
-    Product product = productRepository.getProductById((long) pId);
 
-    Long productId = (long) pId;
-    Long userId = ReviewFactory.getUserId(userRepositoryLength);
+    Long userId = ReviewFactory.getUserId(userCount);
     Integer rating = ReviewFactory.getRating();
     String comment = ReviewFactory.getComment(rating);
     LocalDate reviewDate = ReviewFactory.getReviewDate(product.getReleaseDate());
 
-    review.setProductId(productId);
+    review.setProductId(product.getId());
     review.setUserId(userId);
     review.setRating(rating);
     review.setTitle("Cool, it's a " + product.getName());

@@ -6,6 +6,7 @@ import io.catalyte.training.sportsproducts.domains.review.Review;
 import io.catalyte.training.sportsproducts.domains.review.ReviewRepository;
 import io.catalyte.training.sportsproducts.domains.user.User;
 import io.catalyte.training.sportsproducts.domains.user.UserRepository;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,16 +88,19 @@ public class DemoData implements CommandLineRunner {
     productRepository.saveAll(productList);
     logger.info("Loading " + numberOfUsers + " users...");
     userRepository.saveAll(userList);
+
     logger.info("Loading reviews for products...");
 
     //Generate reviews for the products in the repository
-    List<Review> reviewList = reviewFactory.generateRandomReviews(
-        productRepository,
-        maxReviewsPerProduct,
-        numberOfUsers);
+    List<Review> allProductsReviewList = new ArrayList<>();
+    for (Product product : productList) {
+      List<Review> productReviewList = reviewFactory.generateRandomReviews(product,
+          maxReviewsPerProduct, numberOfUsers);
+      allProductsReviewList.addAll(productReviewList);
+    }
 
     // Persist them to the database
-    reviewRepository.saveAll(reviewList);
+    reviewRepository.saveAll(allProductsReviewList);
     logger.info("Data load completed. You can make requests now.");
   }
 

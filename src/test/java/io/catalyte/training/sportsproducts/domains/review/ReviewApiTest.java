@@ -37,8 +37,8 @@ public class ReviewApiTest {
    * @throws Exception
    */
   @Test
-  public void getAllProductsReturns404() throws Exception {
-    mockMvc.perform(get(REVIEWS_PATH)).andExpect(status().isNotFound());
+  public void getReviewsWithInvalidProductIdReturns400() throws Exception {
+    mockMvc.perform(get(REVIEWS_PATH + "?productId=1001")).andExpect(status().isNotFound());
   }
 
   /**
@@ -59,6 +59,16 @@ public class ReviewApiTest {
   @Test
   public void getReviewByProductIdReturns200() throws Exception {
     mockMvc.perform(get(REVIEWS_PATH + "?productId=1")).andExpect(status().isOk());
+  }
+
+  /**
+   * Test that ReviewController returns a status:200 when given a product ID
+   *
+   * @throws Exception
+   */
+  @Test
+  public void getReviewByUserIdReturns200() throws Exception {
+    mockMvc.perform(get(REVIEWS_PATH + "?userId=1")).andExpect(status().isOk());
   }
 }
 

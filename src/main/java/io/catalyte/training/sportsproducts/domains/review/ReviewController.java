@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Exposes endpoint for product reviews
+ * Exposes endpoint for the product reviews domain
  */
 @RestController
 @RequestMapping(value = REVIEWS_PATH)
@@ -29,23 +30,17 @@ public class ReviewController {
   private ReviewService reviewService;
 
   @GetMapping
-  public ResponseEntity<List<Review>> getAllReviews(Review review) {
-    logger.info("Request received for getReviews");
-    return new ResponseEntity<>(reviewService.getAllReviews(review), HttpStatus.OK);
-  }
-
-  @GetMapping(value = "/{product_id}")
   @ResponseStatus(value = HttpStatus.OK)
-  public ResponseEntity<List<Review>> getReviewsByProductId(@PathVariable Long productId) {
-    logger.info("Request received for getting reviews with product id: " + productId);
+  public ResponseEntity<List<Review>> getReviewsByProductId(Long productId) {
+    logger.info("Request received to get reviews for product id: " + productId);
 
     return new ResponseEntity<>(reviewService.getReviewsByProductId(productId), HttpStatus.OK);
   }
 
-  @GetMapping(value = "/{user_id}")
+  @GetMapping(value = "/user/{userId}")
   @ResponseStatus(value = HttpStatus.OK)
-  public ResponseEntity<List<Review>> getReviewsByUserId(@PathVariable Long userId) {
-    logger.info("Request received for getting reviews with user id: " + userId);
+  public ResponseEntity<List<Review>> getReviewsByUserId(@PathVariable (required = false) Long userId) {
+    logger.info("Request received to get reviews from user id: " + userId);
 
     return new ResponseEntity<>(reviewService.getReviewsByUserId(userId), HttpStatus.OK);
   }

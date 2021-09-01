@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,42 +38,26 @@ public class ReviewServiceImpl implements ReviewService {
   }
 
   /**
-   * Retrieves all reviews from the database, optionally making use of an example if it is passed.
-   *
-   * @param review - an example review to use for querying
-   * @return - a list of all reviews matching the example, or all reviews if no example was passed
-   */
-  public List<Review> getAllReviews(Review review) {
-    try {
-      return reviewRepository.findAll(Example.of(review));
-    } catch (DataAccessException e) {
-      logger.error(e.getMessage());
-      throw new ServerError(e.getMessage());
-    }
-  }
-
-  /**
    * Retrieves all reviews associated with a specific product ID.
    *
    * @param id - product ID used to query the database
    * @return - a list of all reviews for a given product
    */
   public List<Review> getReviewsByProductId(Long id) {
-    List<Review> review;
+    if (id == null || id.toString().trim().isEmpty()) {
+      throw new ResourceNotFound("No product ID specified for request.");
+    }
 
     try {
-      review = reviewRepository.getReviewsByProductId(id);
+      if (productRepository.getProductById(id) != null) {
+        return reviewRepository.getReviewsByProductId(id);
+      } else {
+        logger.info("Product with ID: " + id + ", does not exist.");
+        throw new ResourceNotFound("Product with ID: " + id + ", does not exist.");
+      }
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
-    }
-
-    if (review != null) {
-      return review;
-    } else {
-      logger.info("Get review by product ID: " + id + " failed, it does not exist in the database");
-      throw new ResourceNotFound(
-          "Get review by product ID: " + id + " failed, it does not exist in the database");
     }
   }
 
