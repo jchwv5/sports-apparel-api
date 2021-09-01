@@ -2,11 +2,13 @@ package io.catalyte.training.sportsproducts.domains.user;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 public class UserValidation {
 
   /**
-   * This function validates a user's first name field.
+   * Validates a user's first name field.
    *
    * @param errors An ArrayList of Strings containing the error messages.
    * @param user User being validated
@@ -18,7 +20,7 @@ public class UserValidation {
   }
 
   /**
-   * This function validates a user's first name field.
+   * Validates a user's first name field.
    *
    * @param errors An ArrayList of Strings containing the error messages.
    * @param user User being validated
@@ -44,7 +46,7 @@ public class UserValidation {
   }
 
   /**
-   * This function validates a user's street address field.
+   * Validates a user's street address field.
    *
    * @param errors An ArrayList of Strings containing the error messages.
    * @param user User being validated
@@ -55,7 +57,7 @@ public class UserValidation {
   }
 
   /**
-   * This function validates a user's street address field.
+   * Validates a user's street address field.
    *
    * @param errors An ArrayList of Strings containing the error messages.
    * @param user User being validated
@@ -67,7 +69,7 @@ public class UserValidation {
   }
 
   /**
-   * This function validates a user's state field
+   * Validates a user's state field
    *
    * @param errors An ArrayList of Strings containing the error messages.
    * @param user User being validated
@@ -83,7 +85,7 @@ public class UserValidation {
   }
 
   /**
-   * This function validates a user's zip code field
+   * Validates a user's zip code field
    *
    * @param errors An ArrayList of Strings containing the error messages.
    * @param user User being validated
@@ -98,7 +100,7 @@ public class UserValidation {
   }
 
   /**
-   * This function validates a user's phone number field
+   * Validates a user's phone number field
    *
    * @param errors An ArrayList of Strings containing the error messages.
    * @param user User being validated
@@ -112,10 +114,10 @@ public class UserValidation {
   }
 
   /**
-   * This function validates required user fields.
+   * Validates required user fields.
    *
    * @param errors An ArrayList of Strings containing the error messages.
-   * @param requiredInputToValidate String that will be validated/
+   * @param requiredInputToValidate String that will be validated
    * @param inputNameForErrorMessage Name of the input to be used for the dynamic error message.
    */
   public void validateRequired(ArrayList<String> errors, String requiredInputToValidate,
@@ -126,10 +128,10 @@ public class UserValidation {
   }
 
   /**
-   * This function validates alphabetic user fields.
+   * Validates alphabetic user fields.
    *
    * @param errors An ArrayList of Strings containing the error messages.
-   * @param requiredInputToValidate String that will be validated/
+   * @param requiredInputToValidate String that will be validated
    * @param inputNameForErrorMessage Name of the input to be used for the dynamic error message.
    */
   public void validateAlphabetic(ArrayList<String> errors, String requiredInputToValidate,
@@ -141,5 +143,48 @@ public class UserValidation {
     }
   }
 
+  /**
+   * Validates all user fields
+   *
+   * @param user User being validated
+   */
+  void validateUser(User user) {
+    ArrayList<String> errors = new ArrayList<>();
+    if (user == null) {
+      errors.add("No user provided");
+      processBadUserValidation(errors);
+
+      validateFirstName(errors, user);
+      validateLastName(errors, user);
+      validateEmail(errors, user);
+      validateStreetAddress(errors, user);
+      validateCity(errors, user);
+      validateState(errors, user);
+      validateZipCode(errors, user);
+      validatePhoneNumber(errors, user);
+
+      if (!errors.isEmpty()) {
+        processBadUserValidation(errors);
+      }
+    }
+  }
+
+  /**
+   * Validation helper method to throw exception for creating user with appropriate message
+   *
+   * @param errors ArrayList of error messages detailing what caused validation to fail
+   */
+  public void processBadUserValidation(ArrayList<String> errors) {
+    StringBuilder message = new StringBuilder();
+    for (int i = 0; i < errors.size(); i++) {
+      message.append(errors.get(i));
+      if (i < errors.size() - 1) {
+        message.append("; ");
+      }
+    }
+    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+        "User could not be created - " + message);
+  }
 
 }
+
