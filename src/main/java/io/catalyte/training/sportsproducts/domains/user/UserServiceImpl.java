@@ -1,18 +1,11 @@
 package io.catalyte.training.sportsproducts.domains.user;
 
-import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
-import io.catalyte.training.sportsproducts.exceptions.ServerError;
-import java.util.Optional;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
 import static io.catalyte.training.sportsproducts.constants.Roles.CUSTOMER;
 
 import io.catalyte.training.sportsproducts.auth.GoogleAuthService;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 /**
- * This class provides the implementation for the UserService interface.
-=======
-*/
+ * This class provides the implementation for the UserService interface. =======
+ */
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,9 +26,8 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   private final UserRepository userRepository;
-
-  Logger logger = LogManager.getLogger(UserController.class);
   private final GoogleAuthService googleAuthService = new GoogleAuthService();
+  Logger logger = LogManager.getLogger(UserController.class);
 
   public UserServiceImpl(UserRepository userRepository) {
     this.userRepository = userRepository;
@@ -60,9 +51,11 @@ public class UserServiceImpl implements UserService {
       return user;
     } else {
       logger2.info("Get by id failed, id does not exist in the database: " + id);
-      throw new ResourceNotFound("Get by id failed. id " + id + " does not exist in the database: ");
+      throw new ResourceNotFound(
+          "Get by id failed. id " + id + " does not exist in the database: ");
     }
   }
+
   /**
    * Adds a new user with unique email to the database.
    *
@@ -73,7 +66,7 @@ public class UserServiceImpl implements UserService {
     Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
     if (userOptional.isPresent()) {
       logger2.info("Add new user failed, email already exists in the database: " + user.getEmail());
-      throw new IllegalStateException("Email already exists: " + user.getEmail() );
+      throw new IllegalStateException("Email already exists: " + user.getEmail());
     }
     userRepository.save(user);
     System.out.println(user);

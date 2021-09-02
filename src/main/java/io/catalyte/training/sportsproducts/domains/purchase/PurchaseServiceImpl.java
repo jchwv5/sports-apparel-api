@@ -193,33 +193,6 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
   }
 
-  /**
-   * Checks the purchase for inactive products
-   */
-  public void checkForInactiveProducts(Purchase purchase) {
-    String errorMessage = "The following products in the purchase are inactive: ";
-    boolean inactiveProductPresent = false;
-
-    Set<LineItem> itemList = purchase.getProducts();
-
-    if (itemList != null) {
-      for (LineItem lineItem : itemList) {
-        Product product = productService.getProductById(lineItem.getId());
-        if (!product.getActive()) {
-          inactiveProductPresent = true;
-          errorMessage = errorMessage + product.getName() + ", ";
-        }
-      }
-    }
-
-    if (inactiveProductPresent) {
-      if(errorMessage.endsWith(", ")) {
-        errorMessage = errorMessage.substring(0, errorMessage.length() - 2) + ".";
-      }
-      throw new IllegalArgumentException(errorMessage);
-    }
-  }
-
   private void validateCardholder(ArrayList<String> errors, CreditCard ccToValidate) {
     if (ccToValidate.getCardholder() == null || ccToValidate.getCardholder().trim().equals("")) {
       errors.add("Name field must not be empty");
@@ -258,5 +231,34 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction declined - " + message);
   }
+
+  /**
+   * Checks the purchase for inactive products
+   */
+  public void checkForInactiveProducts(Purchase purchase) {
+    String errorMessage = "The following products in the purchase are inactive: ";
+    boolean inactiveProductPresent = false;
+
+    Set<LineItem> itemList = purchase.getProducts();
+
+    if (itemList != null) {
+      for (LineItem lineItem : itemList) {
+        Product product = lineItem.getProduct();
+        if (!product.getActive()) {
+          inactiveProductPresent = true;
+          errorMessage = errorMessage + product.getName() + ", ";
+        }
+      }
+    }
+
+    if (inactiveProductPresent) {
+      if(errorMessage.endsWith(", ")) {
+        errorMessage = errorMessage.substring(0, errorMessage.length() - 2) + ".";
+      }
+      throw new IllegalArgumentException(errorMessage);
+    }
+  }
 }
+
+
 
