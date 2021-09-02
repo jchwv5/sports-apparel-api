@@ -1,6 +1,7 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
 import static io.catalyte.training.sportsproducts.constants.Paths.PURCHASES_PATH;
+import static io.catalyte.training.sportsproducts.constants.Paths.SAVE_PURCHASES_PATH;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +31,7 @@ public class PurchaseController {
     this.purchaseService = purchaseService;
   }
 
-  @PostMapping
+  @PostMapping(value = SAVE_PURCHASES_PATH)
   public ResponseEntity savePurchase(@RequestBody Purchase purchase) {
 
     purchaseService.savePurchase(purchase);

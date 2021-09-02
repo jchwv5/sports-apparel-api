@@ -1,5 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import java.util.Objects;
@@ -20,7 +21,7 @@ public class LineItem {
   private Long id;
 
   @ManyToOne
-  @JsonIgnoreProperties("products")
+  @JsonIgnore
   private Purchase purchase;
 
   @ManyToOne
