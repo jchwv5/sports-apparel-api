@@ -204,7 +204,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     if (itemList != null) {
       for (LineItem lineItem : itemList) {
-        Product product = lineItem.getProduct();
+        Product product = productService.getProductById(lineItem.getId());
         if (!product.getActive()) {
           inactiveProductPresent = true;
           errorMessage = errorMessage + product.getName() + ", ";
