@@ -62,7 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
    * Retrieves all reviews associated with a specific user ID.
    *
    * @param id user ID used to query the database
-   * @return a list of all reviews for a given product
+   * @return a list of all reviews for a given user
    */
   public List<Review> getReviewsByUserId(Long id) {
     if (id == null || id.toString().trim().isEmpty()) {
@@ -80,28 +80,13 @@ public class ReviewServiceImpl implements ReviewService {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
-//    List<Review> review;
-//
-//    try {
-//      review = reviewRepository.getReviewsByUserId(id);
-//    } catch (DataAccessException e) {
-//      logger.error(e.getMessage());
-//      throw new ServerError(e.getMessage());
-//    }
-//
-//    if (review != null) {
-//      return review;
-//    } else {
-//      logger.info("User with ID: " + id + ", does not exist.");
-//      throw new ResourceNotFound("User with ID: " + id + ", does not exist.");
-//    }
   }
 
   /**
    * Persists a review to the database
    *
-   * @param review The review to be persisted
-   * @return The persisted review with its ids
+   * @param review the review to be persisted
+   * @return the persisted review with its IDs
    */
   public Review saveReview(Review review) {
     ReviewValidator validator = new ReviewValidator(productRepository, reviewRepository,

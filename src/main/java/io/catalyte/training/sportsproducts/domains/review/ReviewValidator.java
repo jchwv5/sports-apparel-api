@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 public class ReviewValidator {
+
   private final Logger logger = LogManager.getLogger(ReviewValidator.class);
 
   private final ProductRepository productRepository;
@@ -31,7 +32,7 @@ public class ReviewValidator {
   /**
    * Validates review fields before it is saved
    *
-   * @param review - the review to validate
+   * @param review the review to validate
    */
   void validateReview(Review review) {
     ArrayList<String> errors = new ArrayList<>();
@@ -56,10 +57,10 @@ public class ReviewValidator {
   }
 
   /**
-   * Validates a user ID is provided and that it exists in the database.
+   * Validates the user ID is provided and that it exists in the database.
    *
-   * @param errors - running list of errors
-   * @param review - review being verified
+   * @param errors running list of errors
+   * @param review review being verified
    */
   private void validateUserId(ArrayList<String> errors, Review review) {
     try {
@@ -73,11 +74,11 @@ public class ReviewValidator {
   }
 
   /**
-   * Validates a product ID is provided and that it exists in the database.
+   * Validates the product ID is provided and that it exists in the database.
    *
-   * @param errors - running list of errors
-   * @param review - review being verified
-   * @return - boolean if the product ID is valid or not
+   * @param errors running list of errors
+   * @param review review being verified
+   * @return boolean if the product ID is valid or not
    */
   private boolean validateProductId(ArrayList<String> errors, Review review) {
     try {
@@ -95,10 +96,10 @@ public class ReviewValidator {
   }
 
   /**
-   * Validates a rating is provided and that it is a positive integer between 1 and 5.
+   * Validates the rating is provided and that it is a positive integer between 1 and 5.
    *
-   * @param errors - running list of errors
-   * @param review - review being verified
+   * @param errors running list of errors
+   * @param review review being verified
    */
   private void validateRating(ArrayList<String> errors, Review review) {
     Integer rating = review.getRating();
@@ -110,10 +111,10 @@ public class ReviewValidator {
 
   /**
    * Validates the review has a date, and that the date is between the product release and today's
-   * date. This method requires the review having a valid product ID associated with it.
+   * date. This method requires the review has valid product ID associated with it.
    *
-   * @param errors - running list of errors
-   * @param review - review being verified
+   * @param errors running list of errors
+   * @param review review being verified
    */
   private void validateReviewDate(ArrayList<String> errors, Review review) {
     try {
@@ -140,6 +141,12 @@ public class ReviewValidator {
     }
   }
 
+  /**
+   * Validates the title length does not exceed the 255-character limit.
+   *
+   * @param errors running list of errors
+   * @param review review being verified
+   */
   private void validateTitle(ArrayList<String> errors, Review review) {
     int titleLength = review.getTitle().length();
 

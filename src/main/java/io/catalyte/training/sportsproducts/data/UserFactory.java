@@ -146,7 +146,7 @@ public class UserFactory {
   /**
    * Returns a random first name.
    *
-   * @return - a first name from the firstNames library
+   * @return a first name from the firstNames library
    */
   public static String getFirstName() {
     Random randomGenerator = new Random();
@@ -156,7 +156,7 @@ public class UserFactory {
   /**
    * Returns a random last name.
    *
-   * @return - a last name from the lastNames library
+   * @return a last name from the lastNames library
    */
   public static String getLastName() {
     Random randomGenerator = new Random();
@@ -164,9 +164,9 @@ public class UserFactory {
   }
 
   /**
-   * Returns an email address based on first and last name.
+   * Returns an email address based on first and last name plus a random number.
    *
-   * @return - an email string
+   * @return an email string
    */
   public static String getEmail(String firstName, String lastName) {
     Random randomGenerator = new Random();
@@ -182,9 +182,9 @@ public class UserFactory {
   }
 
   /**
-   * Returns a random fake street address.
+   * Returns a random fake street address with a random house number and street suffix.
    *
-   * @return - a color string
+   * @return a street address string
    */
   public static String getStreetAddress() {
     Random randomGenerator = new Random();
@@ -213,7 +213,7 @@ public class UserFactory {
   }
 
   /**
-   * Returns a random state from the list of states.
+   * Returns a random state from the library of states.
    *
    * @return a state string
    */
@@ -223,9 +223,9 @@ public class UserFactory {
   }
 
   /**
-   * Returns a random 10-digit phone number.
+   * Returns a randomized 10-digit phone number.
    *
-   * @return - a phone number string
+   * @return a phone number string
    */
   public static String getPhoneNumber() {
 
@@ -239,20 +239,17 @@ public class UserFactory {
   /**
    * Generates a random zip code.
    *
-   * @param min lowest random zip
-   * @param max highest random zip
    * @return random set of 5 numbers representing a zip code
    */
-  public static String getZipCode(double min, double max) {
-    return String.valueOf((int) ((Math.random() * ((max - min) + 1)) + min));
+  public static String getZipCode() {
+    return String.valueOf((int) ((Math.random() * ((99999 - 11111) + 1)) + 11111));
   }
 
   /**
    * Generates a random unique user code.
    *
-   * @param lengthOffset - desired minimum length of code
-   *
-   * @return - a randomized user code
+   * @param lengthOffset desired minimum length of code
+   * @return a randomized user code
    */
   public static String generateUniqueUserCode(int lengthOffset) {
     final Random nameLength = new Random();
@@ -269,13 +266,12 @@ public class UserFactory {
   }
 
   /**
-   * Generates a number of random users based on input.
+   * Generates a number of random users.
    *
-   * @param numberOfUsers - the number of random users to generate
-   * @return - a list of random users
+   * @param numberOfUsers the number of random users to generate
+   * @return a list of randomized users
    */
   public List<User> generateRandomUsers(Integer numberOfUsers) {
-
     List<User> userList = new ArrayList<>();
 
     for (int i = 0; i < numberOfUsers; i++) {
@@ -288,7 +284,7 @@ public class UserFactory {
   /**
    * Uses random generators to build a user.
    *
-   * @return - a randomly generated user
+   * @return a randomly generated user
    */
   public User createRandomUser() {
     User user = new User();
@@ -298,7 +294,7 @@ public class UserFactory {
     String streetAddress = UserFactory.getStreetAddress();
     String city = UserFactory.getCity();
     String state = UserFactory.getState();
-    String zip = UserFactory.getZipCode(11111, 99999);
+    String zip = UserFactory.getZipCode();
     String phoneNumber = UserFactory.getPhoneNumber();
 
     user.setFirstName(firstName);

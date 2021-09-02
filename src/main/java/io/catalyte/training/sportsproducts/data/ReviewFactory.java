@@ -72,9 +72,9 @@ public class ReviewFactory {
   };
 
   /**
-   * Returns a random product rating.
+   * Returns a random user ID to assign a review to.
    *
-   * @return a product rating int
+   * @return a user id as a Long
    */
   public static Long getUserId(int userRepositoryLength) {
     Random randomGenerator = new Random();
@@ -84,7 +84,7 @@ public class ReviewFactory {
   /**
    * Returns a random product rating.
    *
-   * @return a product rating int
+   * @return a product rating as an int
    */
   public static Integer getRating() {
     Random randomGenerator = new Random();
@@ -96,7 +96,7 @@ public class ReviewFactory {
    * comment<br/> - rating 3 = neutral comment<br/> - rating 4 or 5 = positive comment
    *
    * @param rating product rating used to determine library to be used
-   * @return a product comment
+   * @return a product comment as a String
    */
   public static String getComment(Integer rating) {
     StringBuilder comment = new StringBuilder();
@@ -146,7 +146,7 @@ public class ReviewFactory {
   /**
    * Determines a random review date between the product release date and the current local date.
    *
-   * @return a LocalDate
+   * @return a review date as a LocalDate
    */
   public static LocalDate getReviewDate(String productRelease) {
     LocalDate start = LocalDate.parse(productRelease);
@@ -155,8 +155,8 @@ public class ReviewFactory {
   }
 
   /**
-   * Generates a random number of randomized reviews for a given product, assigning each review
-   * to a random user along the way.
+   * Generates a random number of randomized reviews for a given product, assigning each review to a
+   * random user along the way.
    *
    * @param product              the product to create reviews for
    * @param maxReviewsPerProduct specified upper limit of reviews to be generated for the product
