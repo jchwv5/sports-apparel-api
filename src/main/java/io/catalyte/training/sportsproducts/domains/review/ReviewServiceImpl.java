@@ -37,8 +37,8 @@ public class ReviewServiceImpl implements ReviewService {
   /**
    * Retrieves all reviews associated with a specific product ID.
    *
-   * @param id - product ID used to query the database
-   * @return - a list of all reviews for a given product
+   * @param id product ID used to query the database
+   * @return a list of all reviews for a given product
    */
   public List<Review> getReviewsByProductId(Long id) {
     if (id == null || id.toString().trim().isEmpty()) {
@@ -59,10 +59,10 @@ public class ReviewServiceImpl implements ReviewService {
   }
 
   /**
-   * Retrieves all reviews associated with a specific product ID.
+   * Retrieves all reviews associated with a specific user ID.
    *
-   * @param id - product ID used to query the database
-   * @return - a list of all reviews for a given product
+   * @param id user ID used to query the database
+   * @return a list of all reviews for a given product
    */
   public List<Review> getReviewsByUserId(Long id) {
     List<Review> review;
@@ -86,7 +86,7 @@ public class ReviewServiceImpl implements ReviewService {
   /**
    * Persists a review to the database
    *
-   * @param review - The review to be persisted
+   * @param review The review to be persisted
    * @return The persisted review with its ids
    */
   public Review saveReview(Review review) {
@@ -108,141 +108,4 @@ public class ReviewServiceImpl implements ReviewService {
 
     return review;
   }
-
-//  /**
-//   * Validates review fields before it is saved
-//   *
-//   * @param review - the review to validate
-//   */
-//  void validateReview(Review review) {
-//    ArrayList<String> errors = new ArrayList<>();
-//
-//    if (review == null) {
-//      errors.add("No review provided");
-//      rejectReview(errors);
-//    }
-//
-//    assert review != null;
-//    validateUserId(errors, review);
-//    boolean productIdIsValid = validateProductId(errors, review);
-//    validateRating(errors, review);
-//    if (productIdIsValid) {
-//      validateReviewDate(errors, review);
-//    }
-//    validateTitle(errors, review);
-//
-//    if (!errors.isEmpty()) {
-//      rejectReview(errors);
-//    }
-//  }
-//
-//  /**
-//   * Validates a user ID is provided and that it exists in the database.
-//   *
-//   * @param errors - running list of errors
-//   * @param review - review being verified
-//   */
-//  private void validateUserId(ArrayList<String> errors, Review review) {
-//    try {
-//      Long userId = review.getUserId();
-//      if (userId < 1 || userId > userRepository.count()) {
-//        errors.add("User not found in database");
-//      }
-//    } catch (NullPointerException e) {
-//      errors.add("Review must have a user ID associated with it");
-//    }
-//  }
-//
-//  /**
-//   * Validates a product ID is provided and that it exists in the database.
-//   *
-//   * @param errors - running list of errors
-//   * @param review - review being verified
-//   * @return - boolean if the product ID is valid or not
-//   */
-//  private boolean validateProductId(ArrayList<String> errors, Review review) {
-//    try {
-//      Long productId = review.getProductId();
-//      if (productId < 0 || productId > productRepository.count()) {
-//        errors.add("Product with ID " + productId + " not found in database");
-//        return false;
-//      }
-//    } catch (NullPointerException e) {
-//      logger.error(e.getMessage());
-//      errors.add("Review must have a product ID associated with it");
-//      return false;
-//    }
-//    return true;
-//  }
-//
-//  /**
-//   * Validates a rating is provided and that it is a positive integer between 1 and 5.
-//   *
-//   * @param errors - running list of errors
-//   * @param review - review being verified
-//   */
-//  private void validateRating(ArrayList<String> errors, Review review) {
-//    Integer rating = review.getRating();
-//
-//    if (rating < 1 || rating > 5) {
-//      errors.add("Product rating must be a positive integer 1 - 5");
-//    }
-//  }
-//
-//  /**
-//   * Validates the review has a date, and that the date is between the product release and today's
-//   * date. This method requires the review having a valid product ID associated with it.
-//   *
-//   * @param errors - running list of errors
-//   * @param review - review being verified
-//   */
-//  private void validateReviewDate(ArrayList<String> errors, Review review) {
-//    try {
-//      LocalDate reviewDate = review.getDate();
-//      Long productId = review.getProductId();
-//      String productReleaseDate = "";
-//
-//      if (reviewDate == null) {
-//        errors.add("Review must have a review date");
-//        return;
-//      }
-//
-//      ProductServiceImpl productService = new ProductServiceImpl(productRepository);
-//      productReleaseDate = productService.getProductById(productId).getReleaseDate().trim();
-//
-//      LocalDate formattedReleaseDate = LocalDate.parse(productReleaseDate);
-//
-//      assert formattedReleaseDate != null;
-//      if (reviewDate.isBefore(formattedReleaseDate)) {
-//        errors.add("Review cannot be before product release date");
-//      }
-//    } catch (IllegalArgumentException e) {
-//      logger.error(e.getMessage());
-//    }
-//  }
-//
-//  private void validateTitle(ArrayList<String> errors, Review review) {
-//    int titleLength = review.getTitle().length();
-//
-//    if (titleLength > 255) {
-//      errors.add("Review title character length exceeded (max 255 characters)");
-//    }
-//  }
-//
-//  /**
-//   * Validation helper method to throw exception with appropriate message
-//   *
-//   * @param errors - running list of error messages detailing what caused validation to fail
-//   */
-//  private void rejectReview(ArrayList<String> errors) {
-//    StringBuilder message = new StringBuilder();
-//    for (int i = 0; i < errors.size(); i++) {
-//      message.append(errors.get(i));
-//      if (i < errors.size() - 1) {
-//        message.append("; ");
-//      }
-//    }
-//    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-//        "The review was unable to be saved - " + message);
-//  }
 }

@@ -29,20 +29,20 @@ public class ReviewController {
   @Autowired
   private ReviewService reviewService;
 
-  @GetMapping
+  @GetMapping(value = "/product")
   @ResponseStatus(value = HttpStatus.OK)
-  public ResponseEntity<List<Review>> getReviewsByProductId(Long productId) {
-    logger.info("Request received to get reviews for product id: " + productId);
+  public ResponseEntity<List<Review>> getReviewsByProductId(@RequestParam (required = false) Long id) {
+    logger.info("Request received to get reviews for product id: " + id);
 
-    return new ResponseEntity<>(reviewService.getReviewsByProductId(productId), HttpStatus.OK);
+    return new ResponseEntity<>(reviewService.getReviewsByProductId(id), HttpStatus.OK);
   }
 
-  @GetMapping(value = "/user/{userId}")
+  @GetMapping(value = "/user")
   @ResponseStatus(value = HttpStatus.OK)
-  public ResponseEntity<List<Review>> getReviewsByUserId(@PathVariable (required = false) Long userId) {
-    logger.info("Request received to get reviews from user id: " + userId);
+  public ResponseEntity<List<Review>> getReviewsByUserId(@RequestParam (required = false) Long id) {
+    logger.info("Request received to get reviews from user id: " + id);
 
-    return new ResponseEntity<>(reviewService.getReviewsByUserId(userId), HttpStatus.OK);
+    return new ResponseEntity<>(reviewService.getReviewsByUserId(id), HttpStatus.OK);
   }
 
   @PostMapping

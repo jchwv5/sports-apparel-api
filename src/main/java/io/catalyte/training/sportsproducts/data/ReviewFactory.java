@@ -155,7 +155,8 @@ public class ReviewFactory {
   }
 
   /**
-   * Generates a random number of randomized reviews for a given product.
+   * Generates a random number of randomized reviews for a given product, assigning each review
+   * to a random user along the way.
    *
    * @param product              the product to create reviews for
    * @param maxReviewsPerProduct specified upper limit of reviews to be generated for the product
