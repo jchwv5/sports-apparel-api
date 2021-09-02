@@ -58,6 +58,7 @@ public class ProductController {
 
     return new ResponseEntity<>(productService.getProductTypes(), HttpStatus.OK);
   }
+
   @PostMapping
   public ResponseEntity saveProduct(@RequestBody Product product) {
 
