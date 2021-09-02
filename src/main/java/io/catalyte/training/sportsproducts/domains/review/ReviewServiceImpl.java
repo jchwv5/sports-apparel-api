@@ -65,22 +65,36 @@ public class ReviewServiceImpl implements ReviewService {
    * @return a list of all reviews for a given product
    */
   public List<Review> getReviewsByUserId(Long id) {
-    List<Review> review;
+    if (id == null || id.toString().trim().isEmpty()) {
+      throw new ResourceNotFound("No user ID specified for request.");
+    }
 
     try {
-      review = reviewRepository.getReviewsByUserId(id);
+      if (userRepository.getUserById(id) != null) {
+        return reviewRepository.getReviewsByUserId(id);
+      } else {
+        logger.info("User with ID: " + id + ", does not exist.");
+        throw new ResourceNotFound("User with ID: " + id + ", does not exist.");
+      }
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
-
-    if (review != null) {
-      return review;
-    } else {
-      logger.info("Get review by user ID: " + id + " failed, it does not exist in the database");
-      throw new ResourceNotFound(
-          "Get review by user ID: " + id + " failed, it does not exist in the database");
-    }
+//    List<Review> review;
+//
+//    try {
+//      review = reviewRepository.getReviewsByUserId(id);
+//    } catch (DataAccessException e) {
+//      logger.error(e.getMessage());
+//      throw new ServerError(e.getMessage());
+//    }
+//
+//    if (review != null) {
+//      return review;
+//    } else {
+//      logger.info("User with ID: " + id + ", does not exist.");
+//      throw new ResourceNotFound("User with ID: " + id + ", does not exist.");
+//    }
   }
 
   /**

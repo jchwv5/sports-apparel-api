@@ -1,7 +1,5 @@
 package io.catalyte.training.sportsproducts.domains.review;
 
-import static io.catalyte.training.sportsproducts.constants.Paths.PRODUCTS_PATH;
-import static io.catalyte.training.sportsproducts.constants.Paths.PURCHASES_PATH;
 import static io.catalyte.training.sportsproducts.constants.Paths.REVIEWS_PATH;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,23 +30,23 @@ public class ReviewApiTest {
   }
 
   /**
-   * Test that ReviewController returns a 404 error when given a null or empty string parameter
+   * Test that ReviewController returns a 404 error when given an invalid product ID parameter
    *
    * @throws Exception
    */
   @Test
-  public void getReviewsWithInvalidProductIdReturns400() throws Exception {
-    mockMvc.perform(get(REVIEWS_PATH + "?productId=1001")).andExpect(status().isNotFound());
+  public void getReviewsWithInvalidProductIdReturns404() throws Exception {
+    mockMvc.perform(get(REVIEWS_PATH + "/product?id=0")).andExpect(status().isNotFound());
   }
 
   /**
-   * Test that ReviewController returns a status:200 requesting all reviews
+   * Test that ReviewController returns a 404 error when given an invalid user ID parameter
    *
    * @throws Exception
    */
   @Test
-  public void getAllReviewsReturns200() throws Exception {
-    mockMvc.perform(get(REVIEWS_PATH)).andExpect(status().isOk());
+  public void getReviewsWithInvalidUserIdReturns404() throws Exception {
+    mockMvc.perform(get(REVIEWS_PATH + "/user?id=0")).andExpect(status().isNotFound());
   }
 
   /**
@@ -58,7 +56,7 @@ public class ReviewApiTest {
    */
   @Test
   public void getReviewByProductIdReturns200() throws Exception {
-    mockMvc.perform(get(REVIEWS_PATH + "?productId=1")).andExpect(status().isOk());
+    mockMvc.perform(get(REVIEWS_PATH + "/product?id=1")).andExpect(status().isOk());
   }
 
   /**
@@ -68,7 +66,7 @@ public class ReviewApiTest {
    */
   @Test
   public void getReviewByUserIdReturns200() throws Exception {
-    mockMvc.perform(get(REVIEWS_PATH + "?userId=1")).andExpect(status().isOk());
+    mockMvc.perform(get(REVIEWS_PATH + "/user?id=1")).andExpect(status().isOk());
   }
 }
 
