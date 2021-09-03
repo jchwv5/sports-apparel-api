@@ -66,6 +66,7 @@ public class UserServiceImpl implements UserService {
    * @return - the user
    */
   public User addUserByEmail(User user) {
+    userValidation.validateUser(user);
     Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
     if (userOptional.isPresent()) {
       logger2.info("Add new user failed, email already exists in the database: " + user.getEmail());
@@ -188,6 +189,7 @@ public class UserServiceImpl implements UserService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have an email field");
     }
 
+    // VALIDATE THE USER
     userValidation.validateUser(user);
 
     // CHECK TO MAKE SURE USER EMAIL IS NOT TAKEN
