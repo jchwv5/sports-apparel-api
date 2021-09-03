@@ -8,6 +8,7 @@ import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,6 +79,9 @@ public class PurchaseServiceImpl implements PurchaseService {
       throw new BadRequest(e.getMessage());
     }
 
+    //Time stamp the purchase before saving
+    newPurchase.setTimeStamp(LocalDateTime.now());
+
     try {
       purchaseRepository.save(newPurchase);
     } catch (DataAccessException e) {
@@ -103,7 +107,7 @@ public class PurchaseServiceImpl implements PurchaseService {
       itemsList.forEach(lineItem -> {
 
         // retrieve full product information from the database
-        Product product = productService.getProductById(lineItem.getProduct().getId());
+        Product product = productService.getProductById(lineItem.getId());
 
         // set the product info into the lineitem
         if (product != null) {
@@ -243,7 +247,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     if (itemList != null) {
       for (LineItem lineItem : itemList) {
-        Product product = lineItem.getProduct();
+        Product product = productService.getProductById(lineItem.getId());
         if (!product.getActive()) {
           inactiveProductPresent = true;
           errorMessage = errorMessage + product.getName() + ", ";
@@ -252,7 +256,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     if (inactiveProductPresent) {
-      if(errorMessage.endsWith(", ")) {
+      if (errorMessage.endsWith(", ")) {
         errorMessage = errorMessage.substring(0, errorMessage.length() - 2) + ".";
       }
       throw new IllegalArgumentException(errorMessage);

@@ -32,10 +32,7 @@ public class PurchaseController {
 
   @PostMapping
   public ResponseEntity savePurchase(@RequestBody Purchase purchase) {
-
-    purchaseService.savePurchase(purchase);
-
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return new ResponseEntity<>(purchaseService.savePurchase(purchase), HttpStatus.OK);
   }
 
   @GetMapping
