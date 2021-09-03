@@ -1,5 +1,8 @@
 package io.catalyte.training.sportsproducts.domains.user;
 
+import static io.catalyte.training.sportsproducts.constants.Roles.CUSTOMER;
+
+import io.catalyte.training.sportsproducts.auth.GoogleAuthService;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import java.util.Optional;
@@ -7,11 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
-
-import static io.catalyte.training.sportsproducts.constants.Roles.CUSTOMER;
-
-import io.catalyte.training.sportsproducts.auth.GoogleAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,10 +25,8 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   private final UserRepository userRepository;
-
-  Logger logger = LogManager.getLogger(UserController.class);
-  UserValidation userValidation = new UserValidation();
   private final GoogleAuthService googleAuthService = new GoogleAuthService();
+  Logger logger = LogManager.getLogger(UserController.class);
 
   public UserServiceImpl(UserRepository userRepository) {
     this.userRepository = userRepository;
