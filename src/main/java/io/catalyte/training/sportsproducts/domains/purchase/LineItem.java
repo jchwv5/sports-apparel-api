@@ -1,7 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -25,7 +24,7 @@ public class LineItem {
   private Purchase purchase;
 
   @ManyToOne
-  @JsonIgnoreProperties("products")
+  @JsonIgnore
   private Product product;
 
   private int quantity;
@@ -83,7 +82,10 @@ public class LineItem {
 
     LineItem lineItem = (LineItem) o;
 
-    if (quantity != lineItem.quantity) {
+    if(quantity != lineItem.quantity){
+      return false;
+    }
+    if (!Objects.equals(id, lineItem.id)) {
       return false;
     }
     if (!Objects.equals(purchase, lineItem.purchase)) {
@@ -94,7 +96,8 @@ public class LineItem {
 
   @Override
   public int hashCode() {
-    int result = purchase != null ? purchase.hashCode() : 0;
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (purchase != null ? purchase.hashCode() : 0);
     result = 31 * result + (product != null ? product.hashCode() : 0);
     result = 31 * result + quantity;
     return result;
