@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -26,11 +27,11 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private final UserRepository userRepository;
   private final GoogleAuthService googleAuthService = new GoogleAuthService();
+  private final UserValidation userValidation = new UserValidation();
+
   Logger logger = LogManager.getLogger(UserController.class);
 
-  public UserServiceImpl(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
+  public UserServiceImpl(UserRepository userRepository) { this.userRepository = userRepository; }
 
   /**
    * Retrieves the user with the provided id from the database.
