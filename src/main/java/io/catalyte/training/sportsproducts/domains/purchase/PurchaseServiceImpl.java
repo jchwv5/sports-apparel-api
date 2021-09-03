@@ -103,7 +103,7 @@ public class PurchaseServiceImpl implements PurchaseService {
       itemsList.forEach(lineItem -> {
 
         // retrieve full product information from the database
-        Product product = productService.getProductById(lineItem.getProduct().getId());
+        Product product = productService.getProductById(lineItem.getId());
 
         // set the product info into the lineitem
         if (product != null) {
@@ -243,7 +243,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     if (itemList != null) {
       for (LineItem lineItem : itemList) {
-        Product product = lineItem.getProduct();
+        Product product = productService.getProductById(lineItem.getId());
         if (!product.getActive()) {
           inactiveProductPresent = true;
           errorMessage = errorMessage + product.getName() + ", ";

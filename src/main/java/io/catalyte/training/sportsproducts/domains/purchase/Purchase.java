@@ -1,6 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
-import io.catalyte.training.sportsproducts.domains.product.Product;
+import com.google.api.client.util.DateTime;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
@@ -8,8 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Describes a purchase object that holds the information for a transaction
@@ -21,6 +19,8 @@ public class Purchase {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  private Long userId;
+
   @OneToMany(mappedBy = "purchase")
   private Set<LineItem> products;
 
@@ -29,6 +29,8 @@ public class Purchase {
   private BillingAddress billingAddress;
 
   private CreditCard creditCard;
+
+  private DateTime timeStamp;
 
   public Purchase() {
   }
@@ -39,6 +41,14 @@ public class Purchase {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public Long getUserId() {
+    return userId;
+  }
+
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   public Set<LineItem> getProducts() {
@@ -73,13 +83,23 @@ public class Purchase {
     this.creditCard = creditCard;
   }
 
+  public DateTime getTimeStamp() {
+    return timeStamp;
+  }
+
+  public void setTimeStamp(DateTime timeStamp) {
+    this.timeStamp = timeStamp;
+  }
+
   @Override
   public String toString() {
     return "Purchase{" +
         "id=" + id +
+        ", userId=" + userId +
         ", deliveryAddress=" + deliveryAddress +
         ", billingAddress=" + billingAddress +
         ", creditCard=" + creditCard +
+        ", timeStamp=" + timeStamp +
         '}';
   }
 
@@ -209,9 +229,13 @@ class BillingAddress {
     return billingZip;
   }
 
-  public void setBillingZip(int billingZip) { this.billingZip = billingZip;  }
+  public void setBillingZip(int billingZip) {
+    this.billingZip = billingZip;
+  }
 
-  public String getEmail() { return email;  }
+  public String getEmail() {
+    return email;
+  }
 
   public void setEmail(String email) {
     this.email = email;
