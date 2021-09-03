@@ -1,6 +1,5 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
-import com.google.api.client.util.DateTime;
 import java.time.LocalDateTime;
 import java.util.Set;
 import javax.persistence.Embeddable;
@@ -19,8 +18,6 @@ public class Purchase {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  private Long userId;
 
   @OneToMany(mappedBy = "purchase")
   private Set<LineItem> products;
@@ -42,14 +39,6 @@ public class Purchase {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
   }
 
   public Set<LineItem> getProducts() {
@@ -96,7 +85,6 @@ public class Purchase {
   public String toString() {
     return "Purchase{" +
         "id=" + id +
-        ", userId=" + userId +
         ", deliveryAddress=" + deliveryAddress +
         ", billingAddress=" + billingAddress +
         ", creditCard=" + creditCard +
