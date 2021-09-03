@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -63,6 +62,7 @@ public class UserServiceImpl implements UserService {
    * @return - the user
    */
   public User addUserByEmail(User user) {
+    userValidation.validateUser(user);
     Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
     if (userOptional.isPresent()) {
       logger2.info("Add new user failed, email already exists in the database: " + user.getEmail());
@@ -72,7 +72,6 @@ public class UserServiceImpl implements UserService {
     System.out.println(user);
     return user;
   }
-
 
   /**
    * Updates a User given they are given the right credentials
@@ -165,8 +164,8 @@ public class UserServiceImpl implements UserService {
       return existingUser;
     }
 
-    // ELSE CREATE NEW USER
-    return createUser(user);
+    // ELSE CREATE NEW USER WITHOUT VALIDATION
+    return createUserWithoutValidation(user);
   }
 
   /**
@@ -178,6 +177,54 @@ public class UserServiceImpl implements UserService {
   @Override
   public User createUser(User user) {
 
+    String email = user.getEmail();
+
+    // CHECK TO MAKE SURE EMAIL EXISTS ON INCOMING USER
+    if (email == null) {
+      logger.error("User must have an email field");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have an email field");
+    }
+
+    // VALIDATE THE USER
+    userValidation.validateUser(user);
+
+    // CHECK TO MAKE SURE USER EMAIL IS NOT TAKEN
+    User existingUser;
+
+    try {
+      existingUser = userRepository.findByEmail(user.getEmail());
+    } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
+      throw new ServerError(dae.getMessage());
+    }
+
+    if (existingUser != null) {
+      logger.error("Email is taken");
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is taken");
+    }
+
+    // SET DEFAULT ROLE TO CUSTOMER
+    user.setRole(CUSTOMER);
+
+    // SAVE USER
+    try {
+      logger.info("Saving user");
+      return userRepository.save(user);
+    } catch (DataAccessException dae) {
+      logger.error(dae.getMessage());
+      throw new ServerError(dae.getMessage());
+    }
+
+  }
+
+  /**
+   * Creates a user without Validation
+   *
+   * @param user User to create
+   * @return Saved User
+   */
+  @Override
+  public User createUserWithoutValidation(User user) {
     String email = user.getEmail();
 
     // CHECK TO MAKE SURE EMAIL EXISTS ON INCOMING USER
@@ -202,14 +249,11 @@ public class UserServiceImpl implements UserService {
     }
 
     // SET DEFAULT ROLE TO CUSTOMER
-    // NOT RUNNING CONDITIONAL DUE TO SOMEONE ASSIGNING THEMSELVES A ROLE
-    // if (user.getRole() == null) {
     user.setRole(CUSTOMER);
-    // }
 
     // SAVE USER
     try {
-      logger.info("Saved user");
+      logger.info("Saving user");
       return userRepository.save(user);
     } catch (DataAccessException dae) {
       logger.error(dae.getMessage());
