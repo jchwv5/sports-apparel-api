@@ -2,7 +2,6 @@ package io.catalyte.training.sportsproducts.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import io.catalyte.training.sportsproducts.domains.purchase.Purchase;
 import io.catalyte.training.sportsproducts.domains.review.Review;
 import java.util.List;
 import javax.persistence.Entity;
