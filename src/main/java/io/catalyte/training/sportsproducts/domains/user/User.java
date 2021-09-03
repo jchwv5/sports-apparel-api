@@ -2,6 +2,7 @@ package io.catalyte.training.sportsproducts.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import io.catalyte.training.sportsproducts.domains.purchase.Purchase;
 import io.catalyte.training.sportsproducts.domains.review.Review;
 import java.util.List;
 import javax.persistence.Entity;
@@ -60,6 +61,9 @@ public class User {
   private String role;
 
   @OneToMany(mappedBy = "userId")
+  private List<Purchase> purchases;
+
+  @OneToMany(mappedBy = "userId")
   private List<Review> reviews;
 
   public User() {
@@ -67,7 +71,7 @@ public class User {
 
   public User(String firstName, String lastName, String email,
       String streetAddress, String streetAddress2, String city, String state,
-      String zipCode, String phoneNumber, String role, List<Review> reviews) {
+      String zipCode, String phoneNumber, String role, List<Purchase> purchases, List<Review> reviews) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
@@ -78,6 +82,7 @@ public class User {
     this.zipCode = zipCode;
     this.phoneNumber = phoneNumber;
     this.role = role;
+    this.purchases = purchases;
     this.reviews = reviews;
   }
 
