@@ -13,5 +13,7 @@ public interface UserService {
 
   User getUserById(Long id);
 
+  User createUserWithoutValidation(User user);
+
 
 }
