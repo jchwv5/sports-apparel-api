@@ -40,7 +40,7 @@ public class UserValidation {
   public void validateEmail(ArrayList<String> errors, User user) {
     String email = user.getEmail();
     validateRequired(errors, email, "Email");
-    if (!Pattern.matches("^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", email)) {
+    if (email == null || !Pattern.matches("^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", email)) {
       errors.add("Invalid email. Email must be in either x@x.x or x@x format.");
     }
   }
@@ -77,7 +77,7 @@ public class UserValidation {
   public void validateState(ArrayList<String> errors, User user) {
     String state = user.getState();
     validateRequired(errors, state, "State");
-    if (!Pattern.matches(
+    if (state == null || !Pattern.matches(
         "^(?-i:A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$",
         state)) {
       errors.add("Invalid State. Please enter a valid two-letter US state abbreviation.");
@@ -93,7 +93,7 @@ public class UserValidation {
   public void validateZipCode(ArrayList<String> errors, User user) {
     String zipCode = user.getZipCode();
     validateRequired(errors, zipCode, "Zip code");
-    if (!Pattern.matches("^[0-9]{5}(?:-[0-9]{4})?$", zipCode)) {
+    if (zipCode == null || !Pattern.matches("^[0-9]{5}(?:-[0-9]{4})?$", zipCode)) {
       errors.add(
           "Invalid Zip Code. Zip Code must be in either the xxxxx or xxxxx-xxxx format, where 'x' represents a digit.");
     }
@@ -107,7 +107,7 @@ public class UserValidation {
    */
   public void validatePhoneNumber(ArrayList<String> errors, User user) {
     String phoneNumber = user.getPhoneNumber();
-    if (!Pattern.matches("\"^\\d{3}-\\d{3}-\\d{4}$", phoneNumber)) {
+    if (phoneNumber == null || !Pattern.matches("\"^\\d{3}-\\d{3}-\\d{4}$", phoneNumber)) {
       errors.add(
           "Invalid Phone Number. Phone Number must be in the xxx-xxx-xxxx format, where 'x' represents a digit.");
     }
@@ -136,7 +136,7 @@ public class UserValidation {
    */
   public void validateAlphabetic(ArrayList<String> errors, String requiredInputToValidate,
       String inputNameForErrorMessage) {
-    if (!Pattern.matches("^([A-Za-z])[A-Za-z '-]*$", requiredInputToValidate)) {
+    if (requiredInputToValidate == null || !Pattern.matches("^([A-Za-z])[A-Za-z '-]*$", requiredInputToValidate)) {
       errors.add(String
           .format("Invalid Input. %s; may only allow letters, apostrophes, spaces, hyphens (-)",
               inputNameForErrorMessage));
@@ -153,19 +153,19 @@ public class UserValidation {
     if (user == null) {
       errors.add("No user provided");
       processBadUserValidation(errors);
+    }
 
-      validateFirstName(errors, user);
-      validateLastName(errors, user);
-      validateEmail(errors, user);
-      validateStreetAddress(errors, user);
-      validateCity(errors, user);
-      validateState(errors, user);
-      validateZipCode(errors, user);
-      validatePhoneNumber(errors, user);
+    validateFirstName(errors, user);
+    validateLastName(errors, user);
+    validateEmail(errors, user);
+    validateStreetAddress(errors, user);
+    validateCity(errors, user);
+    validateState(errors, user);
+    validateZipCode(errors, user);
+    validatePhoneNumber(errors, user);
 
-      if (!errors.isEmpty()) {
-        processBadUserValidation(errors);
-      }
+    if (!errors.isEmpty()) {
+      processBadUserValidation(errors);
     }
   }
 
