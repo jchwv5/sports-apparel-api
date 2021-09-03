@@ -61,9 +61,6 @@ public class User {
   private String role;
 
   @OneToMany(mappedBy = "userId")
-  private List<Purchase> purchases;
-
-  @OneToMany(mappedBy = "userId")
   private List<Review> reviews;
 
   public User() {
@@ -71,7 +68,7 @@ public class User {
 
   public User(String firstName, String lastName, String email,
       String streetAddress, String streetAddress2, String city, String state,
-      String zipCode, String phoneNumber, String role, List<Purchase> purchases, List<Review> reviews) {
+      String zipCode, String phoneNumber, String role, List<Review> reviews) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
@@ -82,7 +79,6 @@ public class User {
     this.zipCode = zipCode;
     this.phoneNumber = phoneNumber;
     this.role = role;
-    this.purchases = purchases;
     this.reviews = reviews;
   }
 
