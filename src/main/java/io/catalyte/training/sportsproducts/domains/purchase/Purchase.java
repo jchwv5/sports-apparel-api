@@ -1,6 +1,7 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
 import com.google.api.client.util.DateTime;
+import java.time.LocalDateTime;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ public class Purchase {
 
   private CreditCard creditCard;
 
-  private DateTime timeStamp;
+  private LocalDateTime timeStamp;
 
   public Purchase() {
   }
@@ -83,11 +84,11 @@ public class Purchase {
     this.creditCard = creditCard;
   }
 
-  public DateTime getTimeStamp() {
+  public LocalDateTime getTimeStamp() {
     return timeStamp;
   }
 
-  public void setTimeStamp(DateTime timeStamp) {
+  public void setTimeStamp(LocalDateTime timeStamp) {
     this.timeStamp = timeStamp;
   }
 
