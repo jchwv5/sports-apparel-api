@@ -1,5 +1,7 @@
 package io.catalyte.training.sportsproducts.domains.product;
 
+import io.catalyte.training.sportsproducts.data.ProductFactory;
+import io.catalyte.training.sportsproducts.data.ProductType;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import java.util.List;
@@ -92,6 +94,9 @@ public class ProductServiceImpl implements ProductService {
    */
   @Override
   public Product saveProduct(Product product) {
+    //if product is missing any codes, generate them
+    generateMissingCodes(product);
+
     try {
       productRepository.save(product);
       logger.info("Saved product");
@@ -102,4 +107,29 @@ public class ProductServiceImpl implements ProductService {
     return product;
   }
 
+  /**
+   * Generates all missing required code fields for a product before persisting to database.
+   * @param product product to be checked for missing fields
+   * @return product with all codes generated
+   */
+  private Product generateMissingCodes(Product product) {
+    if (product.getPrimaryColorCode() == null ||
+        product.getPrimaryColorCode().isEmpty()) {
+      product.setPrimaryColorCode(ProductFactory.getColorCode());
+    }
+    if (product.getSecondaryColorCode() == null ||
+        product.getSecondaryColorCode().isEmpty()) {
+      product.setSecondaryColorCode(ProductFactory.getColorCode());
+    }
+    if (product.getStyleNumber() == null ||
+        product.getStyleNumber().isEmpty()) {
+      product.setStyleNumber(ProductFactory.getStyleCode());
+    }
+    if (product.getGlobalProductCode() == null ||
+        product.getGlobalProductCode().isEmpty()) {
+      product.setGlobalProductCode(ProductFactory.getRandomProductId());
+    }
+
+    return product;
+  }
 }
