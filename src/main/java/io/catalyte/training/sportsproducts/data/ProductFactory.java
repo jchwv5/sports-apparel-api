@@ -262,7 +262,7 @@ public class ProductFactory {
     product.setSecondaryColorCode(ProductFactory.getColorCode());
     product.setGlobalProductCode(ProductFactory.getRandomProductId());
     product.setStyleNumber(ProductFactory.getStyleCode());
-    product.setReleaseDate(ProductFactory.getReleaseDate().toString());
+    product.setReleaseDate(ProductFactory.getReleaseDate());
     product.setActive((ProductFactory.getActive()));
     return product;
   }
