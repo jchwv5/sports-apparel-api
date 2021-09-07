@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.coyote.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +65,8 @@ public class PurchaseServiceImplTest {
   private PurchaseRepository mockPurchaseRepository;
 
   List purchaseList = new ArrayList<>();
-  Purchase purchase = new Purchase();
+  Purchase p1 = new Purchase();
+  Purchase p2 = new Purchase();
 
   @Before
   public void setUp() throws Exception {
@@ -91,12 +93,12 @@ public class PurchaseServiceImplTest {
     c1.setCvv(510);
     c1.setExpiration("11/11/2011");
     c1.setCardholder("Jack Smith");
-    purchase.setId(1L);
-    purchase.setProducts(null);
-    purchase.setDeliveryAddress(d1);
-    purchase.setBillingAddress(b1);
-    purchase.setCreditCard(c1);
-    purchaseList.add(purchase);
+    p1.setId(1L);
+    p1.setProducts(null);
+    p1.setDeliveryAddress(d1);
+    p1.setBillingAddress(b1);
+    p1.setCreditCard(c1);
+    purchaseList.add(p1);
 
     when(mockPurchaseRepository.findPurchasesByBillingAddressEmail(anyString())).thenReturn(
         purchaseList);
@@ -418,9 +420,9 @@ public class PurchaseServiceImplTest {
   @Test
   public void findPurchasesByEmailReturnsJack() {
     ArrayList<Purchase> expected = new ArrayList<>();
-    expected.add(purchase);
+    expected.add(p1);
     List<Purchase> result = mockPurchaseServiceImpl.findPurchasesByEmail(
-        purchase.getBillingAddress().getEmail());
+        p1.getBillingAddress().getEmail());
     Assert.assertEquals(expected, result);
   }
 

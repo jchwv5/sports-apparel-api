@@ -9,14 +9,6 @@ products:
   number: 1000
   load: true
 
-users:
-  number: 100
-  load: true
-
-reviews:
-  maxPerProduct: 5
-  load: true
-
 logging:
   level:
     org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: ERROR
