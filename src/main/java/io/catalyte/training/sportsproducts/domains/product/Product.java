@@ -2,6 +2,7 @@ package io.catalyte.training.sportsproducts.domains.product;
 
 import io.catalyte.training.sportsproducts.domains.review.Review;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +30,7 @@ public class Product {
 
   private String type;
 
-  private String releaseDate;
+  private LocalDate releaseDate;
 
   private String primaryColorCode;
 
@@ -62,7 +63,7 @@ public class Product {
       String demographic,
       String category,
       String type,
-      String releaseDate,
+      LocalDate releaseDate,
       String primaryColorCode,
       String secondaryColorCode,
       String styleNumber,
@@ -141,11 +142,11 @@ public class Product {
     this.type = type;
   }
 
-  public String getReleaseDate() {
+  public LocalDate getReleaseDate() {
     return releaseDate;
   }
 
-  public void setReleaseDate(String releaseDate) {
+  public void setReleaseDate(LocalDate releaseDate) {
     this.releaseDate = releaseDate;
   }
 
