@@ -32,11 +32,15 @@ public class PurchaseController {
 
   @PostMapping
   public ResponseEntity savePurchase(@RequestBody Purchase purchase) {
-    return new ResponseEntity<>(purchaseService.savePurchase(purchase), HttpStatus.OK);
+
+    purchaseService.savePurchase(purchase);
+
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   @GetMapping
-  public ResponseEntity findPurchasesByEmail(@RequestParam (required = false) String email) {
+  public ResponseEntity findPurchasesByEmail(
+      @RequestParam (required = false) String email) {
     return new ResponseEntity<>(purchaseService.findPurchasesByEmail(email), HttpStatus.OK);
   }
 }

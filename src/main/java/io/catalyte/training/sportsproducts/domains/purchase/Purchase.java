@@ -1,6 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
-import java.time.LocalDateTime;
+import io.catalyte.training.sportsproducts.domains.product.Product;
 import java.util.Set;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Describes a purchase object that holds the information for a transaction
@@ -27,8 +29,6 @@ public class Purchase {
   private BillingAddress billingAddress;
 
   private CreditCard creditCard;
-
-  private LocalDateTime timeStamp;
 
   public Purchase() {
   }
@@ -73,14 +73,6 @@ public class Purchase {
     this.creditCard = creditCard;
   }
 
-  public LocalDateTime getTimeStamp() {
-    return timeStamp;
-  }
-
-  public void setTimeStamp(LocalDateTime timeStamp) {
-    this.timeStamp = timeStamp;
-  }
-
   @Override
   public String toString() {
     return "Purchase{" +
@@ -88,7 +80,6 @@ public class Purchase {
         ", deliveryAddress=" + deliveryAddress +
         ", billingAddress=" + billingAddress +
         ", creditCard=" + creditCard +
-        ", timeStamp=" + timeStamp +
         '}';
   }
 
@@ -218,13 +209,9 @@ class BillingAddress {
     return billingZip;
   }
 
-  public void setBillingZip(int billingZip) {
-    this.billingZip = billingZip;
-  }
+  public void setBillingZip(int billingZip) { this.billingZip = billingZip;  }
 
-  public String getEmail() {
-    return email;
-  }
+  public String getEmail() { return email;  }
 
   public void setEmail(String email) {
     this.email = email;
