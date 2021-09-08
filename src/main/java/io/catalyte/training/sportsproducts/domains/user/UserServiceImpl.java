@@ -27,12 +27,11 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private final UserRepository userRepository;
   private final GoogleAuthService googleAuthService = new GoogleAuthService();
-  Logger logger = LogManager.getLogger(UserController.class);
   private final UserValidation userValidation = new UserValidation();
 
-  public UserServiceImpl(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
+  Logger logger = LogManager.getLogger(UserController.class);
+
+  public UserServiceImpl(UserRepository userRepository) { this.userRepository = userRepository; }
 
   /**
    * Retrieves the user with the provided id from the database.
