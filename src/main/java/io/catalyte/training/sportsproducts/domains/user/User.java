@@ -2,10 +2,13 @@ package io.catalyte.training.sportsproducts.domains.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import io.catalyte.training.sportsproducts.domains.review.Review;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -22,46 +25,27 @@ public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  @NotBlank(message = "First Name may not be blank, empty or null")
-  @Pattern(regexp = "^([A-Za-z])[A-Za-z '-]*$", message = "Invalid Input. Name may only allow letters, apostrophes, spaces, hyphens (-)")
   private String firstName;
-
-  @NotBlank(message = "Last Name may not be blank, empty or null")
-  @Pattern(regexp = "^([A-Za-z])[A-Za-z '-]*$", message = "Invalid Input. Name may only allow letters, apostrophes, spaces, hyphens (-)")
   private String lastName;
-
-  @NotBlank(message = "Email is required")
-  @Email
   private String email;
-
-  @NotBlank(message = "Street address is required")
   private String streetAddress;
-
   private String streetAddress2;
-
-  @NotBlank(message = "City is required")
-  @Pattern(regexp = "^([A-Za-z])[A-Za-z '-]*$", message = "Invalid Input. City may only allow letters, apostrophes, spaces, hyphens (-)")
   private String city;
-
-  @State
   private String state;
-
-  @NotBlank(message = "Zip code may not be blank")
-  @Pattern(regexp = "^[0-9]{5}(?:-[0-9]{4})?$", message = "Invalid Input.")
   private String zipCode;
-
-  @Pattern(regexp = "^\\d{3}-\\d{3}-\\d{4}$", message = "Invalid Input.")
   private String phoneNumber;
 
   private String role;
+
+  @OneToMany(mappedBy = "userId")
+  private List<Review> reviews;
 
   public User() {
   }
 
   public User(String firstName, String lastName, String email,
       String streetAddress, String streetAddress2, String city, String state,
-      String zipCode, String phoneNumber, String role) {
+      String zipCode, String phoneNumber, String role, List<Review> reviews) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
@@ -72,6 +56,7 @@ public class User {
     this.zipCode = zipCode;
     this.phoneNumber = phoneNumber;
     this.role = role;
+    this.reviews = reviews;
   }
 
   public Long getId() {
@@ -162,6 +147,13 @@ public class User {
     this.role = role;
   }
 
+  public List<Review> getReviews() {
+    return reviews;
+  }
+
+  public void setReviews(List<Review> reviews) {
+    this.reviews = reviews;
+  }
 
   @Override
   public String toString() {

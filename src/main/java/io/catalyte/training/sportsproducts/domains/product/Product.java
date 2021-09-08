@@ -1,15 +1,14 @@
 package io.catalyte.training.sportsproducts.domains.product;
 
+import io.catalyte.training.sportsproducts.domains.review.Review;
 import java.math.BigDecimal;
-<<<<<<< HEAD
 import java.time.LocalDate;
 import java.util.List;
-=======
->>>>>>> 69be9d01f4e6497a465a555872c9e547dc4f4091
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  * This class is a representation of a sports apparel product.
@@ -53,6 +52,9 @@ public class Product {
 
   private Boolean active;
 
+  @OneToMany(mappedBy="productId")
+  private List<Review> reviews;
+
   public Product() {
   }
 
@@ -71,7 +73,8 @@ public class Product {
       BigDecimal price,
       Integer quantity,
       String imageSrc,
-      Boolean active) {
+      Boolean active,
+      List<Review> reviews) {
     this.name = name;
     this.description = description;
     this.demographic = demographic;
@@ -88,6 +91,7 @@ public class Product {
     this.quantity = quantity;
     this.imageSrc = imageSrc;
     this.active = active;
+    this.reviews = reviews;
   }
 
   public Long getId() {
@@ -226,6 +230,14 @@ public class Product {
     this.active = active;
   }
 
+  public List<Review> getReviews() {
+    return reviews;
+  }
+
+  public void setReviews(List<Review> reviews) {
+    this.reviews = reviews;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -294,6 +306,10 @@ public class Product {
         : product.quantity != null) {
       return false;
     }
+    if (reviews != null ? !reviews.equals(product.reviews)
+        : product.reviews != null) {
+      return false;
+    }
     return active != null ? active.equals(product.active) : product.active == null;
   }
 
@@ -316,6 +332,7 @@ public class Product {
     result = 31 * result + (imageSrc != null ? imageSrc.hashCode() : 0);
     result = 31 * result + (material != null ? material.hashCode() : 0);
     result = 31 * result + (quantity != null ? quantity.hashCode() : 0);
+    result = 31 * result + (reviews != null ? reviews.hashCode() : 0);
     return result;
   }
 
@@ -339,6 +356,7 @@ public class Product {
         ", quantity=" + quantity +
         ", imageSrc='" + imageSrc + '\'' +
         ", active=" + active +
+        ", reviews=" + reviews +
         '}';
   }
 }

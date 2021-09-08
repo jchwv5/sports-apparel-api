@@ -9,7 +9,6 @@ products:
   number: 1000
   load: true
 
-<<<<<<< HEAD
 users:
   number: 100
   load: true
@@ -18,8 +17,6 @@ reviews:
   maxPerProduct: 10
   load: true
 
-=======
->>>>>>> 69be9d01f4e6497a465a555872c9e547dc4f4091
 logging:
   level:
     org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: ERROR
