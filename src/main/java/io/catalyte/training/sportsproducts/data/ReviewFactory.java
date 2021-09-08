@@ -148,8 +148,8 @@ public class ReviewFactory {
    *
    * @return a review date as a LocalDate
    */
-  public static LocalDate getReviewDate(String productRelease) {
-    LocalDate start = LocalDate.parse(productRelease);
+  public static LocalDate getReviewDate(LocalDate productRelease) {
+    LocalDate start = productRelease;
     LocalDate end = LocalDate.now();
     return between(start, end);
   }

@@ -120,7 +120,7 @@ public class ReviewValidator {
     try {
       LocalDate reviewDate = review.getDate();
       Long productId = review.getProductId();
-      String productReleaseDate = "";
+      LocalDate productReleaseDate;
 
       if (reviewDate == null) {
         errors.add("Review must have a review date");
@@ -128,12 +128,11 @@ public class ReviewValidator {
       }
 
       ProductServiceImpl productService = new ProductServiceImpl(productRepository);
-      productReleaseDate = productService.getProductById(productId).getReleaseDate().trim();
+      productReleaseDate = productService.getProductById(productId).getReleaseDate();
 
-      LocalDate formattedReleaseDate = LocalDate.parse(productReleaseDate);
 
-      assert formattedReleaseDate != null;
-      if (reviewDate.isBefore(formattedReleaseDate)) {
+
+      if (reviewDate.isBefore(productReleaseDate)) {
         errors.add("Review cannot be before product release date");
       }
     } catch (IllegalArgumentException e) {
