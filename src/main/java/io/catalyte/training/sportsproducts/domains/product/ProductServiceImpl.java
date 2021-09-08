@@ -20,7 +20,6 @@ public class ProductServiceImpl implements ProductService {
 
   private final Logger logger = LogManager.getLogger(ProductServiceImpl.class);
 
-  @Autowired
   ProductRepository productRepository;
 
   @Autowired
@@ -89,7 +88,6 @@ public class ProductServiceImpl implements ProductService {
 
   /**
    * Insert and save a new Product to database.
-   *
    * @param product saved product
    */
   @Override

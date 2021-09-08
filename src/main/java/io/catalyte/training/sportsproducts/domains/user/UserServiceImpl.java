@@ -1,11 +1,18 @@
 package io.catalyte.training.sportsproducts.domains.user;
 
+import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
+import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
 import static io.catalyte.training.sportsproducts.constants.Roles.CUSTOMER;
 
 import io.catalyte.training.sportsproducts.auth.GoogleAuthService;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
-import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 /**
- * This class provides the implementation for the UserService interface. =======
- */
+ * This class provides the implementation for the UserService interface.
+=======
+*/
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,12 +34,13 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   private final UserRepository userRepository;
-  private final GoogleAuthService googleAuthService = new GoogleAuthService();
-  private final UserValidation userValidation = new UserValidation();
 
   Logger logger = LogManager.getLogger(UserController.class);
+  private final GoogleAuthService googleAuthService = new GoogleAuthService();
 
-  public UserServiceImpl(UserRepository userRepository) { this.userRepository = userRepository; }
+  public UserServiceImpl(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   /**
    * Retrieves the user with the provided id from the database.
@@ -51,11 +60,9 @@ public class UserServiceImpl implements UserService {
       return user;
     } else {
       logger2.info("Get by id failed, id does not exist in the database: " + id);
-      throw new ResourceNotFound(
-          "Get by id failed. id " + id + " does not exist in the database: ");
+      throw new ResourceNotFound("Get by id failed. id " + id + " does not exist in the database: ");
     }
   }
-
   /**
    * Adds a new user with unique email to the database.
    *
@@ -63,16 +70,16 @@ public class UserServiceImpl implements UserService {
    * @return - the user
    */
   public User addUserByEmail(User user) {
-    userValidation.validateUser(user);
     Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
     if (userOptional.isPresent()) {
       logger2.info("Add new user failed, email already exists in the database: " + user.getEmail());
-      throw new IllegalStateException("Email already exists: " + user.getEmail());
+      throw new IllegalStateException("Email already exists: " + user.getEmail() );
     }
     userRepository.save(user);
     System.out.println(user);
     return user;
   }
+
 
   /**
    * Updates a User given they are given the right credentials
@@ -165,8 +172,8 @@ public class UserServiceImpl implements UserService {
       return existingUser;
     }
 
-    // ELSE CREATE NEW USER WITHOUT VALIDATION
-    return createUserWithoutValidation(user);
+    // ELSE CREATE NEW USER
+    return createUser(user);
   }
 
   /**
@@ -186,9 +193,6 @@ public class UserServiceImpl implements UserService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have an email field");
     }
 
-    // VALIDATE THE USER
-    userValidation.validateUser(user);
-
     // CHECK TO MAKE SURE USER EMAIL IS NOT TAKEN
     User existingUser;
 
@@ -205,56 +209,14 @@ public class UserServiceImpl implements UserService {
     }
 
     // SET DEFAULT ROLE TO CUSTOMER
+    // NOT RUNNING CONDITIONAL DUE TO SOMEONE ASSIGNING THEMSELVES A ROLE
+    // if (user.getRole() == null) {
     user.setRole(CUSTOMER);
+    // }
 
     // SAVE USER
     try {
-      logger.info("Saving user");
-      return userRepository.save(user);
-    } catch (DataAccessException dae) {
-      logger.error(dae.getMessage());
-      throw new ServerError(dae.getMessage());
-    }
-
-  }
-
-  /**
-   * Creates a user without Validation
-   *
-   * @param user User to create
-   * @return Saved User
-   */
-  @Override
-  public User createUserWithoutValidation(User user) {
-    String email = user.getEmail();
-
-    // CHECK TO MAKE SURE EMAIL EXISTS ON INCOMING USER
-    if (email == null) {
-      logger.error("User must have an email field");
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User must have an email field");
-    }
-
-    // CHECK TO MAKE SURE USER EMAIL IS NOT TAKEN
-    User existingUser;
-
-    try {
-      existingUser = userRepository.findByEmail(user.getEmail());
-    } catch (DataAccessException dae) {
-      logger.error(dae.getMessage());
-      throw new ServerError(dae.getMessage());
-    }
-
-    if (existingUser != null) {
-      logger.error("Email is taken");
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is taken");
-    }
-
-    // SET DEFAULT ROLE TO CUSTOMER
-    user.setRole(CUSTOMER);
-
-    // SAVE USER
-    try {
-      logger.info("Saving user");
+      logger.info("Saved user");
       return userRepository.save(user);
     } catch (DataAccessException dae) {
       logger.error(dae.getMessage());
