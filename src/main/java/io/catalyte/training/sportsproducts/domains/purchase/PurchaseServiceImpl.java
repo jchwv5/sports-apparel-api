@@ -2,13 +2,19 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
+import io.catalyte.training.sportsproducts.domains.user.User;
+import io.catalyte.training.sportsproducts.domains.user.UserRepository;
+import io.catalyte.training.sportsproducts.domains.user.UserValidation;
 import io.catalyte.training.sportsproducts.exceptions.BadRequest;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
 import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,17 +33,20 @@ import org.springframework.web.server.ResponseStatusException;
 public class PurchaseServiceImpl implements PurchaseService {
 
   private final Logger logger = LogManager.getLogger(PurchaseServiceImpl.class);
+  private final UserValidation userValidation = new UserValidation();
 
-  PurchaseRepository purchaseRepository;
-  ProductService productService;
-  LineItemRepository lineItemRepository;
+  private final PurchaseRepository purchaseRepository;
+  private final ProductService productService;
+  private final LineItemRepository lineItemRepository;
+  private final UserRepository userRepository;
 
   @Autowired
   public PurchaseServiceImpl(PurchaseRepository purchaseRepository, ProductService productService,
-      LineItemRepository lineItemRepository) {
+      LineItemRepository lineItemRepository, UserRepository userRepository) {
     this.purchaseRepository = purchaseRepository;
     this.productService = productService;
     this.lineItemRepository = lineItemRepository;
+    this.userRepository = userRepository;
   }
 
   /**
@@ -59,7 +68,7 @@ public class PurchaseServiceImpl implements PurchaseService {
   }
 
   /**
-   * Persists a purchase to the database
+   * Persists a purchase to the database and last active timestamp to user table
    *
    * @param newPurchase - the purchase to persist
    * @return the persisted purchase with ids
@@ -70,6 +79,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     } catch (IllegalArgumentException e) {
       logger.error(e.getMessage());
       throw new UnprocessableEntityError(e.getMessage());
+
     }
 
     try {
@@ -79,9 +89,53 @@ public class PurchaseServiceImpl implements PurchaseService {
       throw new BadRequest(e.getMessage());
     }
 
-    //Time stamp the purchase before saving
-    newPurchase.setTimeStamp(LocalDateTime.now());
+    // Calculate and set purchase total
+    newPurchase.setTotal(calculateTotal(newPurchase));
 
+    //Time stamp of when purchase is made
+    ZoneId zid = ZoneId.of("UTC");
+    LocalDateTime lt = LocalDateTime.now(zid);
+    newPurchase.setTimeStamp(lt);
+
+    // SEE IF USER EXISTS
+    User existingUser = userRepository.findByEmail(newPurchase.getBillingAddress().getEmail());
+
+    // IF USER EXISTS, RETURN EXISTING USER WITH UPDATED TIMESTAMP
+    if (existingUser != null) {
+      logger.info("Existing user has been found");
+      existingUser.setLastActiveTime(lt);
+      userRepository.save(existingUser);
+      // IF THE USER DOESN'T EXIST, CREATE A NEW USER IN THE USER TABLE
+    } else {
+      User newUser = new User();
+      newUser.setLastName(newPurchase.getDeliveryAddress().getLastName());
+      newUser.setFirstName(newPurchase.getDeliveryAddress().getFirstName());
+      newUser.setStreetAddress(newPurchase.getBillingAddress().getBillingStreet());
+      newUser.setStreetAddress2(newPurchase.getBillingAddress().getBillingStreet2());
+      newUser.setCity(newPurchase.getBillingAddress().getBillingCity());
+
+      // set up two-letter abbreviation state for user
+      String stateFullName = newPurchase.getBillingAddress().getBillingState();
+      StateAbbreviation abbreviation = new StateAbbreviation();
+      String state = abbreviation.convertStateAbbreviations(stateFullName.toUpperCase());
+      newUser.setState(state);
+
+      //convert zipcode of type int to type String
+      int zipCode = newPurchase.getBillingAddress().getBillingZip();
+      String zipCodeStr = String.valueOf(zipCode);
+      newUser.setZipCode(zipCodeStr);
+      newUser.setPhoneNumber(newPurchase.getBillingAddress().getPhone());
+      newUser.setRole("Customer");
+      newUser.setEmail(newPurchase.getBillingAddress().getEmail());
+      newUser.setLastActiveTime(lt);
+      userValidation.validateUser(newUser);
+      try {
+        userRepository.save(newUser);
+      } catch (DataAccessException e) {
+        logger.error(e.getMessage());
+        throw new ServerError(e.getMessage());
+      }
+    }
     try {
       purchaseRepository.save(newPurchase);
     } catch (DataAccessException e) {
@@ -126,6 +180,38 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
       });
     }
+  }
+
+  /**
+   * Calculates the total purchase cost
+   *
+   * @param purchase purchase to calculate total for
+   * @return total purchase cost
+   */
+  private BigDecimal calculateTotal(Purchase purchase) {
+    BigDecimal total = new BigDecimal(0);
+    Set<LineItem> itemsList = purchase.getProducts();
+
+    if (itemsList != null) {
+      for (LineItem lineItem : itemsList) {
+
+        // retrieve full product information from the database
+        BigDecimal itemPrice = productService.getProductById(lineItem.getId()).getPrice();
+        BigDecimal itemSubtotal = new BigDecimal(0);
+        int itemQuantity = lineItem.getQuantity();
+
+        // get the subtotal of the line item
+        itemSubtotal = itemPrice.multiply(BigDecimal.valueOf(itemQuantity));
+
+        // add line item subtotal to purchase subtotal
+        total = total.add(itemSubtotal);
+
+        // TODO: use subtotal, tax rate, and shipping rate to calc total
+      }
+      ;
+    }
+
+    return total;
   }
 
   /**
@@ -260,9 +346,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         errorMessage = errorMessage.substring(0, errorMessage.length() - 2) + ".";
       }
       throw new IllegalArgumentException(errorMessage);
+
     }
   }
 }
-
-
-

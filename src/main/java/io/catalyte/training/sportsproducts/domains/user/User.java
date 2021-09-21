@@ -3,16 +3,17 @@ package io.catalyte.training.sportsproducts.domains.user;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import io.catalyte.training.sportsproducts.domains.review.Review;
+import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 /**
  * This class is a representation of a user.
@@ -27,15 +28,19 @@ public class User {
   private Long id;
   private String firstName;
   private String lastName;
-  private String email;
+
   private String streetAddress;
   private String streetAddress2;
   private String city;
   private String state;
   private String zipCode;
   private String phoneNumber;
-
   private String role;
+
+  private String email;
+
+  @Column(name = "last_active_time", columnDefinition="timestamp with time zone")
+  private LocalDateTime lastActiveTime;
 
   @OneToMany(mappedBy = "userId")
   private List<Review> reviews;
@@ -43,9 +48,10 @@ public class User {
   public User() {
   }
 
-  public User(String firstName, String lastName, String email,
-      String streetAddress, String streetAddress2, String city, String state,
-      String zipCode, String phoneNumber, String role, List<Review> reviews) {
+  public User(String firstName, String lastName, String email, String streetAddress,
+      String streetAddress2, String city, String state, String zipCode, String phoneNumber,
+      String role, LocalDateTime lastActiveTime,
+      List<Review> reviews) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
@@ -56,6 +62,7 @@ public class User {
     this.zipCode = zipCode;
     this.phoneNumber = phoneNumber;
     this.role = role;
+    this.lastActiveTime = lastActiveTime;
     this.reviews = reviews;
   }
 
@@ -155,6 +162,14 @@ public class User {
     this.reviews = reviews;
   }
 
+  public LocalDateTime getLastActiveTime() {
+    return lastActiveTime;
+  }
+
+  public void setLastActiveTime(LocalDateTime lastActiveTime) {
+    this.lastActiveTime = lastActiveTime;
+  }
+
   @Override
   public String toString() {
     return "User{" +
@@ -163,11 +178,14 @@ public class User {
         ", lastName='" + lastName + '\'' +
         ", email='" + email + '\'' +
         ", streetAddress='" + streetAddress + '\'' +
-        ", StreetAddress2='" + streetAddress2 + '\'' +
+        ", streetAddress2='" + streetAddress2 + '\'' +
         ", city='" + city + '\'' +
-        ", street='" + state + '\'' +
+        ", state='" + state + '\'' +
         ", zipCode='" + zipCode + '\'' +
         ", phoneNumber='" + phoneNumber + '\'' +
+        ", role='" + role + '\'' +
+        ", lastActiveTime=" + lastActiveTime +
+        ", reviews=" + reviews +
         '}';
   }
 }

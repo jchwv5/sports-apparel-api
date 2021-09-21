@@ -1,6 +1,7 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ public class LineItem {
   private Purchase purchase;
 
   @ManyToOne
-  @JsonIgnore
+  @JsonIgnoreProperties("products")
   private Product product;
 
   private int quantity;

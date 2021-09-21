@@ -1,15 +1,27 @@
 package io.catalyte.training.sportsproducts.domains.product;
 
 import io.catalyte.training.sportsproducts.data.ProductFactory;
-import io.catalyte.training.sportsproducts.data.ProductType;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,15 +36,22 @@ public class ProductServiceImpl implements ProductService {
   ProductRepository productRepository;
 
   @Autowired
-  public ProductServiceImpl(ProductRepository productRepository) {
+  public ProductServiceImpl(ProductRepository productRepository,
+      EntityManager entityManager) {
     this.productRepository = productRepository;
+    this.entityManager = entityManager;
+  }
+
+  @PersistenceContext
+  private EntityManager entityManager;
+
+  public ProductServiceImpl(ProductRepository productRepository) {
   }
 
   /**
-   * Retrieves all products from the database, optionally making use of an example if it is passed.
-   *
-   * @param product - an example product to use for querying
-   * @return - a list of products matching the example, or all products if no example was passed
+   * Gets the products from the repository
+   * @param product - object that contains products
+   * @return a List that contains all the products
    */
   public List<Product> getProducts(Product product) {
     try {
@@ -41,6 +60,35 @@ public class ProductServiceImpl implements ProductService {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
+  }
+
+  /**
+   * Retrieves all products from the database, optionally making use of an example if it is passed.
+   * @param pageSize - number of products on page
+   * @param pageNo - page number
+   * @return - a map with all active products paginated
+   */
+  public Map<String, Object> findAllProducts(int pageNo, int pageSize) {
+    List<Product> products = new ArrayList<Product>();
+    Page<Product> pageCount = productRepository.findAllByActive(true, PageRequest.of(pageNo, pageSize));
+    products = pageCount.getContent();
+    Map<String, Object> response = new HashMap<>();
+    response.put("products", products);
+    response.put("totalPages", pageCount.getTotalPages());
+
+    try {
+      return response;
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+      
+    }
+  }
+
+  @Override
+  public List<Product> getFilteredProducts(Product product) {
+    return null;
+
   }
 
   /**
@@ -66,6 +114,7 @@ public class ProductServiceImpl implements ProductService {
       throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
     }
   }
+
 
   @Override
   public List<String> getProductByCategory() {

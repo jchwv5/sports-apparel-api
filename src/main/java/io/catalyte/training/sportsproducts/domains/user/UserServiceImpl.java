@@ -5,6 +5,8 @@ import static io.catalyte.training.sportsproducts.constants.Roles.CUSTOMER;
 import io.catalyte.training.sportsproducts.auth.GoogleAuthService;
 import io.catalyte.training.sportsproducts.exceptions.ResourceNotFound;
 import io.catalyte.training.sportsproducts.exceptions.ServerError;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,16 +24,16 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class UserServiceImpl implements UserService {
 
-  private final Logger logger2 = LogManager.getLogger(UserServiceImpl.class);
+  private final Logger logger = LogManager.getLogger(UserServiceImpl.class);
 
   @Autowired
   private final UserRepository userRepository;
   private final GoogleAuthService googleAuthService = new GoogleAuthService();
   private final UserValidation userValidation = new UserValidation();
 
-  Logger logger = LogManager.getLogger(UserController.class);
-
-  public UserServiceImpl(UserRepository userRepository) { this.userRepository = userRepository; }
+  public UserServiceImpl(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
   /**
    * Retrieves the user with the provided id from the database.
@@ -44,15 +46,38 @@ public class UserServiceImpl implements UserService {
     try {
       user = userRepository.findById(id).orElse(null);
     } catch (DataAccessException e) {
-      logger2.error(e.getMessage());
+      logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
     if (user != null) {
       return user;
     } else {
-      logger2.info("Get by id failed, id does not exist in the database: " + id);
+      logger.info("Get by id failed, id does not exist in the database: " + id);
       throw new ResourceNotFound(
-          "Get by id failed. id " + id + " does not exist in the database: ");
+              "Get by id failed. id " + id + " does not exist in the database: ");
+    }
+  }
+
+  /**
+   * Retrieves the user info with the matching email from the database.
+   * @param email
+   * @return
+   */
+  public User findUserByEmail(String email) {
+    User user;
+    try {
+      user = userRepository.findByEmail(email);
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+    if (user != null) {
+      return user;
+    } else {
+      logger.info("Get by email failed, email does not exist in the database" + email);
+      throw new ResourceNotFound(
+              "Get by email failed. email " + email + "does not exist in the database: "
+      );
     }
   }
 
@@ -66,7 +91,7 @@ public class UserServiceImpl implements UserService {
     userValidation.validateUser(user);
     Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
     if (userOptional.isPresent()) {
-      logger2.info("Add new user failed, email already exists in the database: " + user.getEmail());
+      logger.info("Add new user failed, email already exists in the database: " + user.getEmail());
       throw new IllegalStateException("Email already exists: " + user.getEmail());
     }
     userRepository.save(user);
@@ -92,7 +117,7 @@ public class UserServiceImpl implements UserService {
     if (!isAuthenticated) {
       logger.error("Email in the request body does not match email from JWT");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Email in the request body does not match email from JWT Token");
+              "Email in the request body does not match email from JWT Token");
     }
 
     // UPDATES USER
@@ -146,12 +171,16 @@ public class UserServiceImpl implements UserService {
     if (!isAuthenticated) {
       logger.error("Email in the request body does not match email from JWT");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Email in the request body does not match email from JWT Token");
+              "Email in the request body does not match email from JWT Token");
     }
 
     // SEE IF USER EXISTS
     User existingUser;
 
+    //create a clock
+    ZoneId zid = ZoneId.of("UTC");
+    // create an LocalDateTime object using now(zoneId)
+    LocalDateTime lt = LocalDateTime.now(zid);
     try {
       existingUser = userRepository.findByEmail(user.getEmail());
     } catch (DataAccessException dae) {
@@ -159,13 +188,16 @@ public class UserServiceImpl implements UserService {
       throw new ServerError(dae.getMessage());
     }
 
-    // IF USER EXISTS, RETURN EXISTING USER
+    // IF USER EXISTS, RETURN EXISTING USER WITH UPDATED TIMESTAMP
     if (existingUser != null) {
       logger.info("Existing user has been found");
+      existingUser.setLastActiveTime(lt);
+      userRepository.save(existingUser);
       return existingUser;
     }
 
     // ELSE CREATE NEW USER WITHOUT VALIDATION
+    user.setLastActiveTime(lt);
     return createUserWithoutValidation(user);
   }
 

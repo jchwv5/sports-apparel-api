@@ -72,4 +72,10 @@ public class ProductApiTest {
     String expected = "[\"Belt\",\"Elbow Pad\",\"Flip Flop\",\"Glove\",\"Hat\",\"Headband\",\"Helmet\",\"Hoodie\",\"Jacket\",\"Pant\",\"Pool Noodle\",\"Shin Guard\",\"Shoe\",\"Shorts\",\"Sock\",\"Sunglasses\",\"Tank Top\",\"Visor\",\"Wristband\"]";
     assertEquals(expected, content);
   }
+
+  @Test
+  public void searchProductsReturns200() throws Exception {
+    mockMvc.perform(get(PRODUCTS_PATH + "?search=brand:Nike"))
+        .andExpect(status().isOk());
+  }
 }
