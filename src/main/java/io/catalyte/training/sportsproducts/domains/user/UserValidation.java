@@ -40,8 +40,11 @@ public class UserValidation {
   public void validateEmail(ArrayList<String> errors, User user) {
     String email = user.getEmail();
     validateRequired(errors, email, "Email");
-    if (email == null || !Pattern.matches("^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", email)) {
+//    if (email == null || !Pattern.matches("^^.+@.+\\\\..+$", email)) {
+    if (email == null || !Pattern.matches("^(.+)@(\\S+)$", email)) {
+
       errors.add("Invalid email. Email must be in either x@x.x or x@x format.");
+
     }
   }
 
@@ -107,9 +110,9 @@ public class UserValidation {
    */
   public void validatePhoneNumber(ArrayList<String> errors, User user) {
     String phoneNumber = user.getPhoneNumber();
-    if (phoneNumber == null || !Pattern.matches("\"^\\d{3}-\\d{3}-\\d{4}$", phoneNumber)) {
+    if (phoneNumber == null || !Pattern.matches("[0-9]+", phoneNumber)) {
       errors.add(
-          "Invalid Phone Number. Phone Number must be in the xxx-xxx-xxxx format, where 'x' represents a digit.");
+          "Invalid Phone Number. Phone Number must be digits only.");
     }
   }
 
@@ -148,7 +151,7 @@ public class UserValidation {
    *
    * @param user User being validated
    */
-  void validateUser(User user) {
+  public void validateUser(User user) {
     ArrayList<String> errors = new ArrayList<>();
     if (user == null) {
       errors.add("No user provided");
@@ -187,4 +190,3 @@ public class UserValidation {
   }
 
 }
-

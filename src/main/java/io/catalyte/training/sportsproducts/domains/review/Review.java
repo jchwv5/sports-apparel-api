@@ -1,5 +1,6 @@
 package io.catalyte.training.sportsproducts.domains.review;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;

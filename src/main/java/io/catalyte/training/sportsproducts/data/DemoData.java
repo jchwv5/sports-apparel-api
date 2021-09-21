@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component;
  * Because this class implements CommandLineRunner, the run method is executed as soon as the server
  * successfully starts, and before it begins accepting requests from the outside.
  * <p>
- * Here, we use this as a place to run some code that generates and saves a list of random products
- * into the database.
+ * Here, we use this as a place to run some code that generates and saves a list of random
+ * products, users, and reviews into the database.
  */
 @Component
 public class DemoData implements CommandLineRunner {
@@ -42,6 +42,12 @@ public class DemoData implements CommandLineRunner {
   public void run(String... strings) {
     // Retrieve the value of custom property in application.yml
     boolean loadData = Boolean.parseBoolean(env.getProperty("products.load"));
+    if(!loadData) {
+      loadData = Boolean.parseBoolean(env.getProperty("users.load"));
+    }
+    if(!loadData) {
+      loadData = Boolean.parseBoolean(env.getProperty("reviews.load"));
+    }
 
     if (loadData) {
       seedDatabase();
@@ -101,7 +107,7 @@ public class DemoData implements CommandLineRunner {
 
     // Persist them to the database
     reviewRepository.saveAll(allProductsReviewList);
-    logger.info("Data load completed. You can make requests now.");
+    logger.info("Data load completed.");
   }
 
 }

@@ -1,8 +1,11 @@
 package io.catalyte.training.sportsproducts.domains.purchase;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,14 +25,20 @@ public class Purchase {
   @OneToMany(mappedBy = "purchase")
   private Set<LineItem> products;
 
+  @Embedded
   private DeliveryAddress deliveryAddress;
 
+  @Embedded
   private BillingAddress billingAddress;
 
+  @Embedded
   private CreditCard creditCard;
 
-  private LocalDateTime timeStamp;
+  private BigDecimal total;
 
+  @Column(columnDefinition="timestamp with time zone")
+  private LocalDateTime timeStamp;
+  
   public Purchase() {
   }
 
@@ -71,6 +80,14 @@ public class Purchase {
 
   public void setCreditCard(CreditCard creditCard) {
     this.creditCard = creditCard;
+  }
+
+  public BigDecimal getTotal() {
+    return total;
+  }
+
+  public void setTotal(BigDecimal total) {
+    this.total = total;
   }
 
   public LocalDateTime getTimeStamp() {

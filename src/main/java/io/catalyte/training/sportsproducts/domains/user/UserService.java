@@ -13,6 +13,8 @@ public interface UserService {
 
   User getUserById(Long id);
 
+  User findUserByEmail(String email);
+
   User createUserWithoutValidation(User user);
 
 

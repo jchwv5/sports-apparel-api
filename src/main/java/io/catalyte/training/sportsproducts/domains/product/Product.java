@@ -52,7 +52,7 @@ public class Product {
 
   private Boolean active;
 
-  @OneToMany(mappedBy="productId")
+  @OneToMany(mappedBy = "productId")
   private List<Review> reviews;
 
   public Product() {
@@ -74,6 +74,7 @@ public class Product {
       Integer quantity,
       String imageSrc,
       Boolean active,
+
       List<Review> reviews) {
     this.name = name;
     this.description = description;
@@ -230,6 +231,7 @@ public class Product {
     this.active = active;
   }
 
+
   public List<Review> getReviews() {
     return reviews;
   }
@@ -237,6 +239,7 @@ public class Product {
   public void setReviews(List<Review> reviews) {
     this.reviews = reviews;
   }
+
 
   @Override
   public boolean equals(Object o) {

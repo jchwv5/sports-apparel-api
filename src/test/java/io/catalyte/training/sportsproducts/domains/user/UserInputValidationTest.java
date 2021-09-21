@@ -1,6 +1,7 @@
 package io.catalyte.training.sportsproducts.domains.user;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -693,7 +694,7 @@ public class UserInputValidationTest {
   }
 
   @Test
-  public void phoneNumberHasNoHyphens(){
+  public void phoneNumberHasHyphens(){
     User user = new User();
     user.setFirstName("dg-");
     user.setLastName("smith");
@@ -702,9 +703,9 @@ public class UserInputValidationTest {
     user.setCity("New York");
     user.setState("NY");
     user.setZipCode("123456789");
-    user.setPhoneNumber("111111111");
+    user.setPhoneNumber("111-111-111");
     Set<ConstraintViolation<User>> violations = validator.validate(user);
-    assertEquals(violations.isEmpty(), false);
+    assertEquals(!violations.isEmpty(), false);
   }
 
 

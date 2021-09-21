@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -76,18 +77,27 @@ public class UserController {
 
 
   @PostMapping
-  @ResponseStatus(value = HttpStatus.OK)
+  @ResponseStatus(value = HttpStatus.CREATED)
   public ResponseEntity<User> addUserByEmail(@Valid @RequestBody User user) {
     logger.info("Request received for addUserByEmail: " + user.getEmail());
-    return new ResponseEntity<>(userServiceImpl.addUserByEmail(user), HttpStatus.OK);
+    return new ResponseEntity<>(userServiceImpl.addUserByEmail(user), HttpStatus.CREATED);
   }
 
-  @GetMapping(value = "/{id}")
+  @GetMapping(value = "/id/{id}")
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<User> getUserById(@PathVariable Long id) {
     logger.info("Request received for getUsersById: " + id);
     return new ResponseEntity<>(userServiceImpl.getUserById(id), HttpStatus.OK);
   }
+
+
+  @GetMapping
+  @ResponseStatus(value = HttpStatus.OK)
+  public ResponseEntity<User> findUserByEmail(@RequestParam(required=false) String email) {
+    logger.info( "Request received for findUserByEmail: " + email);
+    return new ResponseEntity<>(userServiceImpl.findUserByEmail(email), HttpStatus.OK);
+  }
+
 
   /*
   This method handles validation and exception, making sure custom error message will display
@@ -107,6 +117,4 @@ public class UserController {
   }
 
 }
-
-
 
