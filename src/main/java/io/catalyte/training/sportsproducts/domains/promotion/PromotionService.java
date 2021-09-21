@@ -44,7 +44,8 @@ public class PromotionService {
     if (codeIsAlreadyInUse) {
       logger.info(
           "Add new promotion failed, code already exists in the database: " + promotion.getCode());
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists: " + promotion.getCode());
+      throw new ResponseStatusException(HttpStatus.CONFLICT,
+          "Email already exists: " + promotion.getCode());
     }
     Promotion persistedPromotion = null;
     try {

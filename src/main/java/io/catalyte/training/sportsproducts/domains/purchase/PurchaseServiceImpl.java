@@ -97,6 +97,11 @@ public class PurchaseServiceImpl implements PurchaseService {
     LocalDateTime lt = LocalDateTime.now(zid);
     newPurchase.setTimeStamp(lt);
 
+
+    // update user timestamp after making a purchase
+    addUserWithPurchase(newPurchase, lt);
+
+
     // SEE IF USER EXISTS
     User existingUser = userRepository.findByEmail(newPurchase.getBillingAddress().getEmail());
 
@@ -147,6 +152,60 @@ public class PurchaseServiceImpl implements PurchaseService {
     handleLineItems(newPurchase);
 
     return newPurchase;
+  }
+
+  /**
+   * Persists a user with purchase and last active timestamp to user table
+   *
+   * @param newPurchase - user's purchase
+   * @param lt - localDateTime in UTC
+   */
+  public void addUserWithPurchase(Purchase newPurchase, LocalDateTime lt){
+    // SEE IF USER EXISTS
+    User existingUser;
+    try {
+      existingUser = userRepository.findByEmail(newPurchase.getBillingAddress().getEmail());
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+
+    // IF USER EXISTS, RETURN EXISTING USER WITH UPDATED TIMESTAMP
+    if (existingUser != null) {
+      logger.info("Existing user has been found");
+      existingUser.setLastActiveTime(lt);
+      userRepository.save(existingUser);
+      // IF THE USER DOESN'T EXIST, CREATE A NEW USER IN THE USER TABLE
+    } else {
+      User newUser = new User();
+      newUser.setLastName(newPurchase.getDeliveryAddress().getLastName());
+      newUser.setFirstName(newPurchase.getDeliveryAddress().getFirstName());
+      newUser.setStreetAddress(newPurchase.getBillingAddress().getBillingStreet());
+      newUser.setStreetAddress2(newPurchase.getBillingAddress().getBillingStreet2());
+      newUser.setCity(newPurchase.getBillingAddress().getBillingCity());
+
+      // set up two-letter abbreviation state for user
+      String stateFullName = newPurchase.getBillingAddress().getBillingState();
+      StateAbbreviation abbreviation = new StateAbbreviation();
+      String state = abbreviation.convertStateAbbreviations(stateFullName.toUpperCase());
+      newUser.setState(state);
+
+      //convert zipcode of type int to type String
+      int zipCode = newPurchase.getBillingAddress().getBillingZip();
+      String zipCodeStr = String.valueOf(zipCode);
+      newUser.setZipCode(zipCodeStr);
+      newUser.setPhoneNumber(newPurchase.getBillingAddress().getPhone());
+      newUser.setRole("Customer");
+      newUser.setEmail(newPurchase.getBillingAddress().getEmail());
+      newUser.setLastActiveTime(lt);
+      userValidation.validateUser(newUser);
+      try {
+        userRepository.save(newUser);
+      } catch (DataAccessException e) {
+        logger.error(e.getMessage());
+        throw new ServerError(e.getMessage());
+      }
+    }
   }
 
   /**
