@@ -12,6 +12,7 @@ import javax.persistence.Id;
 @Entity
 public class Rate {
 
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -21,6 +22,18 @@ public class Rate {
   private String code;
 
   private BigDecimal rate;
+
+  private BigDecimal tax;
+
+  public Rate() {
+  }
+
+  public Rate(String type, String code, BigDecimal rate, BigDecimal tax) {
+    this.type = type;
+    this.code = code;
+    this.rate = rate;
+    this.tax = tax;
+  }
 
   public Long getId() {
     return id;
@@ -52,6 +65,14 @@ public class Rate {
 
   public void setRate(BigDecimal rate) {
     this.rate = rate;
+  }
+
+  public BigDecimal getTax() {
+    return tax;
+  }
+
+  public void setTax(BigDecimal tax) {
+    this.tax = tax;
   }
 
   @Override
