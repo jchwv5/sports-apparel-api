@@ -22,7 +22,7 @@ public class Rate {
 
   private String code;
 
-  @Column(precision=10, scale=3)
+  @Column(precision=10, scale=4)
   private BigDecimal rate;
 
   public Long getId() {
