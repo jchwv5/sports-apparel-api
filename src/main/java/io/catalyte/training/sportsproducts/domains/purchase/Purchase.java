@@ -34,11 +34,18 @@ public class Purchase {
   @Embedded
   private CreditCard creditCard;
 
-  private BigDecimal total;
+  private BigDecimal cartTotal;
 
-  @Column(columnDefinition="timestamp with time zone")
+  @Column(columnDefinition = "timestamp with time zone")
   private LocalDateTime timeStamp;
-  
+
+  private BigDecimal tax;
+
+  private BigDecimal shipping;
+
+  private BigDecimal totalCharge;
+
+
   public Purchase() {
   }
 
@@ -82,12 +89,12 @@ public class Purchase {
     this.creditCard = creditCard;
   }
 
-  public BigDecimal getTotal() {
-    return total;
+  public BigDecimal getCartTotal() {
+    return cartTotal;
   }
 
-  public void setTotal(BigDecimal total) {
-    this.total = total;
+  public void setCartTotal(BigDecimal total) {
+    this.cartTotal = total;
   }
 
   public LocalDateTime getTimeStamp() {
@@ -98,14 +105,43 @@ public class Purchase {
     this.timeStamp = timeStamp;
   }
 
+  public BigDecimal getTax() {
+    return tax;
+  }
+
+  public void setTax(BigDecimal tax) {
+    this.tax = tax;
+  }
+
+  public BigDecimal getShipping() {
+    return shipping;
+  }
+
+  public void setShipping(BigDecimal shipping) {
+    this.shipping = shipping;
+  }
+
+  public BigDecimal getTotalCharge() {
+    return totalCharge;
+  }
+
+  public void setTotalCharge(BigDecimal totalCharge) {
+    this.totalCharge = totalCharge;
+  }
+
   @Override
   public String toString() {
     return "Purchase{" +
         "id=" + id +
+        ", products=" + products +
         ", deliveryAddress=" + deliveryAddress +
         ", billingAddress=" + billingAddress +
         ", creditCard=" + creditCard +
+        ", cartTotal=" + cartTotal +
         ", timeStamp=" + timeStamp +
+        ", tax=" + tax +
+        ", shipping=" + shipping +
+        ", totalCharge=" + totalCharge +
         '}';
   }
 

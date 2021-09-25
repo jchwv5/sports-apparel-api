@@ -2,6 +2,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
+import io.catalyte.training.sportsproducts.domains.rate.Rate;
 import io.catalyte.training.sportsproducts.domains.user.User;
 import io.catalyte.training.sportsproducts.domains.user.UserRepository;
 import io.catalyte.training.sportsproducts.domains.user.UserValidation;
@@ -12,7 +13,6 @@ import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -79,7 +79,6 @@ public class PurchaseServiceImpl implements PurchaseService {
     } catch (IllegalArgumentException e) {
       logger.error(e.getMessage());
       throw new UnprocessableEntityError(e.getMessage());
-
     }
 
     try {
@@ -89,16 +88,46 @@ public class PurchaseServiceImpl implements PurchaseService {
       throw new BadRequest(e.getMessage());
     }
 
-    // Calculate and set purchase total
-    newPurchase.setTotal(calculateTotal(newPurchase));
+    // Calculate and set total charges
+    newPurchase.setTotalCharge(calculateTotal(newPurchase));
+
 
     //Time stamp of when purchase is made
     ZoneId zid = ZoneId.of("UTC");
     LocalDateTime lt = LocalDateTime.now(zid);
     newPurchase.setTimeStamp(lt);
 
+    // update user timestamp after making a purchase
+    addUserWithPurchase(newPurchase, lt);
+
+    try {
+      purchaseRepository.save(newPurchase);
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+
+    // after the purchase is persisted and has an id, we need to handle its lineitems and persist them as well
+    handleLineItems(newPurchase);
+
+    return newPurchase;
+  }
+
+  /**
+   * Persists a user with purchase and last active timestamp to user table
+   *
+   * @param newPurchase - user's purchase
+   * @param lt - localDateTime in UTC
+   */
+  public void addUserWithPurchase(Purchase newPurchase, LocalDateTime lt){
     // SEE IF USER EXISTS
-    User existingUser = userRepository.findByEmail(newPurchase.getBillingAddress().getEmail());
+    User existingUser;
+    try {
+      existingUser = userRepository.findByEmail(newPurchase.getBillingAddress().getEmail());
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
 
     // IF USER EXISTS, RETURN EXISTING USER WITH UPDATED TIMESTAMP
     if (existingUser != null) {
@@ -136,17 +165,6 @@ public class PurchaseServiceImpl implements PurchaseService {
         throw new ServerError(e.getMessage());
       }
     }
-    try {
-      purchaseRepository.save(newPurchase);
-    } catch (DataAccessException e) {
-      logger.error(e.getMessage());
-      throw new ServerError(e.getMessage());
-    }
-
-    // after the purchase is persisted and has an id, we need to handle its lineitems and persist them as well
-    handleLineItems(newPurchase);
-
-    return newPurchase;
   }
 
   /**
@@ -190,7 +208,12 @@ public class PurchaseServiceImpl implements PurchaseService {
    */
   private BigDecimal calculateTotal(Purchase purchase) {
     BigDecimal total = new BigDecimal(0);
+    BigDecimal tax = new BigDecimal(0);
+    BigDecimal shipping = new BigDecimal(0);
+    BigDecimal totalCharge = new BigDecimal(0);
+
     Set<LineItem> itemsList = purchase.getProducts();
+
 
     if (itemsList != null) {
       for (LineItem lineItem : itemsList) {
@@ -205,13 +228,34 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         // add line item subtotal to purchase subtotal
         total = total.add(itemSubtotal);
+        //set cartTotal for new purchase
+        purchase.setCartTotal(total);
 
+        Rate rate = new Rate();
+       if (rate.getCode() == purchase.getDeliveryAddress().getDeliveryState()){
+         BigDecimal taxRate = rate.getRate();
+
+         // set tax rate for new purchase
+         purchase.setTax(taxRate);
+
+         //calculate tax charge for new purchase
+         tax = taxRate.multiply(total);
+       }
+
+       if (rate.getType() == "shipping"){
+         shipping = rate.getRate();
+
+         //set shipping for new purchase
+         purchase.setShipping(shipping);
+         }
+
+       totalCharge = total.add(tax).add(shipping);
         // TODO: use subtotal, tax rate, and shipping rate to calc total
       }
       ;
     }
 
-    return total;
+    return totalCharge;
   }
 
   /**
