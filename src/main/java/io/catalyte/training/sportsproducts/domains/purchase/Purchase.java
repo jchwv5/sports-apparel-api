@@ -34,16 +34,18 @@ public class Purchase {
   @Embedded
   private CreditCard creditCard;
 
-  private BigDecimal cartTotal;
+  private BigDecimal total;
 
   @Column(columnDefinition = "timestamp with time zone")
   private LocalDateTime timeStamp;
 
-  private BigDecimal tax;
+  private BigDecimal taxRate;
 
-  private BigDecimal shipping;
+  private BigDecimal taxTotal;
 
-  private BigDecimal totalCharge;
+  private BigDecimal shippingRates;
+
+  private BigDecimal totalCharges;
 
 
   public Purchase() {
@@ -89,12 +91,12 @@ public class Purchase {
     this.creditCard = creditCard;
   }
 
-  public BigDecimal getCartTotal() {
-    return cartTotal;
+  public BigDecimal getTotal() {
+    return total;
   }
 
-  public void setCartTotal(BigDecimal total) {
-    this.cartTotal = total;
+  public void setTotal(BigDecimal total) {
+    this.total = total;
   }
 
   public LocalDateTime getTimeStamp() {
@@ -105,28 +107,36 @@ public class Purchase {
     this.timeStamp = timeStamp;
   }
 
-  public BigDecimal getTax() {
-    return tax;
+  public BigDecimal getTaxRate() {
+    return taxRate;
   }
 
-  public void setTax(BigDecimal tax) {
-    this.tax = tax;
+  public void setTaxRate(BigDecimal taxRate) {
+    this.taxRate = taxRate;
   }
 
-  public BigDecimal getShipping() {
-    return shipping;
+  public BigDecimal getTaxTotal() {
+    return taxTotal;
   }
 
-  public void setShipping(BigDecimal shipping) {
-    this.shipping = shipping;
+  public void setTaxTotal(BigDecimal taxTotal) {
+    this.taxTotal = taxTotal;
   }
 
-  public BigDecimal getTotalCharge() {
-    return totalCharge;
+  public BigDecimal getShippingRates() {
+    return shippingRates;
   }
 
-  public void setTotalCharge(BigDecimal totalCharge) {
-    this.totalCharge = totalCharge;
+  public void setShippingRates(BigDecimal shippingRates) {
+    this.shippingRates = shippingRates;
+  }
+
+  public BigDecimal getTotalCharges() {
+    return totalCharges;
+  }
+
+  public void setTotalCharges(BigDecimal totalCharges) {
+    this.totalCharges = totalCharges;
   }
 
   @Override
@@ -137,11 +147,12 @@ public class Purchase {
         ", deliveryAddress=" + deliveryAddress +
         ", billingAddress=" + billingAddress +
         ", creditCard=" + creditCard +
-        ", cartTotal=" + cartTotal +
+        ", total=" + total +
         ", timeStamp=" + timeStamp +
-        ", tax=" + tax +
-        ", shipping=" + shipping +
-        ", totalCharge=" + totalCharge +
+        ", taxRate=" + taxRate +
+        ", taxTotal=" + taxTotal +
+        ", shippingRates=" + shippingRates +
+        ", totalCharges=" + totalCharges +
         '}';
   }
 

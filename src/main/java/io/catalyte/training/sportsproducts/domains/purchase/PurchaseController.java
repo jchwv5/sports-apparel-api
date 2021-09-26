@@ -39,4 +39,10 @@ public class PurchaseController {
   public ResponseEntity findPurchasesByEmail(@RequestParam (required = false) String email) {
     return new ResponseEntity<>(purchaseService.findPurchasesByEmail(email), HttpStatus.OK);
   }
+
+  @GetMapping (path = "/calculateTotalCharges")
+  public ResponseEntity calculateTotalCharges(@RequestBody Purchase purchase){
+ return new ResponseEntity<>(purchaseService.calculateTotalCharges(purchase), HttpStatus.OK);
+  }
+
 }

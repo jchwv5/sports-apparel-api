@@ -34,7 +34,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class PurchaseServiceImplTest {
 
   private final PurchaseServiceImpl testPurchaseValidation = new PurchaseServiceImpl(null, null,
-      null, null);
+      null, null,null);
   private final ProductFactory productFactory = new ProductFactory();
   List<Product> productList = productFactory.generateRandomProducts(4);
   private final CreditCard testCard = new CreditCard();

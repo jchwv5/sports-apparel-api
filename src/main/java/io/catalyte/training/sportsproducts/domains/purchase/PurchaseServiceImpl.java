@@ -3,6 +3,7 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
 import io.catalyte.training.sportsproducts.domains.rate.Rate;
+import io.catalyte.training.sportsproducts.domains.rate.RateService;
 import io.catalyte.training.sportsproducts.domains.user.User;
 import io.catalyte.training.sportsproducts.domains.user.UserRepository;
 import io.catalyte.training.sportsproducts.domains.user.UserValidation;
@@ -32,6 +33,11 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
 
+  static final String AK = "Alaska";
+  static final String HI = "Hawaii";
+  static final BigDecimal PRICE_1 = BigDecimal.valueOf(50.00);
+
+
   private final Logger logger = LogManager.getLogger(PurchaseServiceImpl.class);
   private final UserValidation userValidation = new UserValidation();
 
@@ -40,13 +46,17 @@ public class PurchaseServiceImpl implements PurchaseService {
   private final LineItemRepository lineItemRepository;
   private final UserRepository userRepository;
 
+  private RateService rateService;
+
   @Autowired
   public PurchaseServiceImpl(PurchaseRepository purchaseRepository, ProductService productService,
-      LineItemRepository lineItemRepository, UserRepository userRepository) {
+      LineItemRepository lineItemRepository, UserRepository userRepository,
+      RateService rateService) {
     this.purchaseRepository = purchaseRepository;
     this.productService = productService;
     this.lineItemRepository = lineItemRepository;
     this.userRepository = userRepository;
+    this.rateService = rateService;
   }
 
   /**
@@ -88,9 +98,8 @@ public class PurchaseServiceImpl implements PurchaseService {
       throw new BadRequest(e.getMessage());
     }
 
-    // Calculate and set total charges
-    newPurchase.setTotalCharge(calculateTotal(newPurchase));
-
+    //  Calculate and set purchase total
+    newPurchase.setTotal(calculateTotal(newPurchase));
 
     //Time stamp of when purchase is made
     ZoneId zid = ZoneId.of("UTC");
@@ -106,10 +115,8 @@ public class PurchaseServiceImpl implements PurchaseService {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
-
     // after the purchase is persisted and has an id, we need to handle its lineitems and persist them as well
     handleLineItems(newPurchase);
-
     return newPurchase;
   }
 
@@ -117,9 +124,9 @@ public class PurchaseServiceImpl implements PurchaseService {
    * Persists a user with purchase and last active timestamp to user table
    *
    * @param newPurchase - user's purchase
-   * @param lt - localDateTime in UTC
+   * @param lt          - localDateTime in UTC
    */
-  public void addUserWithPurchase(Purchase newPurchase, LocalDateTime lt){
+  public void addUserWithPurchase(Purchase newPurchase, LocalDateTime lt) {
     // SEE IF USER EXISTS
     User existingUser;
     try {
@@ -208,12 +215,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    */
   private BigDecimal calculateTotal(Purchase purchase) {
     BigDecimal total = new BigDecimal(0);
-    BigDecimal tax = new BigDecimal(0);
-    BigDecimal shipping = new BigDecimal(0);
-    BigDecimal totalCharge = new BigDecimal(0);
-
     Set<LineItem> itemsList = purchase.getProducts();
-
 
     if (itemsList != null) {
       for (LineItem lineItem : itemsList) {
@@ -228,34 +230,12 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         // add line item subtotal to purchase subtotal
         total = total.add(itemSubtotal);
-        //set cartTotal for new purchase
-        purchase.setCartTotal(total);
-
-        Rate rate = new Rate();
-       if (rate.getCode() == purchase.getDeliveryAddress().getDeliveryState()){
-         BigDecimal taxRate = rate.getRate();
-
-         // set tax rate for new purchase
-         purchase.setTax(taxRate);
-
-         //calculate tax charge for new purchase
-         tax = taxRate.multiply(total);
-       }
-
-       if (rate.getType() == "shipping"){
-         shipping = rate.getRate();
-
-         //set shipping for new purchase
-         purchase.setShipping(shipping);
-         }
-
-       totalCharge = total.add(tax).add(shipping);
         // TODO: use subtotal, tax rate, and shipping rate to calc total
       }
       ;
     }
 
-    return totalCharge;
+    return total;
   }
 
   /**
@@ -393,4 +373,72 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     }
   }
+
+  /**
+   * calculate total charges in a purchase
+   *
+   * @param purchase - a purchase
+   * @return purchase - a purchase
+   */
+  public Purchase calculateTotalCharges(Purchase purchase) {
+    logger.debug("calculateTotalCharges starts");
+    logger.debug("input purchase is " + purchase);
+    try {
+      BigDecimal total = calculateTotal(purchase);//total product price
+      BigDecimal taxTotal = new BigDecimal(0);
+      BigDecimal shippingTotal = new BigDecimal(0);
+      BigDecimal totalCharges = new BigDecimal(0);
+      String state = purchase.getDeliveryAddress().getDeliveryState();
+      //get taxRate from DB
+      List<Rate> listRate = rateService.getRateByCode(state);
+      if (listRate.size() > 0) {
+        Rate rate = listRate.get(0);
+        BigDecimal taxRate = rate.getRate();
+
+        // set tax rate for new purchase
+        purchase.setTaxRate(taxRate);
+
+        //calculate tax charge for new purchase
+        taxTotal = taxRate.multiply(total);
+        purchase.setTaxTotal(taxTotal);
+      } else {
+        logger.error("can't find state tax rate");
+        throw new ServerError("can't find state tax rate");
+      }
+
+      //get shipping price
+      if (total.compareTo(PRICE_1) <= 0) {// product price <= $50
+        List<Rate> listShippingRate = rateService.getRateByCode("base");// shipping = $5.00
+        if (listShippingRate.size() > 0) {
+          shippingTotal = listShippingRate.get(0).getRate();
+//          shippingTotal = shippingRate.getRate();
+        }
+      } else if (state == AK || state == HI) {
+        List<Rate> listShippingRate = rateService.getRateByCode("extended");// shipping = $10.00
+        if (listShippingRate.size() > 0) {
+          shippingTotal = listShippingRate.get(0).getRate();
+//          shippingTotal = shippingRate.getRate();
+        }
+      }
+//      BigDecimal shippingPrice = shipping.getRate();
+      //set shipping for new purchase
+      purchase.setShippingRates(shippingTotal);
+
+      //totalCharges
+      totalCharges = total.add(taxTotal).add(shippingTotal);
+      purchase.setTotalCharges(totalCharges);
+
+//    logger.error("can't find shipping rate");
+//    throw new ServerError("can't find shipping rate");
+
+      logger.debug("after calculate purchase is " + purchase);
+      logger.debug("calculateTotalCharges end");
+    } catch (
+        DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+    return purchase;
+  }
 }
+
