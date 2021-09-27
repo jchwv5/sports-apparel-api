@@ -12,7 +12,6 @@ import io.catalyte.training.sportsproducts.exceptions.UnprocessableEntityError;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -97,10 +96,8 @@ public class PurchaseServiceImpl implements PurchaseService {
     LocalDateTime lt = LocalDateTime.now(zid);
     newPurchase.setTimeStamp(lt);
 
-
     // update user timestamp after making a purchase
     addUserWithPurchase(newPurchase, lt);
-
 
     // SEE IF USER EXISTS
     User existingUser = userRepository.findByEmail(newPurchase.getBillingAddress().getEmail());
@@ -110,6 +107,7 @@ public class PurchaseServiceImpl implements PurchaseService {
       logger.info("Existing user has been found");
       existingUser.setLastActiveTime(lt);
       userRepository.save(existingUser);
+      
       // IF THE USER DOESN'T EXIST, CREATE A NEW USER IN THE USER TABLE
     } else {
       User newUser = new User();
@@ -148,7 +146,7 @@ public class PurchaseServiceImpl implements PurchaseService {
       throw new ServerError(e.getMessage());
     }
 
-    // after the purchase is persisted and has an id, we need to handle its lineitems and persist them as well
+    // after the purchase is persisted and has an id, we need to handle its line items and persist them as well
     handleLineItems(newPurchase);
 
     return newPurchase;
@@ -158,9 +156,9 @@ public class PurchaseServiceImpl implements PurchaseService {
    * Persists a user with purchase and last active timestamp to user table
    *
    * @param newPurchase - user's purchase
-   * @param lt - localDateTime in UTC
+   * @param lt          - localDateTime in UTC
    */
-  public void addUserWithPurchase(Purchase newPurchase, LocalDateTime lt){
+  public void addUserWithPurchase(Purchase newPurchase, LocalDateTime lt) {
     // SEE IF USER EXISTS
     User existingUser;
     try {
@@ -211,7 +209,7 @@ public class PurchaseServiceImpl implements PurchaseService {
   /**
    * This helper method retrieves product information for each line item and persists it
    *
-   * @param purchase - the purchase object to handle lineitems for
+   * @param purchase - the purchase object to handle line items for
    */
   private void handleLineItems(Purchase purchase) {
     Set<LineItem> itemsList = purchase.getProducts();
@@ -222,7 +220,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         // retrieve full product information from the database
         Product product = productService.getProductById(lineItem.getId());
 
-        // set the product info into the lineitem
+        // set the product info into the line item
         if (product != null) {
           lineItem.setProduct(product);
         }
@@ -230,7 +228,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         // set the purchase on the line item
         lineItem.setPurchase(purchase);
 
-        // persist the populated lineitem
+        // persist the populated line item
         try {
           lineItemRepository.save(lineItem);
         } catch (DataAccessException e) {
@@ -267,7 +265,6 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         // TODO: use subtotal, tax rate, and shipping rate to calc total
       }
-      ;
     }
 
     return total;

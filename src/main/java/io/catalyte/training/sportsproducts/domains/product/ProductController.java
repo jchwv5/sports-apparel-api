@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * The ProductController exposes endpoints for product related actions.
  */
+
 @RestController
 @RequestMapping(value = PRODUCTS_PATH)
 public class ProductController {
@@ -34,6 +37,7 @@ public class ProductController {
 
   private ProductService productService;
   private ProductRepository productRepository;
+
 
   @Autowired
   public ProductController(
@@ -53,7 +57,6 @@ public class ProductController {
   public ResponseEntity<Map<String, Object>> getProductsPaginated(@PathVariable int pageNo) {
     logger.info("Request received for getProducts");
     int pageSize = 20;
-
     return new ResponseEntity<>(productService.findAllProducts(pageNo, pageSize), HttpStatus.OK);
   }
 
@@ -100,6 +103,12 @@ public class ProductController {
     return new ResponseEntity<>(productService.getProductTypes(), HttpStatus.OK);
   }
 
+  /**
+   * saves a product to the database
+   *
+   * @param product - product to be saved
+   * @return - product
+   */
   @PostMapping
   public ResponseEntity saveProduct(@RequestBody Product product) {
 
@@ -127,5 +136,18 @@ public class ProductController {
           matcher.group(4), matcher.group(6));
     }
     return builder.build();
+  }
+
+  /**
+   * updates the list of products
+   *
+   * @param products - list of products
+   * @return - list of updated products
+   */
+  @PutMapping
+  public ResponseEntity updateProduct(@RequestBody List<Product> products) {
+    logger.info("Request received for updateProduct");
+    return new ResponseEntity<>(productService.updateProducts(products), HttpStatus.OK);
+
   }
 }

@@ -61,32 +61,8 @@ public class UserServiceImpl implements UserService {
   /**
    * Retrieves the user info with the matching email from the database.
    *
-   * @param email
-   * @return
-   */
-  public User findUserByEmail(String email) {
-    User user;
-    try {
-      user = userRepository.findByEmail(email);
-    } catch (DataAccessException e) {
-      logger.error(e.getMessage());
-      throw new ServerError(e.getMessage());
-    }
-    if (user != null) {
-      return user;
-    } else {
-      logger.info("Get by email failed, email does not exist in the database" + email);
-      throw new ResourceNotFound(
-          "Get by email failed. email " + email + "does not exist in the database: "
-      );
-    }
-  }
-
-  /**
-   * Retrieves the user info with the matching email from the database.
-   *
-   * @param email
-   * @return
+   * @param email - user email to find
+   * @return user
    */
   public User findUserByEmail(String email) {
     User user;
@@ -127,9 +103,9 @@ public class UserServiceImpl implements UserService {
   /**
    * Updates a User given they are given the right credentials
    *
-   * @param bearerToken String value in the Authorization property of the header
-   * @param id          Id of the user to update
-   * @param updatedUser User to update
+   * @param bearerToken - String value in the Authorization property of the header
+   * @param id          - id of the user to update
+   * @param updatedUser - User to update
    * @return User - Updated user
    */
   @Override
