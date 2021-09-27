@@ -26,4 +26,6 @@ public interface ProductService {
   List<String> getProductTypes();
 
   Product saveProduct(Product product);
+
+  List<Product> updateProducts(List<Product> products);
 }
