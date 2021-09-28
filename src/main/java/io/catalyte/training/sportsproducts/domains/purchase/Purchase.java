@@ -43,7 +43,7 @@ public class Purchase {
 
   private BigDecimal taxTotal;
 
-  private BigDecimal shippingRates;
+  private BigDecimal shippingSubtotal;
 
   private BigDecimal totalCharges;
 
@@ -123,12 +123,13 @@ public class Purchase {
     this.taxTotal = taxTotal;
   }
 
-  public BigDecimal getShippingRates() {
-    return shippingRates;
+
+  public BigDecimal getShippingSubtotal() {
+    return shippingSubtotal;
   }
 
-  public void setShippingRates(BigDecimal shippingRates) {
-    this.shippingRates = shippingRates;
+  public void setShippingSubtotal(BigDecimal shippingSubtotal) {
+    this.shippingSubtotal = shippingSubtotal;
   }
 
   public BigDecimal getTotalCharges() {
@@ -151,7 +152,7 @@ public class Purchase {
         ", timeStamp=" + timeStamp +
         ", taxRate=" + taxRate +
         ", taxTotal=" + taxTotal +
-        ", shippingRates=" + shippingRates +
+        ", shippingSubtotal=" + shippingSubtotal +
         ", totalCharges=" + totalCharges +
         '}';
   }

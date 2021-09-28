@@ -41,7 +41,7 @@ public class PurchaseController {
   }
 
   @PostMapping (path = "/calculateTotalCharges")
-  public ResponseEntity calculateTotalCharges(@RequestBody PurchaseForCalculation purchase){
+  public ResponseEntity calculateTotalCharges(@RequestBody PurchaseForTaxCalculation purchase){
  return new ResponseEntity<>(purchaseService.calculateTotalCharges(purchase), HttpStatus.OK);
   }
 

@@ -99,8 +99,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     //  Calculate and set purchase total
-    newPurchase.setTotal(calculateTotal(newPurchase));
-
+    BigDecimal total = calculateTotal(newPurchase);
+    BigDecimal total2 = total.setScale(2, BigDecimal.ROUND_HALF_UP);
+    newPurchase.setTotal(total2);
 
 
     //Time stamp of when purchase is made
@@ -232,7 +233,66 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         // add line item subtotal to purchase subtotal
         total = total.add(itemSubtotal);
-        // TODO: use subtotal, tax rate, and shipping rate to calc total
+
+        // use total, tax rate, and shipping rate to calc taxTotal, shippingSubtotal and totalCharges
+        BigDecimal taxTotal = new BigDecimal(0);
+        BigDecimal shippingTotal = new BigDecimal(0);
+        BigDecimal totalCharges = new BigDecimal(0);
+        String state = purchase.getDeliveryAddress().getDeliveryState();
+        try {
+          //get taxRate from DB
+          List<Rate> listRate = rateService.getRateByCode(state);
+          if (listRate.size() > 0) {
+            Rate rate = listRate.get(0);
+            BigDecimal taxRate = rate.getRate();
+
+            //calculate tax charge for new purchase
+            taxTotal = taxRate.multiply(total);
+            BigDecimal taxTotal2 = taxTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
+            purchase.setTaxTotal(taxTotal2);
+
+            // set tax rate for new purchase
+            BigDecimal taxRate2 = taxRate.multiply(new BigDecimal(100))
+                .setScale(2, BigDecimal.ROUND_HALF_UP);
+            purchase.setTaxRate(taxRate2);
+          }
+        } catch (DataAccessException e) {
+          logger.error("can't find state tax rate");
+          throw new ServerError("can't find state tax rate");
+        }
+
+        try {
+          //get shipping price
+          if (total.compareTo(PRICE_1) <= 0 && (state == AK || state == HI)) {// purchase price <= $50
+            List<Rate> listShippingRate = rateService.getRateByCode("additional");// shipping = $15.00
+            if (listShippingRate.size() > 0) {
+              shippingTotal = listShippingRate.get(0).getRate();
+            }
+          } else if (total.compareTo(PRICE_1) > 0 && (state == AK
+              || state == HI)) { // purchase price > $50
+            List<Rate> listShippingRate = rateService.getRateByCode("extended");// shipping = $10.00
+            if (listShippingRate.size() > 0) {
+              shippingTotal = listShippingRate.get(0).getRate();
+            }
+          } else if (total.compareTo(PRICE_1) <= 0) {// purchase price <= $50
+            List<Rate> listShippingRate = rateService.getRateByCode("base");// shipping = $5.00
+            if (listShippingRate.size() > 0) {
+              shippingTotal = listShippingRate.get(0).getRate();
+            }
+          }
+        } catch (DataAccessException e) {
+          logger.error("can't find shipping rate");
+          throw new ServerError("can't find shipping rate");
+        }
+
+        //set shipping price
+        purchase.setShippingSubtotal(shippingTotal);
+
+        //totalCharges
+        totalCharges = total.add(taxTotal).add(shippingTotal);
+        BigDecimal totalCharges2 = totalCharges.setScale(2, BigDecimal.ROUND_HALF_UP);
+        purchase.setTotalCharges(totalCharges2);
+
       }
       ;
     }
@@ -382,7 +442,7 @@ public class PurchaseServiceImpl implements PurchaseService {
    * @param purchase - a purchase
    * @return purchase - a purchase
    */
-  public Purchase calculateTotalCharges(PurchaseForCalculation purchase) {
+  public Purchase calculateTotalCharges(PurchaseForTaxCalculation purchase) {
 
     Purchase returnPurchase = new Purchase();
 
@@ -461,7 +521,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     //set shipping price
-    returnPurchase.setShippingRates(shippingTotal);
+    returnPurchase.setShippingSubtotal(shippingTotal);
 
     //totalCharges
     totalCharges = total.add(taxTotal).add(shippingTotal);

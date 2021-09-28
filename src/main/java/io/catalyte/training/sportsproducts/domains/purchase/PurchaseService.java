@@ -8,6 +8,6 @@ public interface PurchaseService {
 
   List<Purchase> findPurchasesByEmail(String email);
 
-  Purchase calculateTotalCharges(PurchaseForCalculation purchase);
+  Purchase calculateTotalCharges(PurchaseForTaxCalculation purchase);
 
 }

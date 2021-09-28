@@ -7,7 +7,7 @@ import java.util.Set;
  * Describes a purchase object that holds the information for a transaction related to state change in UI
  */
 
-public class PurchaseForCalculation {
+public class PurchaseForTaxCalculation {
 
   private Set<LineItem> products;
 
