@@ -101,6 +101,8 @@ public class PurchaseServiceImpl implements PurchaseService {
     //  Calculate and set purchase total
     newPurchase.setTotal(calculateTotal(newPurchase));
 
+
+
     //Time stamp of when purchase is made
     ZoneId zid = ZoneId.of("UTC");
     LocalDateTime lt = LocalDateTime.now(zid);
@@ -375,70 +377,101 @@ public class PurchaseServiceImpl implements PurchaseService {
   }
 
   /**
-   * calculate total charges in a purchase
+   * calculate total charges
    *
    * @param purchase - a purchase
    * @return purchase - a purchase
    */
-  public Purchase calculateTotalCharges(Purchase purchase) {
+  public Purchase calculateTotalCharges(PurchaseForCalculation purchase) {
+
+    Purchase returnPurchase = new Purchase();
+
     logger.debug("calculateTotalCharges starts");
     logger.debug("input purchase is " + purchase);
+
+    BigDecimal total = new BigDecimal(0);
+    Set<LineItem> itemsList = purchase.getProducts();
+
+    if (itemsList != null) {
+      for (LineItem lineItem : itemsList) {
+
+        // retrieve full product information from the database
+        BigDecimal itemPrice = productService.getProductById(lineItem.getId()).getPrice();
+        BigDecimal itemSubtotal = new BigDecimal(0);
+        int itemQuantity = lineItem.getQuantity();
+
+        // get the subtotal of the line item
+        itemSubtotal = itemPrice.multiply(BigDecimal.valueOf(itemQuantity));
+
+        // add line item subtotal to purchase subtotal
+        total = total.add(itemSubtotal);
+      }
+    }
+    BigDecimal total2 = total.setScale(2, BigDecimal.ROUND_HALF_UP);
+    returnPurchase.setTotal(total2);
+
+    BigDecimal taxTotal = new BigDecimal(0);
+    BigDecimal shippingTotal = new BigDecimal(0);
+    BigDecimal totalCharges = new BigDecimal(0);
+    String state = purchase.getDeliveryState();
     try {
-      BigDecimal total = calculateTotal(purchase);//total product price
-      BigDecimal taxTotal = new BigDecimal(0);
-      BigDecimal shippingTotal = new BigDecimal(0);
-      BigDecimal totalCharges = new BigDecimal(0);
-      String state = purchase.getDeliveryAddress().getDeliveryState();
       //get taxRate from DB
       List<Rate> listRate = rateService.getRateByCode(state);
       if (listRate.size() > 0) {
         Rate rate = listRate.get(0);
         BigDecimal taxRate = rate.getRate();
-
-        // set tax rate for new purchase
-        purchase.setTaxRate(taxRate);
-
         //calculate tax charge for new purchase
         taxTotal = taxRate.multiply(total);
-        purchase.setTaxTotal(taxTotal);
-      } else {
-        logger.error("can't find state tax rate");
-        throw new ServerError("can't find state tax rate");
-      }
+        BigDecimal taxTotal2 = taxTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
+        returnPurchase.setTaxTotal(taxTotal2);
 
+        // set tax rate for new purchase
+        BigDecimal taxRate2 = taxRate.multiply(new BigDecimal(100))
+            .setScale(2, BigDecimal.ROUND_HALF_UP);
+
+        returnPurchase.setTaxRate(taxRate2);
+      }
+    } catch (DataAccessException e) {
+      logger.error("can't find state tax rate");
+      throw new ServerError("can't find state tax rate");
+    }
+
+    try {
       //get shipping price
-      if (total.compareTo(PRICE_1) <= 0) {// product price <= $50
-        List<Rate> listShippingRate = rateService.getRateByCode("base");// shipping = $5.00
+      if (total.compareTo(PRICE_1) <= 0 && (state == AK || state == HI)) {// purchase price <= $50
+        List<Rate> listShippingRate = rateService.getRateByCode("additional");// shipping = $15.00
         if (listShippingRate.size() > 0) {
           shippingTotal = listShippingRate.get(0).getRate();
-//          shippingTotal = shippingRate.getRate();
         }
-      } else if (state == AK || state == HI) {
+      } else if (total.compareTo(PRICE_1) > 0 && (state == AK
+          || state == HI)) { // purchase price > $50
         List<Rate> listShippingRate = rateService.getRateByCode("extended");// shipping = $10.00
         if (listShippingRate.size() > 0) {
           shippingTotal = listShippingRate.get(0).getRate();
-//          shippingTotal = shippingRate.getRate();
+        }
+      } else if (total.compareTo(PRICE_1) <= 0) {
+        List<Rate> listShippingRate = rateService.getRateByCode("base");// shipping = $5.00
+        if (listShippingRate.size() > 0) {
+          shippingTotal = listShippingRate.get(0).getRate();
         }
       }
-//      BigDecimal shippingPrice = shipping.getRate();
-      //set shipping for new purchase
-      purchase.setShippingRates(shippingTotal);
-
-      //totalCharges
-      totalCharges = total.add(taxTotal).add(shippingTotal);
-      purchase.setTotalCharges(totalCharges);
-
-//    logger.error("can't find shipping rate");
-//    throw new ServerError("can't find shipping rate");
-
-      logger.debug("after calculate purchase is " + purchase);
-      logger.debug("calculateTotalCharges end");
-    } catch (
-        DataAccessException e) {
-      logger.error(e.getMessage());
-      throw new ServerError(e.getMessage());
+    } catch (DataAccessException e) {
+      logger.error("can't find shipping rate");
+      throw new ServerError("can't find shipping rate");
     }
-    return purchase;
+
+    //set shipping price
+    returnPurchase.setShippingRates(shippingTotal);
+
+    //totalCharges
+    totalCharges = total.add(taxTotal).add(shippingTotal);
+    BigDecimal totalCharges2 = totalCharges.setScale(2, BigDecimal.ROUND_HALF_UP);
+    returnPurchase.setTotalCharges(totalCharges2);
+
+    logger.debug("after calculate purchase is " + purchase);
+    logger.debug("calculateTotalCharges end");
+
+    return returnPurchase;
   }
 }
 

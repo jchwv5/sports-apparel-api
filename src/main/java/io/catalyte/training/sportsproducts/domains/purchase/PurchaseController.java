@@ -40,8 +40,8 @@ public class PurchaseController {
     return new ResponseEntity<>(purchaseService.findPurchasesByEmail(email), HttpStatus.OK);
   }
 
-  @GetMapping (path = "/calculateTotalCharges")
-  public ResponseEntity calculateTotalCharges(@RequestBody Purchase purchase){
+  @PostMapping (path = "/calculateTotalCharges")
+  public ResponseEntity calculateTotalCharges(@RequestBody PurchaseForCalculation purchase){
  return new ResponseEntity<>(purchaseService.calculateTotalCharges(purchase), HttpStatus.OK);
   }
 

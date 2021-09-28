@@ -14,6 +14,7 @@ public class ShippingRateLoader {
 
     shippingRates.add(writeShippingRate("shipping", "base", valueOf(5.00)));
     shippingRates.add(writeShippingRate("shipping", "extended", valueOf(10.00)));
+    shippingRates.add(writeShippingRate("shipping", "additional", valueOf(10.00)));
     shippingRates.add(writeShippingRate("tax", "Alabama", valueOf(0.0400)));
     shippingRates.add(writeShippingRate("tax", "Alaska", valueOf(0.000)));
     shippingRates.add(writeShippingRate("tax", "American Samoa", valueOf(0.000)));
