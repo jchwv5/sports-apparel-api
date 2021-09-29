@@ -29,7 +29,7 @@ public class AppRunner extends SpringBootServletInitializer {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedMethods("GET", "POST", "PUT")
+            .allowedMethods("GET", "POST", "PUT","DELETE")
             .allowedOrigins("*");
       }
     };

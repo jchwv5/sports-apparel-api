@@ -77,6 +77,17 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
   }
 
+  @Override
+  public List<LineItem> findPurchasesByProductId(Long id) {
+    if (id == null || id.equals("")) throw new ResourceNotFound("No ID specified for request.");
+    try {
+      return lineItemRepository.findPurchasesByProductId(id);
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+  }
+
   /**
    * Persists a purchase to the database and last active timestamp to user table
    *

@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
-      
+
     }
   }
 
@@ -112,6 +112,15 @@ public class ProductServiceImpl implements ProductService {
     } else {
       logger.info("Get by id failed, it does not exist in the database: " + id);
       throw new ResourceNotFound("Get by id failed, it does not exist in the database: " + id);
+    }
+  }
+
+  @Override
+  public Long deleteProductById(Long id) {
+    try {
+      return productRepository.deleteProductById(id);
+    } catch (Exception e) {
+      throw new ServerError(e.getMessage());
     }
   }
 
