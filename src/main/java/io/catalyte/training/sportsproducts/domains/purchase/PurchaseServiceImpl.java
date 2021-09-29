@@ -263,13 +263,12 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         try {
           //get shipping price
-          if (total.compareTo(PRICE_1) <= 0 && (state == AK || state == HI)) {// purchase price <= $50
+          if (total.compareTo(PRICE_1) <= 0 && (state.equalsIgnoreCase(AK) || state.equalsIgnoreCase(HI))) {// purchase price <= $50
             List<Rate> listShippingRate = rateService.getRateByCode("additional");// shipping = $15.00
             if (listShippingRate.size() > 0) {
               shippingTotal = listShippingRate.get(0).getRate();
             }
-          } else if (total.compareTo(PRICE_1) > 0 && (state == AK
-              || state == HI)) { // purchase price > $50
+          } else if (total.compareTo(PRICE_1) > 0 && (state.equalsIgnoreCase(AK) || state.equalsIgnoreCase(HI))) { // purchase price > $50
             List<Rate> listShippingRate = rateService.getRateByCode("extended");// shipping = $10.00
             if (listShippingRate.size() > 0) {
               shippingTotal = listShippingRate.get(0).getRate();
@@ -437,9 +436,9 @@ public class PurchaseServiceImpl implements PurchaseService {
   }
 
   /**
-   * calculate total charges
+   * calculate total charges when user changes the state in front end
    *
-   * @param purchase - a purchase
+   * @param purchase - a purchase object used for calculation
    * @return purchase - a purchase
    */
   public Purchase calculateTotalCharges(PurchaseForTaxCalculation purchase) {
@@ -498,13 +497,12 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     try {
       //get shipping price
-      if (total.compareTo(PRICE_1) <= 0 && (state == AK || state == HI)) {// purchase price <= $50
+      if (total.compareTo(PRICE_1) <= 0 && (state.equalsIgnoreCase(AK) || state.equalsIgnoreCase(HI))) {// purchase price <= $50
         List<Rate> listShippingRate = rateService.getRateByCode("additional");// shipping = $15.00
         if (listShippingRate.size() > 0) {
           shippingTotal = listShippingRate.get(0).getRate();
         }
-      } else if (total.compareTo(PRICE_1) > 0 && (state == AK
-          || state == HI)) { // purchase price > $50
+      } else if (total.compareTo(PRICE_1) > 0 && (state.equalsIgnoreCase(AK) || state.equalsIgnoreCase(HI))){ // purchase price > $50
         List<Rate> listShippingRate = rateService.getRateByCode("extended");// shipping = $10.00
         if (listShippingRate.size() > 0) {
           shippingTotal = listShippingRate.get(0).getRate();

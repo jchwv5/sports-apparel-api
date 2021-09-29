@@ -14,7 +14,7 @@ public class ShippingRateLoader {
 
     shippingRates.add(writeShippingRate("shipping", "base", valueOf(5.00)));
     shippingRates.add(writeShippingRate("shipping", "extended", valueOf(10.00)));
-    shippingRates.add(writeShippingRate("shipping", "additional", valueOf(10.00)));
+    shippingRates.add(writeShippingRate("shipping", "additional", valueOf(15.00)));
     shippingRates.add(writeShippingRate("tax", "Alabama", valueOf(0.0400)));
     shippingRates.add(writeShippingRate("tax", "Alaska", valueOf(0.000)));
     shippingRates.add(writeShippingRate("tax", "American Samoa", valueOf(0.000)));
@@ -49,7 +49,7 @@ public class ShippingRateLoader {
     shippingRates.add(writeShippingRate("tax", "Nebraska", valueOf(0.055)));
     shippingRates.add(writeShippingRate("tax", "Nevada", valueOf(0.685)));
     shippingRates.add(writeShippingRate("tax", "New Hampshire", valueOf(0.000)));
-    shippingRates.add(writeShippingRate("tax", "NewJersey", valueOf(0.06625)));
+    shippingRates.add(writeShippingRate("tax", "New Jersey", valueOf(0.06625)));
     shippingRates.add(writeShippingRate("tax", "New Mexico", valueOf(0.05125)));
     shippingRates.add(writeShippingRate("tax", "New York", valueOf(0.04)));
     shippingRates.add(writeShippingRate("tax", "North Carolina", valueOf(0.04750)));
