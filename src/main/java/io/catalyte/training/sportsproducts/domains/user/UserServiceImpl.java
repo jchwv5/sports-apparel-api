@@ -60,7 +60,6 @@ public class UserServiceImpl implements UserService {
 
   /**
    * Retrieves the user info with the matching email from the database.
-   *
    * @param email - user email to find
    * @return user
    */
@@ -172,7 +171,7 @@ public class UserServiceImpl implements UserService {
     if (!isAuthenticated) {
       logger.error("Email in the request body does not match email from JWT");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Email in the request body does not match email from JWT Token");
+              "Email in the request body does not match email from JWT Token");
     }
 
     // SEE IF USER EXISTS

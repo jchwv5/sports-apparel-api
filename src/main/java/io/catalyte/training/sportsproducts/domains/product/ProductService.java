@@ -16,10 +16,12 @@ public interface ProductService {
 
 
   Map<String, Object> findAllProducts(int pageNo, int pageSize);
+
   List<Product> getFilteredProducts(Product product);
 
-
   Product getProductById(Long id);
+
+  Long deleteProductById(Long id);
 
   List<String> getProductByCategory();
 

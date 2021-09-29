@@ -3,6 +3,7 @@ package io.catalyte.training.sportsproducts.domains.product;
 import java.util.List;
 
 
+import javax.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,10 +17,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-
-
-
-
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
   @Query(value = "SELECT p FROM Product p WHERE p.active = true")
   Page<Product> findAllByActive(boolean active, Pageable pageable);
@@ -30,5 +27,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
   @Query("SELECT DISTINCT type FROM Product ORDER BY type")
   List<String> getProductByTypes();
+
+  @Transactional
+  Long deleteProductById(Long id);
 
 }
