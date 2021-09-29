@@ -30,21 +30,17 @@ public class Promotion {
   @NotBlank(message = "type is required")
   private String type;
 
-  @Column(name = "discount_percentage")
-  private String percentage;
-
-  @Column(name = "discount_dollar_amount")
-  private String flat;
+  @Column(name = "discount_amount")
+  private double amount;
 
   public Promotion() {
 
   }
 
-  public Promotion(String code, String type, String percentage, String flat) {
+  public Promotion(String code, String type, Double amount) {
     this.code = code;
     this.type = type;
-    this.percentage = percentage;
-    this.flat = flat;
+    this.amount = amount;
   }
 
   public Long getId() {
@@ -71,20 +67,12 @@ public class Promotion {
     this.type = type;
   }
 
-  public String getPercentage() {
-    return percentage;
+  public Double getAmount() {
+    return amount;
   }
 
-  public void setPercentage(String percentage) {
-    this.percentage = percentage;
-  }
-
-  public String getFlat() {
-    return flat;
-  }
-
-  public void setFlat(String flat) {
-    this.flat = flat;
+  public void setAmount(Double amount) {
+    this.amount = amount;
   }
 
   @Override
@@ -93,8 +81,7 @@ public class Promotion {
         "id=" + id +
         ", code='" + code + '\'' +
         ", type='" + type + '\'' +
-        ", percentage='" + percentage + '\'' +
-        ", flat='" + flat + '\'' +
+        ", amount='" + amount + '\'' +
         '}';
   }
 }

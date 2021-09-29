@@ -54,14 +54,15 @@ public class UserServiceImpl implements UserService {
     } else {
       logger.info("Get by id failed, id does not exist in the database: " + id);
       throw new ResourceNotFound(
-              "Get by id failed. id " + id + " does not exist in the database: ");
+          "Get by id failed. id " + id + " does not exist in the database: ");
     }
   }
 
   /**
    * Retrieves the user info with the matching email from the database.
-   * @param email
-   * @return
+   *
+   * @param email - user email to find
+   * @return user
    */
   public User findUserByEmail(String email) {
     User user;
@@ -76,7 +77,7 @@ public class UserServiceImpl implements UserService {
     } else {
       logger.info("Get by email failed, email does not exist in the database" + email);
       throw new ResourceNotFound(
-              "Get by email failed. email " + email + "does not exist in the database: "
+          "Get by email failed. email " + email + "does not exist in the database: "
       );
     }
   }
@@ -102,9 +103,9 @@ public class UserServiceImpl implements UserService {
   /**
    * Updates a User given they are given the right credentials
    *
-   * @param bearerToken String value in the Authorization property of the header
-   * @param id          Id of the user to update
-   * @param updatedUser User to update
+   * @param bearerToken - String value in the Authorization property of the header
+   * @param id          - id of the user to update
+   * @param updatedUser - User to update
    * @return User - Updated user
    */
   @Override
@@ -117,7 +118,7 @@ public class UserServiceImpl implements UserService {
     if (!isAuthenticated) {
       logger.error("Email in the request body does not match email from JWT");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "Email in the request body does not match email from JWT Token");
+          "Email in the request body does not match email from JWT Token");
     }
 
     // UPDATES USER
@@ -171,7 +172,7 @@ public class UserServiceImpl implements UserService {
     if (!isAuthenticated) {
       logger.error("Email in the request body does not match email from JWT");
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "Email in the request body does not match email from JWT Token");
+          "Email in the request body does not match email from JWT Token");
     }
 
     // SEE IF USER EXISTS

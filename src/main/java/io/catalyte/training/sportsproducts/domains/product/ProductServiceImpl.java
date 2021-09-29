@@ -157,7 +157,24 @@ public class ProductServiceImpl implements ProductService {
   }
 
   /**
+   * save updated products information
+   *
+   * @param updatedProducts - updated products to be saved
+   * @return - the updated products
+   */
+  @Override
+  public List<Product> updateProducts(List<Product> updatedProducts) {
+    try {
+      return productRepository.saveAll(updatedProducts);
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+  }
+
+  /**
    * Generates all missing required code fields for a product before persisting to database.
+   *
    * @param product product to be checked for missing fields
    * @return product with all codes generated
    */
