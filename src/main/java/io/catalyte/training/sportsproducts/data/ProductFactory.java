@@ -67,17 +67,17 @@ public class ProductFactory {
   };
 
   private static final String[] brands = {
-    "Adidas",
-    "Nike",
-    "Puma",
-    "Under Armour",
-    "Reebok",
-    "New Balance",
-    "Jordan",
-    "Champion",
-    "Columbia Sportswear",
-    "Patagonia"
-};
+      "Adidas",
+      "Nike",
+      "Puma",
+      "Under Armour",
+      "Reebok",
+      "New Balance",
+      "Jordan",
+      "Champion",
+      "Columbia Sportswear",
+      "Patagonia"
+  };
 
   /**
    * Returns a random demographic from the list of demographics.
@@ -137,6 +137,7 @@ public class ProductFactory {
     Random randomGenerator = new Random();
     return brands[randomGenerator.nextInt(brands.length)];
   }
+
   /**
    * Returns a random price from within a range.
    *
@@ -149,13 +150,12 @@ public class ProductFactory {
   }
 
   /**
-   *
    * @param min quantity of product
    * @param max quantity of product
    * @return random quantity of product
    */
-  public static double getQuantity(double min, double max){
-    return (int)(Math.random()*((max-min)+1))+min;
+  public static double getQuantity(double min, double max) {
+    return (int) (Math.random() * ((max - min) + 1)) + min;
   }
 
   /**
@@ -206,11 +206,22 @@ public class ProductFactory {
 
   /**
    * Random generates if a product active or not
+   *
    * @return Boolean true or false
    */
   public static Boolean getActive() {
     Random randomGenerator = new Random();
     return randomGenerator.nextInt(2) == 1 ? Boolean.TRUE : Boolean.FALSE;
+  }
+
+  /**
+   * randomly generates view count
+   * @param min - minimum view count
+   * @param max - maximum view count
+   * @return - random view count
+   */
+  public static double getViewCount(double min, double max) {
+    return (int) (Math.random() * ((max - min) + 1)) + min;
   }
 
   /**
@@ -256,7 +267,7 @@ public class ProductFactory {
     product.setImageSrc(productType.getUrl());
     product.setPrice(getPrice());
     product.setBrand(getBrand());
-    product.setQuantity((int) getQuantity(0,99));
+    product.setQuantity((int) getQuantity(0, 99));
     product.setDemographic(demographic);
     product.setPrimaryColorCode(ProductFactory.getColorCode());
     product.setSecondaryColorCode(ProductFactory.getColorCode());
@@ -264,6 +275,7 @@ public class ProductFactory {
     product.setStyleNumber(ProductFactory.getStyleCode());
     product.setReleaseDate(ProductFactory.getReleaseDate());
     product.setActive((ProductFactory.getActive()));
+    product.setViewCount((int) getViewCount(0, 100));
     return product;
   }
 
