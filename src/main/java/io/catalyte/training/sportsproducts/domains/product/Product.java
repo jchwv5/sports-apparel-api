@@ -52,6 +52,8 @@ public class Product {
 
   private Boolean active;
 
+  private Integer viewCount;
+
   @OneToMany(mappedBy = "productId")
   private List<Review> reviews;
 
@@ -74,7 +76,7 @@ public class Product {
       Integer quantity,
       String imageSrc,
       Boolean active,
-
+      Integer viewCount,
       List<Review> reviews) {
     this.name = name;
     this.description = description;
@@ -92,6 +94,7 @@ public class Product {
     this.quantity = quantity;
     this.imageSrc = imageSrc;
     this.active = active;
+    this.viewCount = viewCount;
     this.reviews = reviews;
   }
 
@@ -231,6 +234,13 @@ public class Product {
     this.active = active;
   }
 
+  public Integer getViewCount() {
+    return viewCount;
+  }
+
+  public void setViewCount(Integer viewCount) {
+    this.viewCount = viewCount;
+  }
 
   public List<Review> getReviews() {
     return reviews;
@@ -362,4 +372,5 @@ public class Product {
         ", reviews=" + reviews +
         '}';
   }
+
 }

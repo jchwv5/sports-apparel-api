@@ -7,14 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
 
   /**
    * Gets the products from the repository
+   *
    * @param product - object that contains products
    * @return a List that contains all the products
    */
@@ -64,13 +59,15 @@ public class ProductServiceImpl implements ProductService {
 
   /**
    * Retrieves all products from the database, optionally making use of an example if it is passed.
+   *
    * @param pageSize - number of products on page
-   * @param pageNo - page number
+   * @param pageNo   - page number
    * @return - a map with all active products paginated
    */
   public Map<String, Object> findAllProducts(int pageNo, int pageSize) {
     List<Product> products = new ArrayList<Product>();
-    Page<Product> pageCount = productRepository.findAllByActive(true, PageRequest.of(pageNo, pageSize));
+    Page<Product> pageCount = productRepository.findAllByActive(true,
+        PageRequest.of(pageNo, pageSize));
     products = pageCount.getContent();
     Map<String, Object> response = new HashMap<>();
     response.put("products", products);
@@ -139,6 +136,21 @@ public class ProductServiceImpl implements ProductService {
   public List<String> getProductTypes() {
     try {
       return productRepository.getProductByTypes();
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+  }
+
+  /**
+   * get a list of top 4 viewed products
+   *
+   * @return top 4 viewed products
+   */
+  @Override
+  public List<Product> getPopularProducts() {
+    try {
+      return productRepository.getPopularProducts();
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
