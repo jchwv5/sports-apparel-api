@@ -112,6 +112,12 @@ public class ProductServiceImpl implements ProductService {
     }
   }
 
+  /**
+   *  This method will delete a product from the database only if the ID of the product matches
+   *  the provided ID
+   * @param id - The ID of the product to be deleted from the database
+   * @return
+   */
   @Override
   public Long deleteProductById(Long id) {
     try {

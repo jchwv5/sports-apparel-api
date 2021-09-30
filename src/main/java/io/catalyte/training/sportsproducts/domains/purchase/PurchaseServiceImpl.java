@@ -77,6 +77,13 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
   }
 
+  /**
+   * This method will search the line_item table looking for purchases that contain a product that
+   * matches the ID provided
+   * @param id - The ID of the product to check for purchases
+   * @return
+   */
+
   @Override
   public List<LineItem> findPurchasesByProductId(Long id) {
     if (id == null || id.equals("")) throw new ResourceNotFound("No ID specified for request.");
