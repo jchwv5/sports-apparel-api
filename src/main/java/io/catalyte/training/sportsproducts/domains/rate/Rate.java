@@ -1,10 +1,12 @@
 package io.catalyte.training.sportsproducts.domains.rate;
 
 import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.hibernate.annotations.Type;
 
 /**
  * This class represents a potential shipping or tax rate to be associated with a purchase.
@@ -20,6 +22,7 @@ public class Rate {
 
   private String code;
 
+  @Column(precision=10, scale=4)
   private BigDecimal rate;
 
   public Long getId() {

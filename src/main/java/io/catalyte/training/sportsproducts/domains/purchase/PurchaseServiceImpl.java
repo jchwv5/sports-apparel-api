@@ -2,6 +2,8 @@ package io.catalyte.training.sportsproducts.domains.purchase;
 
 import io.catalyte.training.sportsproducts.domains.product.Product;
 import io.catalyte.training.sportsproducts.domains.product.ProductService;
+import io.catalyte.training.sportsproducts.domains.rate.Rate;
+import io.catalyte.training.sportsproducts.domains.rate.RateService;
 import io.catalyte.training.sportsproducts.domains.user.User;
 import io.catalyte.training.sportsproducts.domains.user.UserRepository;
 import io.catalyte.training.sportsproducts.domains.user.UserValidation;
@@ -31,6 +33,11 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
 
+  static final String AK = "Alaska";
+  static final String HI = "Hawaii";
+  static final BigDecimal PRICE_1 = BigDecimal.valueOf(50.00);
+
+
   private final Logger logger = LogManager.getLogger(PurchaseServiceImpl.class);
   private final UserValidation userValidation = new UserValidation();
 
@@ -39,13 +46,17 @@ public class PurchaseServiceImpl implements PurchaseService {
   private final LineItemRepository lineItemRepository;
   private final UserRepository userRepository;
 
+  private RateService rateService;
+
   @Autowired
   public PurchaseServiceImpl(PurchaseRepository purchaseRepository, ProductService productService,
-      LineItemRepository lineItemRepository, UserRepository userRepository) {
+      LineItemRepository lineItemRepository, UserRepository userRepository,
+      RateService rateService) {
     this.purchaseRepository = purchaseRepository;
     this.productService = productService;
     this.lineItemRepository = lineItemRepository;
     this.userRepository = userRepository;
+    this.rateService = rateService;
   }
 
   /**
@@ -89,7 +100,6 @@ public class PurchaseServiceImpl implements PurchaseService {
     } catch (IllegalArgumentException e) {
       logger.error(e.getMessage());
       throw new UnprocessableEntityError(e.getMessage());
-
     }
 
     try {
@@ -99,8 +109,11 @@ public class PurchaseServiceImpl implements PurchaseService {
       throw new BadRequest(e.getMessage());
     }
 
-    // Calculate and set purchase total
-    newPurchase.setTotal(calculateTotal(newPurchase));
+    //  Calculate and set purchase total
+    BigDecimal total = calculateTotal(newPurchase);
+    BigDecimal total2 = total.setScale(2, BigDecimal.ROUND_HALF_UP);
+    newPurchase.setTotal(total2);
+
 
     //Time stamp of when purchase is made
     ZoneId zid = ZoneId.of("UTC");
@@ -110,56 +123,14 @@ public class PurchaseServiceImpl implements PurchaseService {
     // update user timestamp after making a purchase
     addUserWithPurchase(newPurchase, lt);
 
-    // SEE IF USER EXISTS
-    User existingUser = userRepository.findByEmail(newPurchase.getBillingAddress().getEmail());
-
-    // IF USER EXISTS, RETURN EXISTING USER WITH UPDATED TIMESTAMP
-    if (existingUser != null) {
-      logger.info("Existing user has been found");
-      existingUser.setLastActiveTime(lt);
-      userRepository.save(existingUser);
-      
-      // IF THE USER DOESN'T EXIST, CREATE A NEW USER IN THE USER TABLE
-    } else {
-      User newUser = new User();
-      newUser.setLastName(newPurchase.getDeliveryAddress().getLastName());
-      newUser.setFirstName(newPurchase.getDeliveryAddress().getFirstName());
-      newUser.setStreetAddress(newPurchase.getBillingAddress().getBillingStreet());
-      newUser.setStreetAddress2(newPurchase.getBillingAddress().getBillingStreet2());
-      newUser.setCity(newPurchase.getBillingAddress().getBillingCity());
-
-      // set up two-letter abbreviation state for user
-      String stateFullName = newPurchase.getBillingAddress().getBillingState();
-      StateAbbreviation abbreviation = new StateAbbreviation();
-      String state = abbreviation.convertStateAbbreviations(stateFullName.toUpperCase());
-      newUser.setState(state);
-
-      //convert zipcode of type int to type String
-      int zipCode = newPurchase.getBillingAddress().getBillingZip();
-      String zipCodeStr = String.valueOf(zipCode);
-      newUser.setZipCode(zipCodeStr);
-      newUser.setPhoneNumber(newPurchase.getBillingAddress().getPhone());
-      newUser.setRole("Customer");
-      newUser.setEmail(newPurchase.getBillingAddress().getEmail());
-      newUser.setLastActiveTime(lt);
-      userValidation.validateUser(newUser);
-      try {
-        userRepository.save(newUser);
-      } catch (DataAccessException e) {
-        logger.error(e.getMessage());
-        throw new ServerError(e.getMessage());
-      }
-    }
     try {
       purchaseRepository.save(newPurchase);
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
     }
-
-    // after the purchase is persisted and has an id, we need to handle its line items and persist them as well
+    // after the purchase is persisted and has an id, we need to handle its lineitems and persist them as well
     handleLineItems(newPurchase);
-
     return newPurchase;
   }
 
@@ -274,7 +245,64 @@ public class PurchaseServiceImpl implements PurchaseService {
         // add line item subtotal to purchase subtotal
         total = total.add(itemSubtotal);
 
-        // TODO: use subtotal, tax rate, and shipping rate to calc total
+        // use total, tax rate, and shipping rate to calc taxTotal, shippingSubtotal and totalCharges
+        BigDecimal taxTotal = new BigDecimal(0);
+        BigDecimal shippingTotal = new BigDecimal(0);
+        BigDecimal totalCharges = new BigDecimal(0);
+        String state = purchase.getDeliveryAddress().getDeliveryState();
+        try {
+          //get taxRate from DB
+          List<Rate> listRate = rateService.getRateByCode(state);
+          if (listRate.size() > 0) {
+            Rate rate = listRate.get(0);
+            BigDecimal taxRate = rate.getRate();
+
+            //calculate tax charge for new purchase
+            taxTotal = taxRate.multiply(total);
+            BigDecimal taxTotal2 = taxTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
+            purchase.setTaxTotal(taxTotal2);
+
+            // set tax rate for new purchase
+            BigDecimal taxRate2 = taxRate.multiply(new BigDecimal(100))
+                .setScale(2, BigDecimal.ROUND_HALF_UP);
+            purchase.setTaxRate(taxRate2);
+          }
+        } catch (DataAccessException e) {
+          logger.error("can't find state tax rate");
+          throw new ServerError("can't find state tax rate");
+        }
+
+        try {
+          //get shipping price
+          if (total.compareTo(PRICE_1) <= 0 && (state.equalsIgnoreCase(AK) || state.equalsIgnoreCase(HI))) {// purchase price <= $50
+            List<Rate> listShippingRate = rateService.getRateByCode("additional");// shipping = $15.00
+            if (listShippingRate.size() > 0) {
+              shippingTotal = listShippingRate.get(0).getRate();
+            }
+          } else if (total.compareTo(PRICE_1) > 0 && (state.equalsIgnoreCase(AK) || state.equalsIgnoreCase(HI))) { // purchase price > $50
+            List<Rate> listShippingRate = rateService.getRateByCode("extended");// shipping = $10.00
+            if (listShippingRate.size() > 0) {
+              shippingTotal = listShippingRate.get(0).getRate();
+            }
+          } else if (total.compareTo(PRICE_1) <= 0) {// purchase price <= $50
+            List<Rate> listShippingRate = rateService.getRateByCode("base");// shipping = $5.00
+            if (listShippingRate.size() > 0) {
+              shippingTotal = listShippingRate.get(0).getRate();
+            }
+          }
+        } catch (DataAccessException e) {
+          logger.error("can't find shipping rate");
+          throw new ServerError("can't find shipping rate");
+        }
+
+        //set shipping price
+        purchase.setShippingSubtotal(shippingTotal);
+
+        //totalCharges
+        totalCharges = total.add(taxTotal).add(shippingTotal);
+        BigDecimal totalCharges2 = totalCharges.setScale(2, BigDecimal.ROUND_HALF_UP);
+        purchase.setTotalCharges(totalCharges2);
+
       }
     }
 
@@ -416,4 +444,102 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     }
   }
+
+  /**
+   * calculate total charges when user changes the state in front end
+   *
+   * @param purchase - a purchase object used for calculation
+   * @return purchase - a purchase
+   */
+  public Purchase calculateTotalCharges(PurchaseForTaxCalculation purchase) {
+
+    Purchase returnPurchase = new Purchase();
+
+    logger.debug("calculateTotalCharges starts");
+    logger.debug("input purchase is " + purchase);
+
+    BigDecimal total = new BigDecimal(0);
+    Set<LineItem> itemsList = purchase.getProducts();
+
+    if (itemsList != null) {
+      for (LineItem lineItem : itemsList) {
+
+        // retrieve full product information from the database
+        BigDecimal itemPrice = productService.getProductById(lineItem.getId()).getPrice();
+        BigDecimal itemSubtotal = new BigDecimal(0);
+        int itemQuantity = lineItem.getQuantity();
+
+        // get the subtotal of the line item
+        itemSubtotal = itemPrice.multiply(BigDecimal.valueOf(itemQuantity));
+
+        // add line item subtotal to purchase subtotal
+        total = total.add(itemSubtotal);
+      }
+    }
+    BigDecimal total2 = total.setScale(2, BigDecimal.ROUND_HALF_UP);
+    returnPurchase.setTotal(total2);
+
+    BigDecimal taxTotal = new BigDecimal(0);
+    BigDecimal shippingTotal = new BigDecimal(0);
+    BigDecimal totalCharges = new BigDecimal(0);
+    String state = purchase.getDeliveryState();
+    try {
+      //get taxRate from DB
+      List<Rate> listRate = rateService.getRateByCode(state);
+      if (listRate.size() > 0) {
+        Rate rate = listRate.get(0);
+        BigDecimal taxRate = rate.getRate();
+        //calculate tax charge for new purchase
+        taxTotal = taxRate.multiply(total);
+        BigDecimal taxTotal2 = taxTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
+        returnPurchase.setTaxTotal(taxTotal2);
+
+        // set tax rate for new purchase
+        BigDecimal taxRate2 = taxRate.multiply(new BigDecimal(100))
+            .setScale(2, BigDecimal.ROUND_HALF_UP);
+
+        returnPurchase.setTaxRate(taxRate2);
+      }
+    } catch (DataAccessException e) {
+      logger.error("can't find state tax rate");
+      throw new ServerError("can't find state tax rate");
+    }
+
+    try {
+      //get shipping price
+      if (total.compareTo(PRICE_1) <= 0 && (state.equalsIgnoreCase(AK) || state.equalsIgnoreCase(HI))) {// purchase price <= $50
+        List<Rate> listShippingRate = rateService.getRateByCode("additional");// shipping = $15.00
+        if (listShippingRate.size() > 0) {
+          shippingTotal = listShippingRate.get(0).getRate();
+        }
+      } else if (total.compareTo(PRICE_1) > 0 && (state.equalsIgnoreCase(AK) || state.equalsIgnoreCase(HI))){ // purchase price > $50
+        List<Rate> listShippingRate = rateService.getRateByCode("extended");// shipping = $10.00
+        if (listShippingRate.size() > 0) {
+          shippingTotal = listShippingRate.get(0).getRate();
+        }
+      } else if (total.compareTo(PRICE_1) <= 0) {
+        List<Rate> listShippingRate = rateService.getRateByCode("base");// shipping = $5.00
+        if (listShippingRate.size() > 0) {
+          shippingTotal = listShippingRate.get(0).getRate();
+        }
+      }
+    } catch (DataAccessException e) {
+      logger.error("can't find shipping rate");
+      throw new ServerError("can't find shipping rate");
+    }
+
+    //set shipping price
+    returnPurchase.setShippingSubtotal(shippingTotal);
+
+    //totalCharges
+    totalCharges = total.add(taxTotal).add(shippingTotal);
+    BigDecimal totalCharges2 = totalCharges.setScale(2, BigDecimal.ROUND_HALF_UP);
+    returnPurchase.setTotalCharges(totalCharges2);
+
+    logger.debug("after calculate purchase is " + purchase);
+    logger.debug("calculateTotalCharges end");
+
+    return returnPurchase;
+  }
 }
+

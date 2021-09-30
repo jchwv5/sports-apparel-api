@@ -36,9 +36,18 @@ public class Purchase {
 
   private BigDecimal total;
 
-  @Column(columnDefinition="timestamp with time zone")
+  @Column(columnDefinition = "timestamp with time zone")
   private LocalDateTime timeStamp;
-  
+
+  private BigDecimal taxRate;
+
+  private BigDecimal taxTotal;
+
+  private BigDecimal shippingSubtotal;
+
+  private BigDecimal totalCharges;
+
+
   public Purchase() {
   }
 
@@ -98,14 +107,53 @@ public class Purchase {
     this.timeStamp = timeStamp;
   }
 
+  public BigDecimal getTaxRate() {
+    return taxRate;
+  }
+
+  public void setTaxRate(BigDecimal taxRate) {
+    this.taxRate = taxRate;
+  }
+
+  public BigDecimal getTaxTotal() {
+    return taxTotal;
+  }
+
+  public void setTaxTotal(BigDecimal taxTotal) {
+    this.taxTotal = taxTotal;
+  }
+
+
+  public BigDecimal getShippingSubtotal() {
+    return shippingSubtotal;
+  }
+
+  public void setShippingSubtotal(BigDecimal shippingSubtotal) {
+    this.shippingSubtotal = shippingSubtotal;
+  }
+
+  public BigDecimal getTotalCharges() {
+    return totalCharges;
+  }
+
+  public void setTotalCharges(BigDecimal totalCharges) {
+    this.totalCharges = totalCharges;
+  }
+
   @Override
   public String toString() {
     return "Purchase{" +
         "id=" + id +
+        ", products=" + products +
         ", deliveryAddress=" + deliveryAddress +
         ", billingAddress=" + billingAddress +
         ", creditCard=" + creditCard +
+        ", total=" + total +
         ", timeStamp=" + timeStamp +
+        ", taxRate=" + taxRate +
+        ", taxTotal=" + taxTotal +
+        ", shippingSubtotal=" + shippingSubtotal +
+        ", totalCharges=" + totalCharges +
         '}';
   }
 

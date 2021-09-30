@@ -10,5 +10,10 @@ public interface PurchaseService {
 
   List<Purchase> findPurchasesByEmail(String email);
 
+
+  Purchase calculateTotalCharges(PurchaseForTaxCalculation purchase);
+
+
   List<LineItem> findPurchasesByProductId(Long id);
+
 }
