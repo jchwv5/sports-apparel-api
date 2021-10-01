@@ -237,6 +237,7 @@ public class PurchaseServiceImpl implements PurchaseService {
   private BigDecimal calculateTotal(Purchase purchase) {
     BigDecimal total = new BigDecimal(0);
     Set<LineItem> itemsList = purchase.getProducts();
+    BigDecimal chargeDiscount = purchase.getChargeDiscount();
 
     if (itemsList != null) {
       for (LineItem lineItem : itemsList) {
@@ -306,7 +307,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.setShippingSubtotal(shippingTotal);
 
         //totalCharges
-        totalCharges = total.add(taxTotal).add(shippingTotal);
+        totalCharges = total.add(taxTotal).add(shippingTotal).subtract(chargeDiscount);
         BigDecimal totalCharges2 = totalCharges.setScale(2, BigDecimal.ROUND_HALF_UP);
         purchase.setTotalCharges(totalCharges2);
 

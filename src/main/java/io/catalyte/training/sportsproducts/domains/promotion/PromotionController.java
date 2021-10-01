@@ -2,6 +2,7 @@ package io.catalyte.training.sportsproducts.domains.promotion;
 
 import static io.catalyte.training.sportsproducts.constants.Paths.PROMOTIONS_PATH;
 
+import io.catalyte.training.sportsproducts.domains.product.Product;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * The PromotionController exposes endpoints for promotion related actions.
@@ -30,17 +33,25 @@ public class PromotionController {
     this.promotionService = promotionService;
   }
 
+
+  @GetMapping
+  public ResponseEntity<List<Promotion>> getPromotions() {
+    logger.info("Request received for getPromotions");
+
+    return new ResponseEntity<>(promotionService.getPromotions(), HttpStatus.OK);
+  }
+
   /**
    * Controller method for getting a promotion
    *
-   * @param id - promotion id
-   * @return promotion with requested id
+   * @param code - promotion code
+   * @return promotion with requested code
    */
-  @GetMapping(value = "/{id}")
+  @GetMapping(value = "/{code}")
   @ResponseStatus(value = HttpStatus.OK)
-  public ResponseEntity<Promotion> getPromotionById(@PathVariable Long id) {
-    logger.info("Request received for getPromotionById: " + id);
-    return new ResponseEntity<>(promotionService.getPromotionById(id), HttpStatus.OK);
+  public ResponseEntity<Promotion> getPromotionByCode(@PathVariable String code) {
+    logger.info("Request received for getPromotionByCode: " + code);
+    return new ResponseEntity<>(promotionService.getPromotionByCode(code), HttpStatus.OK);
   }
 
   /**

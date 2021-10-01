@@ -8,5 +8,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 
   boolean existsByCode(String code);
 
+  Promotion getPromotionByCode(String code);
 
 }

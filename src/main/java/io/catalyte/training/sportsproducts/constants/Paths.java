@@ -9,5 +9,4 @@ public class Paths {
   public static final String RATES_PATH = "/rates";
   public static final String REVIEWS_PATH = "/reviews";
   public static final String USERS_PATH = "/users";
-
 }
