@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 
 @Service
 public class PromotionService {
@@ -59,13 +61,13 @@ public class PromotionService {
   /**
    * Retrieves the promotion with the provided id from the database.
    *
-   * @param id - the id of the promotion to retrieve
+   * @param code - the code of the promotion to retrieve
    * @return - the promotion
    */
-  public Promotion getPromotionById(Long id) {
+  public Promotion getPromotionByCode(String code) {
     Promotion promotion;
     try {
-      promotion = promotionRepository.findById(id).orElse(null);
+      promotion = promotionRepository.getPromotionByCode(code);
     } catch (DataAccessException e) {
       logger.error(e.getMessage());
       throw new ServerError(e.getMessage());
@@ -73,13 +75,20 @@ public class PromotionService {
     if (promotion != null) {
       return promotion;
     } else {
-      logger.info("Get by id failed, id does not exist in the database: " + id);
+      logger.info("Get by code failed, code does not exist in the database: " + code);
       throw new ResourceNotFound(
-          "Get by id failed. id " + id + " does not exist in the database: ");
+          "Get by id failed. code " + code + " does not exist in the database: ");
     }
   }
 
-
+  public List<Promotion> getPromotions() {
+    try {
+     return promotionRepository.findAll();
+    } catch (DataAccessException e) {
+      logger.error(e.getMessage());
+      throw new ServerError(e.getMessage());
+    }
+  }
 }
 
 

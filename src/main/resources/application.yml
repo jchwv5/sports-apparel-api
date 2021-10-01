@@ -35,3 +35,6 @@ spring:
     username: postgres
     password: root
     driverClassName: org.postgresql.Driver
+  hibernate:
+    naming:
+      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
