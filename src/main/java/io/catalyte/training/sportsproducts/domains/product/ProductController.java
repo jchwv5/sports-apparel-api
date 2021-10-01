@@ -61,17 +61,22 @@ public class ProductController {
     return new ResponseEntity<>(productService.findAllProducts(pageNo, pageSize), HttpStatus.OK);
   }
 
+  /**
+   * Deletes a product from the database with a product ID matching the ID provided
+   * @param id - The ID of the product in question to be deleted
+   * @return
+   */
+
   @DeleteMapping(value = "/delete/{id}")
   @ResponseBody
   public ResponseEntity<Long> deleteProductById(@PathVariable Long id) {
     var isRemoved = productService.deleteProductById(id);
 
     if (isRemoved == null) {
-      logger.info("Product with the ID of " + id + " was successfully deleted");
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
-    return new ResponseEntity<>(id, HttpStatus.OK);
+    logger.info("Product with the ID of " + id + " was successfully deleted");
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**
@@ -93,6 +98,12 @@ public class ProductController {
     return new ResponseEntity<>(productService.getProducts(product), HttpStatus.OK);
   }
 
+  /**
+   * Searches the line_item table to look for purchases containing products with the given ID
+   *
+   * @param id - The ID of the product to look for in the line_item purchase table
+   * @return
+   */
   @GetMapping(value = "/{id}")
   @ResponseStatus(value = HttpStatus.OK)
   public ResponseEntity<Product> getProductById(@PathVariable Long id) {
